@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(supabase --version)",
+      "Bash(npm --version)",
+      "Bash(deno --version)",
+      "Bash(winget --version)",
+      "Bash(winget install *)"
+    ]
+  }
+}
