@@ -18,4 +18,4 @@ jobs:
       - name: Deploy Edge Functions
         run: supabase functions deploy --project-ref nsbtbdorpjbvpxehxmkt
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.teste1 }}
