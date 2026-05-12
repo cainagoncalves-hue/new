@@ -16,6 +16,6 @@ jobs:
           version: latest
 
       - name: Deploy Edge Functions
-        run: supabase functions deploy --project-ref nsbtbdorpjbvpxehxmkt
+        run: supabase functions deploy --project-ref nsbtbdorpjbvpxehxmkt --no-verify-jwt
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.teste2 }}
