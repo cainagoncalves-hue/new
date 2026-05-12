@@ -10,8 +10,8 @@ const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const FUNCTIONS = [
   "sync-estrutura",
   "sync-competencias",
-  "sync-avaliacoes",
-  "sync-okrs",
+  "sync-okrs",        // sincroniza períodos primeiro — outros dependem deles
+  "sync-avaliacoes",  // depende de elofy_periods (sync-okrs) e elofy_surveys (sync-pesquisas roda depois)
   "sync-pdi",
   "sync-feedback",
   "sync-one-one-sucessao",

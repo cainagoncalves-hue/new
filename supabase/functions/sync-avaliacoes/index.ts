@@ -105,8 +105,15 @@ async function syncCycleReviewDetailed() {
 }
 
 async function syncCycleReviewPublic() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_public");
-  const rows = items.map((r) => ({
+  const { data: periods } = await supabase.from("elofy_periods").select("elofy_id");
+  const allItems: Record<string, string>[] = [];
+
+  for (const period of periods ?? []) {
+    const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_public", { periodId: period.elofy_id });
+    allItems.push(...items);
+  }
+
+  const rows = allItems.map((r) => ({
     elofy_id: r["ID revisão de ciclo score"],
     id_empresa: r["ID Empresa"],
     id_revisao_score: r["ID revisão de ciclo score"],

@@ -133,9 +133,21 @@ async function syncDrivers() {
   return allRows.length;
 }
 
+async function getPeriodIds(): Promise<string[]> {
+  const { data } = await supabase.from("elofy_periods").select("elofy_id");
+  return (data ?? []).map((r: { elofy_id: string }) => r.elofy_id).filter(Boolean);
+}
+
 async function syncObjectives() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/objectives");
-  const rows = items.map((r) => ({
+  const periodIds = await getPeriodIds();
+  const allRows: Record<string, string>[] = [];
+
+  for (const periodId of periodIds) {
+    const items = await elofyGetAll<Record<string, string>>("/dataQuery/objectives", { periodId });
+    allRows.push(...items);
+  }
+
+  const rows = allRows.map((r) => ({
     elofy_id: r["ID Objetivo"],
     id_empresa: r["ID Empresa"],
     id_periodo: r["ID Período"],
@@ -164,13 +176,21 @@ async function syncObjectives() {
     ativo: r["Ativo"],
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_objectives", rows);
+
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_objectives", rows);
   return rows.length;
 }
 
 async function syncKeyResults() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/key_results");
-  const rows = items.map((r) => ({
+  const periodIds = await getPeriodIds();
+  const allItems: Record<string, string>[] = [];
+
+  for (const periodId of periodIds) {
+    const items = await elofyGetAll<Record<string, string>>("/dataQuery/key_results", { periodId });
+    allItems.push(...items);
+  }
+
+  const rows = allItems.map((r) => ({
     elofy_id: r["ID resultado-chave"],
     id_objetivo: r["ID objetivo"],
     resultado_chave: r["Resultado-chave"],
@@ -201,7 +221,8 @@ async function syncKeyResults() {
     ativo: r["Ativo"],
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_key_results", rows);
+
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_key_results", rows);
   return rows.length;
 }
 

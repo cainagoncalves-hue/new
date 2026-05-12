@@ -84,9 +84,21 @@ async function syncSurveyDismiss() {
   return allRows.length;
 }
 
+async function getSurveyIds(): Promise<string[]> {
+  const { data } = await supabase.from("elofy_surveys").select("elofy_id");
+  return (data ?? []).map((r: { elofy_id: string }) => r.elofy_id).filter(Boolean);
+}
+
 async function syncSurveyPulse() {
-  const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/survey_pulse");
-  const rows = items.map((r) => ({
+  const surveyIds = await getSurveyIds();
+  const allItems: Record<string, unknown>[] = [];
+
+  for (const id_pesquisa of surveyIds) {
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/survey_pulse", { id_pesquisa });
+    allItems.push(...items);
+  }
+
+  const rows = allItems.map((r) => ({
     elofy_id: String(r["id_resposta"]),
     id_empresa: String(r["id_empresa"] ?? ""),
     id_pesquisa: String(r["id_pesquisa"] ?? ""),
@@ -117,8 +129,15 @@ async function syncSurveyPulse() {
 }
 
 async function syncSurveyStandard() {
-  const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/survey_standard");
-  const rows = items.map((r) => ({
+  const surveyIds = await getSurveyIds();
+  const allItems: Record<string, unknown>[] = [];
+
+  for (const id_pesquisa of surveyIds) {
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/survey_standard", { id_pesquisa });
+    allItems.push(...items);
+  }
+
+  const rows = allItems.map((r) => ({
     elofy_id: String(r["id_resposta"]),
     id_empresa: String(r["id_empresa"] ?? ""),
     id_pesquisa: String(r["id_pesquisa"] ?? ""),
@@ -148,13 +167,21 @@ async function syncSurveyStandard() {
     id_publico_pesquisa: String(r["id_publico_pesquisa"] ?? ""),
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_survey_standard", rows);
+
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_survey_standard", rows);
   return rows.length;
 }
 
 async function syncSurveyTemporal() {
-  const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/survey_temporal");
-  const rows = items.map((r) => ({
+  const surveyIds = await getSurveyIds();
+  const allItems: Record<string, unknown>[] = [];
+
+  for (const id_pesquisa of surveyIds) {
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/survey_temporal", { id_pesquisa });
+    allItems.push(...items);
+  }
+
+  const rows = allItems.map((r) => ({
     elofy_id: String(r["id_resposta"]),
     id_empresa: String(r["id_empresa"] ?? ""),
     id_pesquisa: String(r["id_pesquisa"] ?? ""),
@@ -191,7 +218,7 @@ async function syncSurveyTemporal() {
     id_publico_pesquisa: String(r["id_publico_pesquisa"] ?? ""),
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_survey_temporal", rows);
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_survey_temporal", rows);
   return rows.length;
 }
 
