@@ -137,9 +137,21 @@ async function syncCycleReviewPublic() {
   return rows.length;
 }
 
+async function getPeriodIds(): Promise<string[]> {
+  const { data } = await supabase.from("elofy_periods").select("elofy_id");
+  return (data ?? []).map((r: { elofy_id: string }) => r.elofy_id).filter(Boolean);
+}
+
 async function syncCycleReviewNoteStep() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_public_note_step");
-  const rows = items.map((r) => ({
+  const periodIds = await getPeriodIds();
+  const allItems: Record<string, string>[] = [];
+
+  for (const periodId of periodIds) {
+    const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_public_note_step", { periodId });
+    allItems.push(...items);
+  }
+
+  const rows = allItems.map((r) => ({
     elofy_id: r["id_revisao_ciclo_score"],
     id_empresa: r["id_empresa"],
     id_revisao_score: r["id_revisao_ciclo_score"],
@@ -194,13 +206,20 @@ async function syncCycleReviewNoteStep() {
     conceito_valores_clientes: r["conceito_valores_clientes"],
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_cycle_review_note_step", rows);
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_cycle_review_note_step", rows);
   return rows.length;
 }
 
 async function syncAvgCompetencies() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_average_step_competencies");
-  const rows = items.map((r) => ({
+  const periodIds = await getPeriodIds();
+  const allItems: Record<string, string>[] = [];
+
+  for (const periodId of periodIds) {
+    const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_average_step_competencies", { periodId });
+    allItems.push(...items);
+  }
+
+  const rows = allItems.map((r) => ({
     elofy_id: r["ID_revisao_ciclo_score"],
     id_empresa: r["ID_empresa"],
     id_revisao_score: r["ID_revisao_ciclo_score"],
@@ -222,13 +241,20 @@ async function syncAvgCompetencies() {
     media_competencia_clientes: r["media_competencia_clientes"],
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_cycle_review_avg_competencies", rows);
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_cycle_review_avg_competencies", rows);
   return rows.length;
 }
 
 async function syncAvgResults() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_average_step_results");
-  const rows = items.map((r) => ({
+  const periodIds = await getPeriodIds();
+  const allItems: Record<string, string>[] = [];
+
+  for (const periodId of periodIds) {
+    const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_average_step_results", { periodId });
+    allItems.push(...items);
+  }
+
+  const rows = allItems.map((r) => ({
     elofy_id: r["ID_revisao_ciclo_avaliacoes_fase"],
     id_empresa: r["ID_empresa"],
     id_revisao_avaliacoes_fase: r["ID_revisao_ciclo_avaliacoes_fase"],
@@ -252,13 +278,20 @@ async function syncAvgResults() {
     media_final: r["media_final"],
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_cycle_review_avg_results", rows);
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_cycle_review_avg_results", rows);
   return rows.length;
 }
 
 async function syncNinebox() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_ninebox");
-  const rows = items.map((r) => ({
+  const periodIds = await getPeriodIds();
+  const allItems: Record<string, string>[] = [];
+
+  for (const periodId of periodIds) {
+    const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_ninebox", { periodId });
+    allItems.push(...items);
+  }
+
+  const rows = allItems.map((r) => ({
     elofy_id: r["id_revisao_ciclo_score"],
     id_empresa: r["id_empresa"],
     id_revisao_score: r["id_revisao_ciclo_score"],
@@ -287,7 +320,7 @@ async function syncNinebox() {
     reconhecimento: r["reconhecimento"],
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_cycle_review_ninebox", rows);
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_cycle_review_ninebox", rows);
   return rows.length;
 }
 

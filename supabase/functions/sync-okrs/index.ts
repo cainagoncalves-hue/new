@@ -227,8 +227,15 @@ async function syncKeyResults() {
 }
 
 async function syncOkrsV2() {
-  const items = await elofyGetAll<Record<string, unknown>>("/v2/dataQuery/okrs");
-  const rows = items.map((r) => ({
+  const periodIds = await getPeriodIds();
+  const allItems: Record<string, unknown>[] = [];
+
+  for (const periodId of periodIds) {
+    const items = await elofyGetAll<Record<string, unknown>>("/v2/dataQuery/okrs", { periodId });
+    allItems.push(...items);
+  }
+
+  const rows = allItems.map((r) => ({
     elofy_id: String(r["id_objetivo"]),
     id_empresa: String(r["id_empresa"] ?? ""),
     nome_empresa: String(r["nome_empresa"] ?? ""),
@@ -255,13 +262,20 @@ async function syncOkrsV2() {
     resultados_chave: r["resultados_chave"] ?? null,
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_okrs_v2", rows);
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_okrs_v2", rows);
   return rows.length;
 }
 
 async function syncGoalsContractV2() {
-  const items = await elofyGetAll<Record<string, unknown>>("/v2/dataQuery/goals_contract");
-  const rows = items.map((r) => ({
+  const periodIds = await getPeriodIds();
+  const allItems: Record<string, unknown>[] = [];
+
+  for (const periodId of periodIds) {
+    const items = await elofyGetAll<Record<string, unknown>>("/v2/dataQuery/goals_contract", { periodId });
+    allItems.push(...items);
+  }
+
+  const rows = allItems.map((r) => ({
     elofy_id: String(r["id_objetivo"]),
     id_empresa: String(r["id_empresa"] ?? ""),
     nome_empresa: String(r["nome_empresa"] ?? ""),
@@ -287,13 +301,20 @@ async function syncGoalsContractV2() {
     metas: r["metas"] ?? null,
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_goals_contract_v2", rows);
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_goals_contract_v2", rows);
   return rows.length;
 }
 
 async function syncBaseIndicators() {
-  const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/base_indicators");
-  const rows = items.map((r) => ({
+  const periodIds = await getPeriodIds();
+  const allItems: Record<string, unknown>[] = [];
+
+  for (const periodId of periodIds) {
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/base_indicators", { periodId });
+    allItems.push(...items);
+  }
+
+  const rows = allItems.map((r) => ({
     elofy_id: String(r["id_indicador"]),
     id_empresa: String(r["id_empresa"] ?? ""),
     nome_empresa: String(r["nome_empresa"] ?? ""),
@@ -346,7 +367,7 @@ async function syncBaseIndicators() {
     metas_vinculadas: r["metas_vinculadas"] ?? null,
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_base_indicators", rows);
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_base_indicators", rows);
   return rows.length;
 }
 
