@@ -19,6 +19,18 @@ function decodeJwtPayload(token: string): Record<string, unknown> {
   }
 }
 
+const TOKEN_AGING_THRESHOLD_DAYS = 25;
+
+function checkTokenAging(token: string): void {
+  const payload = decodeJwtPayload(token);
+  const createdAt = payload["created_at"] as number | undefined;
+  if (!createdAt) return;
+  const ageDays = (Date.now() / 1000 - createdAt) / 86400;
+  if (ageDays >= TOKEN_AGING_THRESHOLD_DAYS) {
+    console.warn(`⚠️ Token Elofy com ${Math.floor(ageDays)} dias — considere renovar antes de expirar`);
+  }
+}
+
 let cachedToken: string | null = null;
 
 export async function getElofyToken(): Promise<string> {
@@ -111,7 +123,7 @@ export async function elofyGetAll<T>(
     ) {
       const paged = raw as { data: T[]; current_page: number; last_page: number };
       batch = paged.data;
-      reachedEnd = paged.current_page >= paged.last_page;
+      reachedEnd = Number(paged.current_page) >= Number(paged.last_page);
     } else {
       break;
     }
