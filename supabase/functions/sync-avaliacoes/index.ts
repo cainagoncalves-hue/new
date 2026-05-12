@@ -124,6 +124,7 @@ async function syncCycleReviewPublic() {
     nome_avaliado: r["nome_usuario_avaliado"],
     status_avaliado: r["status_usuario_avaliado"],
     media_final: r["media_final"],
+    media_final_calibrado: r["media_final_calibrado"],
     fase: r["fase"],
     media_fase: r["media_fase"],
     media_fase_auto: r["media_fase_auto"],
