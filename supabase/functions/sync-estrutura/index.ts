@@ -5,12 +5,14 @@ const supabase = getSupabaseClient();
 
 async function syncCompany() {
   const items = await elofyGet<Record<string, string>>("/dataQuery/company");
-  const rows = items.map((r) => ({
-    elofy_id: r["ID Empresa"],
-    nome: r["Nome da empresa"],
-    id_grupo_economico: r["ID grupo econômico"],
-    raw_data: r,
-  }));
+  const rows = items
+    .map((r) => ({
+      elofy_id: r["ID Empresa"] ?? r["id_empresa"],
+      nome: r["Nome da empresa"] ?? r["nome_empresa"],
+      id_grupo_economico: r["ID grupo econômico"] ?? r["id_grupo_economico"],
+      raw_data: r,
+    }))
+    .filter((row) => row.elofy_id != null);
   await upsertBatch(supabase, "elofy_company", rows);
   return rows.length;
 }

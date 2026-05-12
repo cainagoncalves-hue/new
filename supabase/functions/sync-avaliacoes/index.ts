@@ -4,88 +4,104 @@ import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-cli
 const supabase = getSupabaseClient();
 
 async function syncCycleReviewDetailed() {
-  const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/cycle_review_detailed");
+  const { data: publicReviews } = await supabase
+    .from("elofy_cycle_review_public")
+    .select("id_revisao_ciclo");
+
+  const cycleIds = [...new Set(
+    (publicReviews ?? []).map((r) => r.id_revisao_ciclo).filter(Boolean),
+  )];
+
+  let totalRoot = 0;
   let totalSteps = 0;
   let totalItems = 0;
 
-  const rootRows = items.map((r) => {
-    const detailedId = String(r["id_revisao_ciclos_avaliacoes"]);
-    return {
-      elofy_id: detailedId,
-      id_revisao_ciclo: String(r["id_revisao_ciclo"] ?? ""),
-      ano: r["ano"] as number,
-      nome_ciclo: String(r["nome_ciclo"] ?? ""),
-      id_empresa: String(r["id_empresa"] ?? ""),
-      id_revisao_ciclos_avaliacoes: detailedId,
-      id_avaliado: String(r["id_avaliado"] ?? ""),
-      matricula_avaliado: String(r["matricula_avaliado"] ?? ""),
-      nome_avaliado: String(r["nome_avaliado"] ?? ""),
-      id_time_avaliado: String(r["id_time_avaliado"] ?? ""),
-      nome_time_avaliado: String(r["nome_time_avaliado"] ?? ""),
-      tipo_cargo_avaliado: String(r["tipo_cargo_avaliado"] ?? ""),
-      id_tipo_cargo_avaliado: String(r["id_tipo_cargo_avaliado"] ?? ""),
-      id_cargo_avaliado: String(r["id_cargo_avaliado"] ?? ""),
-      cargo_avaliado: String(r["cargo_avaliado"] ?? ""),
-      id_gestor_avaliado: String(r["id_gestor_avaliado"] ?? ""),
-      gestor_avaliado: String(r["gestor_avaliado"] ?? ""),
-      media_final_avaliacao: String(r["media_final_avaliacao"] ?? ""),
-      label_nbox: String(r["label_nbox"] ?? ""),
-      quadrante_nbox: String(r["quadrante_nbox"] ?? ""),
-      tipo_avaliacao: String(r["tipo_avaliacao"] ?? ""),
-      id_avaliador: String(r["id_avaliador"] ?? ""),
-      matricula_avaliador: String(r["matricula_avaliador"] ?? ""),
-      avaliador: String(r["avaliador"] ?? ""),
-      id_time_avaliador: String(r["id_time_avaliador"] ?? ""),
-      nome_time_avaliador: String(r["nome_time_avaliador"] ?? ""),
-      tipo_cargo_avaliador: String(r["tipo_cargo_avaliador"] ?? ""),
-      id_cargo_avaliador: String(r["id_cargo_avaliador"] ?? ""),
-      cargo_avaliador: String(r["cargo_avaliador"] ?? ""),
-      raw_data: r,
-    };
-  });
+  for (const cycleReviewId of cycleIds) {
+    const items = await elofyGetAll<Record<string, unknown>>(
+      "/dataQuery/cycle_review_detailed",
+      { cycleReviewId },
+    );
 
-  await upsertBatch(supabase, "elofy_cycle_review_detailed", rootRows);
+    const rootRows = items.map((r) => {
+      const detailedId = String(r["id_revisao_ciclos_avaliacoes"]);
+      return {
+        elofy_id: detailedId,
+        id_revisao_ciclo: String(r["id_revisao_ciclo"] ?? ""),
+        ano: r["ano"] as number,
+        nome_ciclo: String(r["nome_ciclo"] ?? ""),
+        id_empresa: String(r["id_empresa"] ?? ""),
+        id_revisao_ciclos_avaliacoes: detailedId,
+        id_avaliado: String(r["id_avaliado"] ?? ""),
+        matricula_avaliado: String(r["matricula_avaliado"] ?? ""),
+        nome_avaliado: String(r["nome_avaliado"] ?? ""),
+        id_time_avaliado: String(r["id_time_avaliado"] ?? ""),
+        nome_time_avaliado: String(r["nome_time_avaliado"] ?? ""),
+        tipo_cargo_avaliado: String(r["tipo_cargo_avaliado"] ?? ""),
+        id_tipo_cargo_avaliado: String(r["id_tipo_cargo_avaliado"] ?? ""),
+        id_cargo_avaliado: String(r["id_cargo_avaliado"] ?? ""),
+        cargo_avaliado: String(r["cargo_avaliado"] ?? ""),
+        id_gestor_avaliado: String(r["id_gestor_avaliado"] ?? ""),
+        gestor_avaliado: String(r["gestor_avaliado"] ?? ""),
+        media_final_avaliacao: String(r["media_final_avaliacao"] ?? ""),
+        label_nbox: String(r["label_nbox"] ?? ""),
+        quadrante_nbox: String(r["quadrante_nbox"] ?? ""),
+        tipo_avaliacao: String(r["tipo_avaliacao"] ?? ""),
+        id_avaliador: String(r["id_avaliador"] ?? ""),
+        matricula_avaliador: String(r["matricula_avaliador"] ?? ""),
+        avaliador: String(r["avaliador"] ?? ""),
+        id_time_avaliador: String(r["id_time_avaliador"] ?? ""),
+        nome_time_avaliador: String(r["nome_time_avaliador"] ?? ""),
+        tipo_cargo_avaliador: String(r["tipo_cargo_avaliador"] ?? ""),
+        id_cargo_avaliador: String(r["id_cargo_avaliador"] ?? ""),
+        cargo_avaliador: String(r["cargo_avaliador"] ?? ""),
+        raw_data: r,
+      };
+    });
 
-  for (const r of items) {
-    const detailedId = String(r["id_revisao_ciclos_avaliacoes"]);
-    const etapas = (r["etapas"] as Array<Record<string, unknown>>) ?? [];
+    await upsertBatch(supabase, "elofy_cycle_review_detailed", rootRows);
+    totalRoot += rootRows.length;
 
-    const stepRows = etapas.map((e) => ({
-      elofy_id: String(e["id_revisao_ciclo_fases"]),
-      cycle_review_detailed_id: detailedId,
-      etapa: String(e["etapa"] ?? ""),
-      media_fase: e["media_fase"] as number,
-      nome_etapa: String(e["nome_etapa"] ?? ""),
-      conceito_media_etapa: String(e["conceito_media_etapa"] ?? ""),
-      comentario_unico_fase: String(e["comentario_unico_fase"] ?? ""),
-      id_revisao_ciclo_fases: String(e["id_revisao_ciclo_fases"] ?? ""),
-      raw_data: e,
-    }));
+    for (const r of items) {
+      const detailedId = String(r["id_revisao_ciclos_avaliacoes"]);
+      const etapas = (r["etapas"] as Array<Record<string, unknown>>) ?? [];
 
-    await upsertBatch(supabase, "elofy_cycle_review_steps", stepRows);
-    totalSteps += stepRows.length;
-
-    for (const e of etapas) {
-      const stepId = String(e["id_revisao_ciclo_fases"]);
-      const itens = (e["itens_avaliacao"] as Array<Record<string, unknown>>) ?? [];
-
-      const itemRows = itens.map((i) => ({
-        elofy_id: String(i["id_revisao_ciclo_avaliacoes_fase"]),
-        step_id: stepId,
-        nota: i["nota"] as number,
-        conceito: String(i["conceito"] ?? ""),
-        comentario: String(i["comentario"] ?? ""),
-        item_avaliado: String(i["item_avaliado"] ?? ""),
-        id_revisao_ciclo_avaliacoes_fase: String(i["id_revisao_ciclo_avaliacoes_fase"] ?? ""),
-        raw_data: i,
+      const stepRows = etapas.map((e) => ({
+        elofy_id: String(e["id_revisao_ciclo_fases"]),
+        cycle_review_detailed_id: detailedId,
+        etapa: String(e["etapa"] ?? ""),
+        media_fase: e["media_fase"] as number,
+        nome_etapa: String(e["nome_etapa"] ?? ""),
+        conceito_media_etapa: String(e["conceito_media_etapa"] ?? ""),
+        comentario_unico_fase: String(e["comentario_unico_fase"] ?? ""),
+        id_revisao_ciclo_fases: String(e["id_revisao_ciclo_fases"] ?? ""),
+        raw_data: e,
       }));
 
-      await upsertBatch(supabase, "elofy_cycle_review_items", itemRows);
-      totalItems += itemRows.length;
+      await upsertBatch(supabase, "elofy_cycle_review_steps", stepRows);
+      totalSteps += stepRows.length;
+
+      for (const e of etapas) {
+        const stepId = String(e["id_revisao_ciclo_fases"]);
+        const itens = (e["itens_avaliacao"] as Array<Record<string, unknown>>) ?? [];
+
+        const itemRows = itens.map((i) => ({
+          elofy_id: String(i["id_revisao_ciclo_avaliacoes_fase"]),
+          step_id: stepId,
+          nota: i["nota"] as number,
+          conceito: String(i["conceito"] ?? ""),
+          comentario: String(i["comentario"] ?? ""),
+          item_avaliado: String(i["item_avaliado"] ?? ""),
+          id_revisao_ciclo_avaliacoes_fase: String(i["id_revisao_ciclo_avaliacoes_fase"] ?? ""),
+          raw_data: i,
+        }));
+
+        await upsertBatch(supabase, "elofy_cycle_review_items", itemRows);
+        totalItems += itemRows.length;
+      }
     }
   }
 
-  return { root: rootRows.length, steps: totalSteps, items: totalItems };
+  return { root: totalRoot, steps: totalSteps, items: totalItems };
 }
 
 async function syncCycleReviewPublic() {
@@ -273,8 +289,8 @@ Deno.serve(async () => {
   const results: Record<string, unknown> = {};
 
   try {
-    results.cycle_review_detailed = await syncCycleReviewDetailed();
     results.cycle_review_public = await syncCycleReviewPublic();
+    results.cycle_review_detailed = await syncCycleReviewDetailed();
     results.cycle_review_note_step = await syncCycleReviewNoteStep();
     results.avg_competencies = await syncAvgCompetencies();
     results.avg_results = await syncAvgResults();
