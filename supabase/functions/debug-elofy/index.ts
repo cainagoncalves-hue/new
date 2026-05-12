@@ -9,7 +9,8 @@ async function probe(token: string, path: string): Promise<unknown> {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) return { error: res.status, body: await res.text() };
-  const raw = await res.json();
+  const buf = await res.arrayBuffer();
+  const raw = JSON.parse(new TextDecoder("utf-8").decode(buf));
   const items: unknown[] = Array.isArray(raw) ? raw : (raw?.data ?? []);
   return {
     isArray: Array.isArray(raw),
