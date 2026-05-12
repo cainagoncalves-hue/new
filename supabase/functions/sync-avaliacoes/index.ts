@@ -106,31 +106,32 @@ async function syncCycleReviewDetailed() {
 
 async function syncCycleReviewPublic() {
   const { data: periods } = await supabase.from("elofy_periods").select("elofy_id");
-  const allItems: Record<string, string>[] = [];
+  const allItems: Record<string, unknown>[] = [];
 
   for (const period of periods ?? []) {
-    const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_public", { periodId: period.elofy_id });
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/cycle_review_public", { periodId: period.elofy_id });
     allItems.push(...items);
   }
 
   const rows = allItems.map((r) => ({
-    elofy_id: r["ID revisão de ciclo score"],
-    id_empresa: r["ID Empresa"],
-    id_revisao_score: r["ID revisão de ciclo score"],
-    id_revisao_ciclo: r["ID revisão de ciclo"],
-    nome_revisao: r["Nome revisão de ciclo"],
-    id_usuario_avaliado: r["ID usuário avaliado"],
-    matricula_avaliado: r["Matrícula usuário avaliado"],
-    nome_avaliado: r["Nome usuário avaliado"],
-    status_avaliado: r["Status usuário avaliado"],
+    elofy_id: r["id_revisao_ciclo_score"],
+    id_empresa: r["id_empresa"],
+    id_revisao_score: r["id_revisao_ciclo_score"],
+    id_revisao_ciclo: r["id_revisao_ciclo"],
+    nome_revisao: r["nome_revisao_ciclo"],
+    id_usuario_avaliado: r["id_usuario_avaliado"],
+    matricula_avaliado: r["matricula_usuario_avaliado"],
+    nome_avaliado: r["nome_usuario_avaliado"],
+    status_avaliado: r["status_usuario_avaliado"],
     media_final: r["media_final"],
-    fase: r["Fase"],
-    media_fase: r["Media fase"],
-    media_fase_auto: r["Media fase auto"],
-    media_fase_gestor: r["Media fase gestor"],
-    media_fase_pares: r["Media fase pares"],
-    media_fase_equipe: r["Media fase equipe"],
-    media_fase_cliente: r["Media fase cliente"],
+    media_final_calibrado: r["media_final_calibrado"],
+    fase: r["fase"],
+    media_fase: r["media_fase"],
+    media_fase_auto: r["media_fase_auto"],
+    media_fase_gestor: r["media_fase_gestor"],
+    media_fase_pares: r["media_fase_pares"],
+    media_fase_equipe: r["media_fase_equipe"],
+    media_fase_cliente: r["media_fase_cliente"],
     raw_data: r,
   }));
   await upsertBatch(supabase, "elofy_cycle_review_public", rows);

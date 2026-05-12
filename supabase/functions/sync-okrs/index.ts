@@ -4,19 +4,19 @@ import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-cli
 const supabase = getSupabaseClient();
 
 async function syncPeriods() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/periods");
+  const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/periods");
   const rows = items.map((r) => ({
-    elofy_id: r["ID Período"],
-    periodo: r["Período"],
-    data_inicio: r["Data de início"],
-    data_fim: r["Data de fim"],
-    situacao: r["Situação"],
-    escala_peso_obj: r["Escala de peso de objetivos"],
-    nome_padrao_objetivo: r["Nome padrão de objetivo"],
-    escala_peso_kr: r["Escala de peso de resultados_chave"],
-    periodicidade_kr: r["Periodicidade padrão resultados_chave"],
-    modulo: r["Modulo"],
-    id_empresa: r["ID Empresa"],
+    elofy_id: String(r["id_periodo"]),
+    periodo: String(r["periodo"] ?? ""),
+    data_inicio: String(r["data_inicio"] ?? ""),
+    data_fim: String(r["data_fim"] ?? ""),
+    situacao: String(r["situacao"] ?? ""),
+    escala_peso_obj: String(r["escala_peso_objetivos"] ?? ""),
+    nome_padrao_objetivo: String(r["nome_padrao_objetivo"] ?? ""),
+    escala_peso_kr: String(r["escala_peso_resultados_chave"] ?? ""),
+    periodicidade_kr: String(r["periodicidade_padrao_resultados_chave"] ?? ""),
+    modulo: String(r["modulo"] ?? ""),
+    id_empresa: String(r["id_empresa"] ?? ""),
     raw_data: r,
   }));
   await upsertBatch(supabase, "elofy_periods", rows);
@@ -71,16 +71,16 @@ async function syncPeriodsDetailed() {
 }
 
 async function syncCycles() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycles");
+  const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/cycles");
   const rows = items.map((r) => ({
-    elofy_id: r["ID Ciclo"],
-    ciclo: r["Ciclo"],
-    id_periodo: r["ID Período"],
-    data_inicio: r["Data de início"],
-    data_fim: r["Data de fim"],
-    situacao: r["Situação"],
-    status: r["Status"],
-    id_empresa: r["ID Empresa"],
+    elofy_id: String(r["id_ciclo"]),
+    ciclo: String(r["ciclo"] ?? ""),
+    id_periodo: String(r["id_periodo"] ?? ""),
+    data_inicio: String(r["data_inicio"] ?? ""),
+    data_fim: String(r["data_fim"] ?? ""),
+    situacao: String(r["situacao"] ?? ""),
+    status: String(r["status"] ?? ""),
+    id_empresa: String(r["id_empresa"] ?? ""),
     raw_data: r,
   }));
   await upsertBatch(supabase, "elofy_cycles", rows);
@@ -140,40 +140,40 @@ async function getPeriodIds(): Promise<string[]> {
 
 async function syncObjectives() {
   const periodIds = await getPeriodIds();
-  const allRows: Record<string, string>[] = [];
+  const allRows: Record<string, unknown>[] = [];
 
   for (const periodId of periodIds) {
-    const items = await elofyGetAll<Record<string, string>>("/dataQuery/objectives", { periodId });
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/objectives", { periodId });
     allRows.push(...items);
   }
 
   const rows = allRows.map((r) => ({
-    elofy_id: r["ID Objetivo"],
-    id_empresa: r["ID Empresa"],
-    id_periodo: r["ID Período"],
-    periodo: r["Período"],
-    id_ciclo: r["ID Ciclo"],
-    ciclo: r["Ciclo"],
-    id_direcionador: r["ID Direcionador"],
-    direcionador: r["Direcionador"],
-    id_objetivo_pai: r["ID Objetivo pai"],
-    objetivo_pai: r["Objetivo pai"],
-    objetivo: r["Objetivo"],
-    objetivo_estrategico: r["Objetivo estratégico"],
-    descricao: r["Descrição"],
-    tipo: r["Tipo"],
-    id_responsavel: r["Id Responsável objetivo"],
-    responsavel: r["Responsável objetivo"],
-    id_corresponsavel: r["ID Corresponsável objetivo"],
-    corresponsavel: r["Corresponsável objetivo"],
-    time: r["Time"],
-    workflow: r["Workflow"],
-    tags: r["Tags"],
-    peso: r["Peso"],
-    progresso: r["Progresso"],
-    sentimento: r["Sentimento"],
-    status: r["Status"],
-    ativo: r["Ativo"],
+    elofy_id: String(r["id_objetivo"]),
+    id_empresa: String(r["id_empresa"] ?? ""),
+    id_periodo: String(r["id_periodo"] ?? ""),
+    periodo: String(r["periodo"] ?? ""),
+    id_ciclo: String(r["id_ciclo"] ?? ""),
+    ciclo: String(r["ciclo"] ?? ""),
+    id_direcionador: String(r["id_direcionador"] ?? ""),
+    direcionador: String(r["direcionador"] ?? ""),
+    id_objetivo_pai: String(r["id_objetivo_pai"] ?? ""),
+    objetivo_pai: String(r["objetivo_pai"] ?? ""),
+    objetivo: String(r["objetivo"] ?? ""),
+    objetivo_estrategico: String(r["objetivo_estrategico"] ?? ""),
+    descricao: String(r["descricao"] ?? ""),
+    tipo: String(r["tipo"] ?? ""),
+    id_responsavel: String(r["id_responsavel_objetivo"] ?? ""),
+    responsavel: String(r["responsavel_objetivo"] ?? ""),
+    id_corresponsavel: String(r["id_corresponsavel_objetivo"] ?? ""),
+    corresponsavel: String(r["corresponsavel_objetivo"] ?? ""),
+    time: String(r["time"] ?? ""),
+    workflow: String(r["workflow"] ?? ""),
+    tags: String(r["tags"] ?? ""),
+    peso: String(r["peso"] ?? ""),
+    progresso: String(r["progresso"] ?? ""),
+    sentimento: String(r["sentimento"] ?? ""),
+    status: String(r["status"] ?? ""),
+    ativo: String(r["ativo"] ?? ""),
     raw_data: r,
   }));
 
@@ -183,42 +183,42 @@ async function syncObjectives() {
 
 async function syncKeyResults() {
   const periodIds = await getPeriodIds();
-  const allItems: Record<string, string>[] = [];
+  const allItems: Record<string, unknown>[] = [];
 
   for (const periodId of periodIds) {
-    const items = await elofyGetAll<Record<string, string>>("/dataQuery/key_results", { periodId });
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/key_results", { periodId });
     allItems.push(...items);
   }
 
   const rows = allItems.map((r) => ({
-    elofy_id: r["ID resultado-chave"],
-    id_objetivo: r["ID objetivo"],
-    resultado_chave: r["Resultado-chave"],
-    descricao: r["Descrição"],
-    workflow: r["Workflow"],
-    id_responsavel: r["ID Responsável"],
-    responsavel: r["Responsável"],
-    id_corresponsavel: r["ID corresonsável"],
-    corresponsavel: r["Corresponsável"],
-    peso: r["Peso"],
-    unidade_medida: r["Unidade de medida"],
-    meta: r["Meta"],
-    ponto_partida: r["Ponto de partida"],
-    direcao: r["Direção"],
-    manutencao: r["Resultado-chave manutenção"],
-    medicao_atual: r["Medição atual"],
-    data_medicao_atual: r["Data da medição atual"],
-    progresso: r["Progresso"],
-    periodicidade: r["Periodicidade"],
-    checkins_pendentes: r["Número de check-ins pendentes"],
-    sentimento: r["Sentimento"],
-    status: r["Status"],
-    tipo_informacao: r["Tipo de informação"],
-    tipo_score: r["Tipo score"],
-    formula_calculo: r["Fórmula de cálculo"],
-    tags: r["Tags"],
-    modulo: r["Modulo"],
-    ativo: r["Ativo"],
+    elofy_id: String(r["id_resultado_chave"]),
+    id_objetivo: String(r["id_objetivo"] ?? ""),
+    resultado_chave: String(r["resultado_chave"] ?? ""),
+    descricao: String(r["descricao"] ?? ""),
+    workflow: String(r["workflow"] ?? ""),
+    id_responsavel: String(r["id_responsavel"] ?? ""),
+    responsavel: String(r["responsavel"] ?? ""),
+    id_corresponsavel: String(r["id_corresonsavel"] ?? ""),  // API typo: missing 'p'
+    corresponsavel: String(r["corresponsavel"] ?? ""),
+    peso: String(r["peso"] ?? ""),
+    unidade_medida: String(r["unidade_medida"] ?? ""),
+    meta: String(r["meta"] ?? ""),
+    ponto_partida: String(r["ponto_partida"] ?? ""),
+    direcao: String(r["direcao"] ?? ""),
+    manutencao: String(r["resultado_chave_manutencao"] ?? ""),
+    medicao_atual: String(r["medicao_atual"] ?? ""),
+    data_medicao_atual: String(r["data_medicao_atual"] ?? ""),
+    progresso: String(r["progresso"] ?? ""),
+    periodicidade: String(r["periodicidade"] ?? ""),
+    checkins_pendentes: String(r["numero_check_ins_pendentes"] ?? ""),
+    sentimento: String(r["sentimento"] ?? ""),
+    status: String(r["status"] ?? ""),
+    tipo_informacao: String(r["tipo_informacao"] ?? ""),
+    tipo_score: String(r["tipo_score"] ?? ""),
+    formula_calculo: String(r["formula_calculo"] ?? ""),
+    tags: String(r["tags"] ?? ""),
+    modulo: String(r["modulo"] ?? ""),
+    ativo: String(r["ativo"] ?? ""),
     raw_data: r,
   }));
 

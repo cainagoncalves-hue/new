@@ -18,19 +18,19 @@ async function syncCompany() {
 }
 
 async function syncTeams() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/teams");
+  const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/teams");
   const rows = items.map((r) => ({
-    elofy_id: r["ID time"],
-    nome: r["Time"],
-    status: r["Status"],
-    codigo_origem: r["Código time sistema origem"],
-    id_responsavel: r["Id usuário responsável"],
-    nome_responsavel: r["Usuários Responsável"],
-    id_time_pai: r["ID time pai"],
-    nome_time_pai: r["Time pai"],
-    ids_tags: r["IDs tags"],
-    tags: r["Tags"],
-    id_empresa: r["ID Empresa"],
+    elofy_id: String(r["id_time"]),
+    nome: String(r["time"] ?? ""),
+    status: String(r["status"] ?? ""),
+    codigo_origem: String(r["codigo_time_sistema_origem"] ?? ""),
+    id_responsavel: String(r["id_usuario_responsavel"] ?? ""),
+    nome_responsavel: String(r["usuarios_responsavel"] ?? ""),
+    id_time_pai: String(r["id_time_pai"] ?? ""),
+    nome_time_pai: String(r["time_pai"] ?? ""),
+    ids_tags: String(r["ids_tags"] ?? ""),
+    tags: String(r["tags"] ?? ""),
+    id_empresa: String(r["id_empresa"] ?? ""),
     raw_data: r,
   }));
   await upsertBatch(supabase, "elofy_teams", rows);
@@ -38,18 +38,18 @@ async function syncTeams() {
 }
 
 async function syncPositions() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/positions");
+  const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/positions");
   const rows = items.map((r) => ({
-    elofy_id: r["ID Cargo"],
-    cargo: r["Cargo"],
-    status: r["Status"],
-    codigo_origem: r["Código cargo sistema origem"],
-    descricao: r["Descrição"],
-    dificuldade: r["Dificuldade"],
-    impacto: r["Impacto"],
-    mapeado_sucessao: r["Mapeado para sucessão"],
-    regua: r["Régua"],
-    id_empresa: r["ID Empresa"],
+    elofy_id: String(r["id_cargo"]),
+    cargo: String(r["cargo"] ?? ""),
+    status: String(r["status"] ?? ""),
+    codigo_origem: String(r["codigo_cargo_sistema_origem"] ?? ""),
+    descricao: String(r["descricao"] ?? ""),
+    dificuldade: String(r["dificuldade"] ?? ""),
+    impacto: String(r["impacto"] ?? ""),
+    mapeado_sucessao: String(r["mapeado_para_sucessao"] ?? ""),
+    regua: String(r["regua"] ?? ""),
+    id_empresa: String(r["id_empresa"] ?? ""),
     raw_data: r,
   }));
   await upsertBatch(supabase, "elofy_positions", rows);
@@ -57,32 +57,32 @@ async function syncPositions() {
 }
 
 async function syncUsers() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/users");
+  const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/users");
   const rows = items.map((r) => ({
-    elofy_id: r["ID Usuario"],
-    nome: r["Nome usuário"],
-    matricula: r["Matrícula"],
-    status: r["Status"],
-    data_admissao: r["Data de admissão"],
-    data_desligamento: r["Data de deligamento"],
-    id_gestor: r["ID Gestor"],
-    nome_gestor: r["Gestor"],
-    email: r["E-mail"],
-    login: r["Login"],
-    tipo_cargo: r["Tipo cargo"],
-    id_cargo: r["ID Cargo"],
-    cargo: r["Cargo"],
-    nivel_responsabilidade: r["Nível de responsabilidade"],
-    id_time: r["ID Time"],
-    nome_time: r["Time"],
-    ids_times_acessiveis: r["IDs Times acessíveis"],
-    times_acessiveis: r["Times acessiveis"],
-    projeto_pod: r["Projeto/POD"],
-    ids_perfil: r["IDs Perfil"],
-    perfis: r["Perfis"],
-    cpf: r["CPF"],
-    colaborador_chave: r["Colaborador Chave"],
-    id_empresa: r["ID Empresa"],
+    elofy_id: String(r["id_usuario"]),
+    nome: String(r["nome_usuario"] ?? ""),
+    matricula: String(r["matricula"] ?? ""),
+    status: String(r["status"] ?? ""),
+    data_admissao: String(r["data_admissao"] ?? ""),
+    data_desligamento: String(r["data_deligamento"] ?? ""),  // API has typo: deligamento
+    id_gestor: String(r["id_gestor"] ?? ""),
+    nome_gestor: String(r["gestor"] ?? ""),
+    email: String(r["e_mail"] ?? ""),  // API uses e_mail
+    login: String(r["login"] ?? ""),
+    tipo_cargo: String(r["tipo_cargo"] ?? ""),
+    id_cargo: String(r["id_cargo"] ?? ""),
+    cargo: String(r["cargo"] ?? ""),
+    nivel_responsabilidade: String(r["nivel_responsabilidade"] ?? ""),
+    id_time: String(r["id_time"] ?? ""),
+    nome_time: String(r["time"] ?? ""),
+    ids_times_acessiveis: String(r["ids_times_acessiveis"] ?? ""),
+    times_acessiveis: String(r["times_acessiveis"] ?? ""),
+    projeto_pod: String(r["projetopod"] ?? ""),  // API has no underscore: projetopod
+    ids_perfil: String(r["ids_perfil"] ?? ""),
+    perfis: String(r["perfis"] ?? ""),
+    cpf: String(r["cpf"] ?? ""),
+    colaborador_chave: String(r["colaborador_chave"] ?? ""),
+    id_empresa: String(r["id_empresa"] ?? ""),
     raw_data: r,
   }));
   await upsertBatch(supabase, "elofy_users", rows);
