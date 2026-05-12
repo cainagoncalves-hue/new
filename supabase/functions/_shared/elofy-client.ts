@@ -98,7 +98,10 @@ export async function elofyGet<T>(
     throw new Error(`Elofy GET ${path} falhou: ${res.status} ${await res.text()}`);
   }
 
-  return res.json();
+  // A API Elofy serve UTF-8 mas pode declarar charset errado no Content-Type.
+  // Forçamos a decodificação como UTF-8 para evitar mojibake (NÃ£o → Não).
+  const buffer = await res.arrayBuffer();
+  return JSON.parse(new TextDecoder("utf-8").decode(buffer));
 }
 
 export async function elofyGetAll<T>(
