@@ -7,17 +7,6 @@ const supabase = getSupabaseClient();
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
-const FUNCTIONS = [
-  "sync-estrutura",
-  "sync-competencias",
-  "sync-okrs",        // sincroniza períodos primeiro — outros dependem deles
-  "sync-avaliacoes",  // depende de elofy_periods (sync-okrs) e elofy_surveys (sync-pesquisas roda depois)
-  "sync-pdi",
-  "sync-feedback",
-  "sync-one-one-sucessao",
-  "sync-pesquisas",
-  "sync-integracao",
-];
 
 async function invokeFunction(name: string): Promise<{ ok: boolean; error?: string; token_expired?: boolean }> {
   try {
@@ -61,16 +50,31 @@ Deno.serve(async () => {
   let hasError = false;
   let tokenExpired = false;
 
-  for (const fn of FUNCTIONS) {
-    const result = await invokeFunction(fn);
-    results[fn] = result;
-
-    if (!result.ok) {
+  // Fase 1: funções independentes em paralelo
+  const PHASE1 = [
+    "sync-estrutura", "sync-competencias", "sync-okrs",
+    "sync-pdi", "sync-feedback", "sync-one-one-sucessao",
+    "sync-pesquisas", "sync-integracao",
+  ];
+  const phase1Results = await Promise.all(PHASE1.map(fn => invokeFunction(fn)));
+  for (let i = 0; i < PHASE1.length; i++) {
+    results[PHASE1[i]] = phase1Results[i];
+    if (!phase1Results[i].ok) {
       hasError = true;
-      // Se qualquer função retornar token expirado, interrompe o restante
-      if (result.error?.includes("Token do Elofy expirou") || result.token_expired) {
+      if (phase1Results[i].error?.includes("Token do Elofy expirou") || phase1Results[i].token_expired) {
         tokenExpired = true;
-        break;
+      }
+    }
+  }
+
+  // Fase 2: sync-avaliacoes depende de elofy_periods (sync-okrs) — roda após fase 1
+  if (!tokenExpired) {
+    const avalResult = await invokeFunction("sync-avaliacoes");
+    results["sync-avaliacoes"] = avalResult;
+    if (!avalResult.ok) {
+      hasError = true;
+      if (avalResult.error?.includes("Token do Elofy expirou") || avalResult.token_expired) {
+        tokenExpired = true;
       }
     }
   }
