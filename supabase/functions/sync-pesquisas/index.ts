@@ -27,9 +27,8 @@ async function syncSurveys() {
   return rows.length;
 }
 
-async function syncSurveyDismiss() {
-  const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/survey_dismiss");
-  const rows = items.map((r) => ({
+function mapSurveyDismiss(r: Record<string, unknown>) {
+  return {
     elofy_id: String(r["id_resposta"]),
     id_empresa: String(r["id_empresa"] ?? ""),
     id_pesquisa: String(r["id_pesquisa"] ?? ""),
@@ -67,9 +66,22 @@ async function syncSurveyDismiss() {
     nome_categoria_pergunta: String(r["nome_categoria_pergunta"] ?? ""),
     status_pesquisa_ativa: String(r["status_pesquisa_ativa"] ?? ""),
     raw_data: r,
-  }));
-  await upsertBatch(supabase, "elofy_survey_dismiss", rows);
-  return rows.length;
+  };
+}
+
+async function syncSurveyDismiss() {
+  const { data: surveys } = await supabase.from("elofy_surveys").select("elofy_id");
+  const allRows: ReturnType<typeof mapSurveyDismiss>[] = [];
+
+  for (const survey of surveys ?? []) {
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/survey_dismiss", { id_pesquisa: survey.elofy_id });
+    allRows.push(...items.map(mapSurveyDismiss));
+  }
+
+  if (allRows.length > 0) {
+    await upsertBatch(supabase, "elofy_survey_dismiss", allRows);
+  }
+  return allRows.length;
 }
 
 async function syncSurveyPulse() {

@@ -87,9 +87,8 @@ async function syncCycles() {
   return rows.length;
 }
 
-async function syncDrivers() {
-  const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/drivers");
-  const rows = items.map((r) => ({
+function mapDriver(r: Record<string, unknown>) {
+  return {
     elofy_id: String(r["id_direcionador"]),
     id_empresa: String(r["id_empresa"] ?? ""),
     nome_empresa: String(r["nome_empresa"] ?? ""),
@@ -116,9 +115,22 @@ async function syncDrivers() {
     tags: r["tags"] ?? null,
     itens_vinculados: r["itens_vinculados"] ?? null,
     raw_data: r,
-  }));
-  await upsertBatch(supabase, "elofy_drivers", rows);
-  return rows.length;
+  };
+}
+
+async function syncDrivers() {
+  const { data: periods } = await supabase.from("elofy_periods").select("elofy_id");
+  const allRows: ReturnType<typeof mapDriver>[] = [];
+
+  for (const period of periods ?? []) {
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/drivers", { periodId: period.elofy_id });
+    allRows.push(...items.map(mapDriver));
+  }
+
+  if (allRows.length > 0) {
+    await upsertBatch(supabase, "elofy_drivers", allRows);
+  }
+  return allRows.length;
 }
 
 async function syncObjectives() {

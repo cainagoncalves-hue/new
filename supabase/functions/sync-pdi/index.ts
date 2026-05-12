@@ -4,7 +4,9 @@ import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-cli
 const supabase = getSupabaseClient();
 
 async function syncPdi() {
-  const items = await elofyGetAll<Record<string, string>>("/dataQuery/pdi");
+  const year = new Date().getFullYear();
+  const initialDate = `01/01/${year}`;
+  const items = await elofyGetAll<Record<string, string>>("/dataQuery/pdi", { initialDate });
   const rows = items.map((r) => ({
     elofy_id: r["ID PDI"] + "_" + r["id_iniciativa"],
     id_empresa: r["ID Empresa"],
