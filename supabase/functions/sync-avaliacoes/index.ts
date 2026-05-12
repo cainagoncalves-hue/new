@@ -124,7 +124,6 @@ async function syncCycleReviewPublic() {
     nome_avaliado: r["nome_usuario_avaliado"],
     status_avaliado: r["status_usuario_avaliado"],
     media_final: r["media_final"],
-    media_final_calibrado: r["media_final_calibrado"],
     fase: r["fase"],
     media_fase: r["media_fase"],
     media_fase_auto: r["media_fase_auto"],
@@ -145,10 +144,10 @@ async function getPeriodIds(): Promise<string[]> {
 
 async function syncCycleReviewNoteStep() {
   const periodIds = await getPeriodIds();
-  const allItems: Record<string, string>[] = [];
+  const allItems: Record<string, unknown>[] = [];
 
   for (const periodId of periodIds) {
-    const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_public_note_step", { periodId });
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/cycle_review_public_note_step", { periodId });
     allItems.push(...items);
   }
 
@@ -213,33 +212,33 @@ async function syncCycleReviewNoteStep() {
 
 async function syncAvgCompetencies() {
   const periodIds = await getPeriodIds();
-  const allItems: Record<string, string>[] = [];
+  const allItems: Record<string, unknown>[] = [];
 
   for (const periodId of periodIds) {
-    const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_average_step_competencies", { periodId });
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/cycle_review_average_step_competencies", { periodId });
     allItems.push(...items);
   }
 
   const rows = allItems.map((r) => ({
-    elofy_id: r["ID_revisao_ciclo_score"],
-    id_empresa: r["ID_empresa"],
-    id_revisao_score: r["ID_revisao_ciclo_score"],
-    id_revisao_ciclo: r["ID_revisao_ciclo"],
-    nome_revisao: r["nome_revisao_ciclo"],
-    periodo: r["Período"],
-    id_usuario_avaliado: r["ID_usuario_avaliado"],
-    nome_usuario_avaliado: r["nome_usuario_avaliado"],
-    id_gestor: r["ID_gestor"],
-    nome_gestor: r["nome_gestor"],
-    conceito_final_ciclo: r["conceito_final_ciclo"],
-    media_final_ciclo_calibrado: r["media_final_ciclo_calibrado"],
-    conceito_final_ciclo_calibrado: r["conceito_final_ciclo_calibrado"],
-    media_competencia: r["media_competencia"],
-    media_competencia_auto: r["media_competencia_auto"],
-    media_competencia_gestor: r["media_competencia_gestor"],
-    media_competencia_pares: r["media_competencia_pares"],
-    media_competencia_equipe: r["media_competencia_equipe"],
-    media_competencia_clientes: r["media_competencia_clientes"],
+    elofy_id: String(r["id_revisao_ciclo_score"]),
+    id_empresa: String(r["id_empresa"] ?? ""),
+    id_revisao_score: String(r["id_revisao_ciclo_score"] ?? ""),
+    id_revisao_ciclo: String(r["id_revisao_ciclo"] ?? ""),
+    nome_revisao: String(r["nome_revisao_ciclo"] ?? ""),
+    periodo: String(r["periodo"] ?? ""),
+    id_usuario_avaliado: String(r["id_usuario_avaliado"] ?? ""),
+    nome_usuario_avaliado: String(r["nome_usuario_avaliado"] ?? ""),
+    id_gestor: String(r["id_gestor"] ?? ""),
+    nome_gestor: String(r["nome_gestor"] ?? ""),
+    conceito_final_ciclo: String(r["conceito_final_ciclo"] ?? ""),
+    media_final_ciclo_calibrado: String(r["media_final_ciclo_calibrado"] ?? ""),
+    conceito_final_ciclo_calibrado: String(r["conceito_final_ciclo_calibrado"] ?? ""),
+    media_competencia: String(r["media_competencia"] ?? ""),
+    media_competencia_auto: String(r["media_competencia_auto"] ?? ""),
+    media_competencia_gestor: String(r["media_competencia_gestor"] ?? ""),
+    media_competencia_pares: String(r["media_competencia_pares"] ?? ""),
+    media_competencia_equipe: String(r["media_competencia_equipe"] ?? ""),
+    media_competencia_clientes: String(r["media_competencia_clientes"] ?? ""),
     raw_data: r,
   }));
   if (rows.length > 0) await upsertBatch(supabase, "elofy_cycle_review_avg_competencies", rows);
@@ -248,35 +247,35 @@ async function syncAvgCompetencies() {
 
 async function syncAvgResults() {
   const periodIds = await getPeriodIds();
-  const allItems: Record<string, string>[] = [];
+  const allItems: Record<string, unknown>[] = [];
 
   for (const periodId of periodIds) {
-    const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_average_step_results", { periodId });
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/cycle_review_average_step_results", { periodId });
     allItems.push(...items);
   }
 
   const rows = allItems.map((r) => ({
-    elofy_id: r["ID_revisao_ciclo_avaliacoes_fase"],
-    id_empresa: r["ID_empresa"],
-    id_revisao_avaliacoes_fase: r["ID_revisao_ciclo_avaliacoes_fase"],
-    id_revisao_ciclo: r["ID_revisao_ciclo"],
-    nome_revisao: r["nome_revisao_ciclo"],
-    id_usuario_avaliado: r["ID_usuario_avaliado"],
-    nome_usuario_avaliado: r["nome_usuario_avaliado"],
-    id_gestor: r["ID_gestor"],
-    nome_gestor: r["nome_gestor"],
-    conceito_final_ciclo: r["conceito_final_ciclo"],
-    media_final_ciclo_calibrado: r["media_final_ciclo_calibrado"],
-    conceito_final_ciclo_calibrado: r["conceito_final_ciclo_calibrado"],
-    media_final_fase_resultados: r["media_final_fase_resultados"],
-    item_avaliado: r["Item_avaliado"],
-    media_item_avaliado: r["media_item_avaliado"],
-    media_item_auto: r["media_item_auto"],
-    media_item_gestor: r["media_item_gestor"],
-    media_item_pares: r["media_item_pares"],
-    media_item_equipe: r["media_item_equipe"],
-    media_item_clientes: r["media_item_clientes"],
-    media_final: r["media_final"],
+    elofy_id: String(r["id_revisao_ciclo_avaliacoes_fase"]),
+    id_empresa: String(r["id_empresa"] ?? ""),
+    id_revisao_avaliacoes_fase: String(r["id_revisao_ciclo_avaliacoes_fase"] ?? ""),
+    id_revisao_ciclo: String(r["id_revisao_ciclo"] ?? ""),
+    nome_revisao: String(r["nome_revisao_ciclo"] ?? ""),
+    id_usuario_avaliado: String(r["id_usuario_avaliado"] ?? ""),
+    nome_usuario_avaliado: String(r["nome_usuario_avaliado"] ?? ""),
+    id_gestor: String(r["id_gestor"] ?? ""),
+    nome_gestor: String(r["nome_gestor"] ?? ""),
+    conceito_final_ciclo: String(r["conceito_final_ciclo"] ?? ""),
+    media_final_ciclo_calibrado: String(r["media_final_ciclo_calibrado"] ?? ""),
+    conceito_final_ciclo_calibrado: String(r["conceito_final_ciclo_calibrado"] ?? ""),
+    media_final_fase_resultados: String(r["media_final_fase_resultados"] ?? ""),
+    item_avaliado: String(r["item_avaliado"] ?? ""),
+    media_item_avaliado: String(r["media_item_avaliado"] ?? ""),
+    media_item_auto: String(r["media_item_auto"] ?? ""),
+    media_item_gestor: String(r["media_item_gestor"] ?? ""),
+    media_item_pares: String(r["media_item_pares"] ?? ""),
+    media_item_equipe: String(r["media_item_equipe"] ?? ""),
+    media_item_clientes: String(r["media_item_clientes"] ?? ""),
+    media_final: String(r["media_final"] ?? ""),
     raw_data: r,
   }));
   if (rows.length > 0) await upsertBatch(supabase, "elofy_cycle_review_avg_results", rows);
@@ -285,10 +284,10 @@ async function syncAvgResults() {
 
 async function syncNinebox() {
   const periodIds = await getPeriodIds();
-  const allItems: Record<string, string>[] = [];
+  const allItems: Record<string, unknown>[] = [];
 
   for (const periodId of periodIds) {
-    const items = await elofyGetAll<Record<string, string>>("/dataQuery/cycle_review_ninebox", { periodId });
+    const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/cycle_review_ninebox", { periodId });
     allItems.push(...items);
   }
 
