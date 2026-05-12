@@ -98,10 +98,27 @@ export async function elofyGetAll<T>(
   const perPage = 100;
 
   while (true) {
-    const batch = await elofyGet<T>(path, { ...extraParams, page, perPage });
-    if (!Array.isArray(batch) || batch.length === 0) break;
+    const raw = await elofyGet<T>(path, { ...extraParams, page, perPage }) as unknown;
+    let batch: T[];
+    let reachedEnd: boolean;
+
+    if (Array.isArray(raw)) {
+      batch = raw as T[];
+      reachedEnd = batch.length < perPage;
+    } else if (
+      raw !== null && typeof raw === "object" &&
+      Array.isArray((raw as { data: unknown }).data)
+    ) {
+      const paged = raw as { data: T[]; current_page: number; last_page: number };
+      batch = paged.data;
+      reachedEnd = paged.current_page >= paged.last_page;
+    } else {
+      break;
+    }
+
+    if (batch.length === 0) break;
     all.push(...batch);
-    if (batch.length < perPage) break;
+    if (reachedEnd) break;
     page++;
   }
 
