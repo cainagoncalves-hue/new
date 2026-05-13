@@ -333,7 +333,6 @@ Deno.serve(async () => {
 
   try {
     results.cycle_review_public = await syncCycleReviewPublic();
-    results.cycle_review_detailed = await syncCycleReviewDetailed();
     results.cycle_review_note_step = await syncCycleReviewNoteStep();
     results.avg_competencies = await syncAvgCompetencies();
     results.avg_results = await syncAvgResults();
