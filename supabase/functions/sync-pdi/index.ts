@@ -1,6 +1,6 @@
 import { elofyGetAll } from "../_shared/elofy-client.ts";
 import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-client.ts";
-import { dedup, parseDate } from "../_shared/utils.ts";
+import { dedup, parseDate, toInt, toNum } from "../_shared/utils.ts";
 
 const supabase = getSupabaseClient();
 
@@ -47,14 +47,14 @@ async function syncInitiatives() {
     nome_empresa: String(r["nome_empresa"] ?? ""),
     iniciativa: String(r["iniciativa"] ?? ""),
     descricao: String(r["descricao"] ?? ""),
-    nro_sub_iniciativas: r["nro_sub_iniciativas"] as number,
+    nro_sub_iniciativas: toInt(r["nro_sub_iniciativas"]),
     id_iniciativa_pai: String(r["id_iniciativa_pai"] ?? ""),
     nome_iniciativa_pai: String(r["nome_iniciativa_pai"] ?? ""),
     status_iniciativa: String(r["status_iniciativa"] ?? ""),
     data_inicio: parseDate(r["data_inicio"]),
     data_final: parseDate(r["data_final"]),
     situacao_iniciativa: String(r["situacao_iniciativa"] ?? ""),
-    progresso_iniciativa: r["progresso_iniciativa"] as number,
+    progresso_iniciativa: toInt(r["progresso_iniciativa"]),
     data_conclusao: parseDate(r["data_conclusao"]),
     disponivel_avaliacao: String(r["disponivel_avaliacao"] ?? ""),
     origem: String(r["origem"] ?? ""),
@@ -72,7 +72,7 @@ async function syncInitiatives() {
     corresponsaveis: String(r["corresponsaveis_iniciativa"] ?? ""),
     id_resultado_chave: String(r["id_resultado_chave"] ?? ""),
     resultado_chave: String(r["resultado_chave"] ?? ""),
-    progresso_resultado_chave: r["progresso_resultado_chave"] as number,
+    progresso_resultado_chave: toInt(r["progresso_resultado_chave"]),
     raw_data: r,
   }));
   await upsertBatch(supabase, "elofy_initiatives", dedup(rows));
@@ -92,7 +92,7 @@ async function syncInitiativesPdi() {
     data_final: String(r["data_final"] ?? ""),
     situacao_iniciativa: String(r["situacao_iniciativa"] ?? ""),
     data_conclusao: String(r["data_conclusao"] ?? ""),
-    progresso_iniciativa: r["progresso_iniciativa"] as number,
+    progresso_iniciativa: toInt(r["progresso_iniciativa"]),
     disponivel_avaliacao: String(r["disponivel_avaliacao"] ?? ""),
     origem: String(r["origem"] ?? ""),
     tags: String(r["tags"] ?? ""),
@@ -125,7 +125,7 @@ async function syncInitiativesOneOne() {
     data_final: String(r["data_final"] ?? ""),
     situacao_iniciativa: String(r["situacao_iniciativa"] ?? ""),
     data_conclusao: String(r["data_conclusao"] ?? ""),
-    progresso_iniciativa: r["progresso_iniciativa"] as number,
+    progresso_iniciativa: toInt(r["progresso_iniciativa"]),
     disponivel_avaliacao: String(r["disponivel_avaliacao"] ?? ""),
     origem: String(r["origem"] ?? ""),
     id_responsavel: String(r["id_responsavel"] ?? ""),

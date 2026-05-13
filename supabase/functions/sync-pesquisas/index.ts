@@ -71,7 +71,7 @@ function mapSurveyDismiss(r: Record<string, unknown>) {
 }
 
 async function syncSurveyDismiss() {
-  const { data: surveys } = await supabase.from("elofy_surveys").select("elofy_id");
+  const { data: surveys } = await supabase.from("elofy_surveys").select("elofy_id").neq("situacao", "Encerrada");
   let total = 0;
 
   for (const survey of surveys ?? []) {
@@ -84,7 +84,7 @@ async function syncSurveyDismiss() {
 }
 
 async function getSurveyIds(): Promise<string[]> {
-  const { data } = await supabase.from("elofy_surveys").select("elofy_id");
+  const { data } = await supabase.from("elofy_surveys").select("elofy_id").neq("situacao", "Encerrada");
   return (data ?? []).map((r: { elofy_id: string }) => r.elofy_id).filter(Boolean);
 }
 

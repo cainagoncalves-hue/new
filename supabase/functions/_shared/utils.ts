@@ -14,6 +14,12 @@ export function toNum(val: unknown): number | null {
   return isNaN(n) ? null : n;
 }
 
+/** Converte para integer arredondado, retorna null se vazio/inválido. */
+export function toInt(val: unknown): number | null {
+  const n = toNum(val);
+  return n !== null ? Math.round(n) : null;
+}
+
 /** Remove linhas com elofy_id duplicado (mantém a primeira ocorrência). */
 export function dedup<T extends Record<string, unknown>>(rows: T[], key = "elofy_id"): T[] {
   const seen = new Set<unknown>();

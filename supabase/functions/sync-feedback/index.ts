@@ -49,7 +49,7 @@ async function syncPraisesBoard() {
     usuario_elogiado: r["usuario_elogiado"],
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_praises_board", rows);
+  await upsertBatch(supabase, "elofy_praises_board", dedup(rows));
   return rows.length;
 }
 
