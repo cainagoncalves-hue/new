@@ -72,6 +72,7 @@ export async function getElofyToken(): Promise<string> {
 export async function elofyGet<T>(
   path: string,
   params: Record<string, string | number | undefined> = {},
+  retries = 3,
 ): Promise<T[]> {
   const token = await getElofyToken();
   const url = new URL(`${BASE_URL}${path}`);
@@ -92,6 +93,11 @@ export async function elofyGet<T>(
       timestamp: new Date().toISOString(),
     });
     throw new ElofyTokenExpiredError();
+  }
+
+  if (res.status === 429 && retries > 0) {
+    await new Promise((r) => setTimeout(r, 5000)); // aguarda 5s e tenta de novo
+    return elofyGet<T>(path, params, retries - 1);
   }
 
   if (!res.ok) {
@@ -135,6 +141,7 @@ export async function elofyGetAll<T>(
     all.push(...batch);
     if (reachedEnd) break;
     page++;
+    await new Promise((r) => setTimeout(r, 150)); // evitar rate limit da API Elofy
   }
 
   return all;
