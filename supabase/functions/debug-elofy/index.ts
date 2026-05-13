@@ -31,6 +31,11 @@ Deno.serve(async () => {
     objectives: `/dataQuery/objectives?periodId=${periodId}&page=1&perPage=2`,
     key_results: `/dataQuery/key_results?periodId=${periodId}&page=1&perPage=2`,
     cycle_review_public: `/dataQuery/cycle_review_public?periodId=${periodId}&page=1&perPage=2`,
+    avg_competencies: `/dataQuery/cycle_review_average_step_competencies?periodId=${periodId}&page=1&perPage=2`,
+    avg_results: `/dataQuery/cycle_review_average_step_results?periodId=${periodId}&page=1&perPage=2`,
+    surveys: `/dataQuery/surveys?page=1&perPage=2`,
+    competencies: `/dataQuery/competencies?page=1&perPage=2`,
+    cycle_review_config: `/dataQuery/cycle_review_config?page=1&perPage=2`,
   };
 
   const results: Record<string, unknown> = { periodId };
