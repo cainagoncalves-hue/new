@@ -1,6 +1,6 @@
 import { elofyGetAll } from "../_shared/elofy-client.ts";
 import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-client.ts";
-import { dedup, parseDate, toInt, toNum } from "../_shared/utils.ts";
+import { dedup, parseDate, toInt } from "../_shared/utils.ts";
 
 const supabase = getSupabaseClient();
 
