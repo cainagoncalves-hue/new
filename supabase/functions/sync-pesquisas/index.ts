@@ -1,5 +1,6 @@
 import { elofyGetAll } from "../_shared/elofy-client.ts";
 import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-client.ts";
+import { dedup } from "../_shared/utils.ts";
 
 const supabase = getSupabaseClient();
 
@@ -76,7 +77,7 @@ async function syncSurveyDismiss() {
   for (const survey of surveys ?? []) {
     const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/survey_dismiss", { id_pesquisa: survey.elofy_id });
     const rows = items.map(mapSurveyDismiss);
-    if (rows.length > 0) await upsertBatch(supabase, "elofy_survey_dismiss", rows);
+    if (rows.length > 0) await upsertBatch(supabase, "elofy_survey_dismiss", dedup(rows));
     total += rows.length;
   }
   return total;
@@ -119,7 +120,7 @@ async function syncSurveyPulse() {
       id_publico_pesquisa: String(r["id_publico_pesquisa"] ?? ""),
       raw_data: r,
     }));
-    if (rows.length > 0) await upsertBatch(supabase, "elofy_survey_pulse", rows);
+    if (rows.length > 0) await upsertBatch(supabase, "elofy_survey_pulse", dedup(rows));
     total += rows.length;
   }
   return total;
@@ -161,7 +162,7 @@ async function syncSurveyStandard() {
       id_publico_pesquisa: String(r["id_publico_pesquisa"] ?? ""),
       raw_data: r,
     }));
-    if (rows.length > 0) await upsertBatch(supabase, "elofy_survey_standard", rows);
+    if (rows.length > 0) await upsertBatch(supabase, "elofy_survey_standard", dedup(rows));
     total += rows.length;
   }
   return total;
@@ -210,7 +211,7 @@ async function syncSurveyTemporal() {
       id_publico_pesquisa: String(r["id_publico_pesquisa"] ?? ""),
       raw_data: r,
     }));
-    if (rows.length > 0) await upsertBatch(supabase, "elofy_survey_temporal", rows);
+    if (rows.length > 0) await upsertBatch(supabase, "elofy_survey_temporal", dedup(rows));
     total += rows.length;
   }
   return total;

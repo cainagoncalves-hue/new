@@ -1,6 +1,6 @@
 import { elofyGetAll } from "../_shared/elofy-client.ts";
 import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-client.ts";
-import { parseDate } from "../_shared/utils.ts";
+import { dedup, parseDate } from "../_shared/utils.ts";
 
 const supabase = getSupabaseClient();
 
@@ -29,7 +29,7 @@ async function syncFeedbacks() {
     valores_competencias: r["valores_competencias_percebidas"],
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_feedbacks", rows);
+  await upsertBatch(supabase, "elofy_feedbacks", dedup(rows));
   return rows.length;
 }
 

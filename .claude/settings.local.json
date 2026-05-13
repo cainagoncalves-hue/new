@@ -5,7 +5,11 @@
       "Bash(npm --version)",
       "Bash(deno --version)",
       "Bash(winget --version)",
-      "Bash(winget install *)"
+      "Bash(winget install *)",
+      "Bash(git push *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(curl -s -m 180 -X POST https://nsbtbdorpjbvpxehxmkt.supabase.co/functions/v1/__TRACKED_VAR__ -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zYnRiZG9ycGpidnB4ZWh4bWt0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzUyOTQyMywiZXhwIjoyMDkzMTA1NDIzfQ.7K-Dj7RduOlov_T_V_1p6Wl29WX1q7k0jtCkzi1DQBA' -H 'Content-Type: application/json')"
     ]
   }
 }
