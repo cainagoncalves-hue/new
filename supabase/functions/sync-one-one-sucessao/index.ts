@@ -1,5 +1,6 @@
 import { elofyGetAll } from "../_shared/elofy-client.ts";
 import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-client.ts";
+import { parseDate } from "../_shared/utils.ts";
 
 const supabase = getSupabaseClient();
 
@@ -16,7 +17,7 @@ async function syncOneOne() {
     status_remetente: String(r["status_remetente"] ?? ""),
     id_gestor_remetente: String(r["id_gestor_remetente"] ?? ""),
     nome_gestor_remetente: String(r["nome_gestor_remetente"] ?? ""),
-    data: r["data"] as string || null,
+    data: parseDate(r["data"]),
     horario: String(r["horario"] ?? ""),
     duracao: r["duracao"] as number,
     id_usuario_convidado: String(r["id_usuario_convidado"] ?? ""),

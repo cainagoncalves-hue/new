@@ -1,5 +1,6 @@
 import { elofyGetAll } from "../_shared/elofy-client.ts";
 import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-client.ts";
+import { toNum } from "../_shared/utils.ts";
 
 const supabase = getSupabaseClient();
 
@@ -27,7 +28,7 @@ async function syncCycleReviewDetailed() {
       return {
         elofy_id: detailedId,
         id_revisao_ciclo: String(r["id_revisao_ciclo"] ?? ""),
-        ano: r["ano"] as number,
+        ano: toNum(r["ano"]),
         nome_ciclo: String(r["nome_ciclo"] ?? ""),
         id_empresa: String(r["id_empresa"] ?? ""),
         id_revisao_ciclos_avaliacoes: detailedId,
@@ -69,7 +70,7 @@ async function syncCycleReviewDetailed() {
         elofy_id: String(e["id_revisao_ciclo_fases"]),
         cycle_review_detailed_id: detailedId,
         etapa: String(e["etapa"] ?? ""),
-        media_fase: e["media_fase"] as number,
+        media_fase: toNum(e["media_fase"]),
         nome_etapa: String(e["nome_etapa"] ?? ""),
         conceito_media_etapa: String(e["conceito_media_etapa"] ?? ""),
         comentario_unico_fase: String(e["comentario_unico_fase"] ?? ""),
@@ -87,7 +88,7 @@ async function syncCycleReviewDetailed() {
         const itemRows = itens.map((i) => ({
           elofy_id: String(i["id_revisao_ciclo_avaliacoes_fase"]),
           step_id: stepId,
-          nota: i["nota"] as number,
+          nota: toNum(i["nota"]),
           conceito: String(i["conceito"] ?? ""),
           comentario: String(i["comentario"] ?? ""),
           item_avaliado: String(i["item_avaliado"] ?? ""),

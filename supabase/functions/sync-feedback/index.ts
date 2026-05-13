@@ -1,5 +1,6 @@
 import { elofyGetAll } from "../_shared/elofy-client.ts";
 import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-client.ts";
+import { parseDate } from "../_shared/utils.ts";
 
 const supabase = getSupabaseClient();
 
@@ -9,8 +10,8 @@ async function syncFeedbacks() {
     elofy_id: r["id_feedback"],
     id_empresa: r["id_empresa"],
     acao: r["acao"],
-    data_feedback: r["data_feedback"] || null,
-    prazo_esperado: r["prazo_esperado"] || null,
+    data_feedback: parseDate(r["data_feedback"]),
+    prazo_esperado: parseDate(r["prazo_esperado"]),
     id_usuario_remetente: r["id_usuario_remetente"],
     matricula_remetente: r["matricula_usuario_remetente"],
     usuario_remetente: r["usuario_remetente"],
@@ -38,7 +39,7 @@ async function syncPraisesBoard() {
     elofy_id: r["id_elogio"],
     id_empresa: r["id_empresa"],
     elogio: r["elogio"],
-    data: r["data"] || null,
+    data: parseDate(r["data"]),
     hora: r["hora"],
     id_usuario_remetente: r["id_usuario_remetente"],
     usuario_remetente: r["usuario_remetente"],
