@@ -64,7 +64,7 @@ async function syncCycleReviewDetailed() {
 
     for (const r of items) {
       const detailedId = String(r["id_revisao_ciclos_avaliacoes"]);
-      const etapas = (r["etapas"] as Array<Record<string, unknown>>) ?? [];
+      const etapas = Array.isArray(r["etapas"]) ? r["etapas"] as Array<Record<string, unknown>> : [];
 
       const stepRows = etapas.map((e) => ({
         elofy_id: String(e["id_revisao_ciclo_fases"]),
@@ -83,7 +83,7 @@ async function syncCycleReviewDetailed() {
 
       for (const e of etapas) {
         const stepId = String(e["id_revisao_ciclo_fases"]);
-        const itens = (e["itens_avaliacao"] as Array<Record<string, unknown>>) ?? [];
+        const itens = Array.isArray(e["itens_avaliacao"]) ? e["itens_avaliacao"] as Array<Record<string, unknown>> : [];
 
         const itemRows = itens.map((i) => ({
           elofy_id: String(i["id_revisao_ciclo_avaliacoes_fase"]),

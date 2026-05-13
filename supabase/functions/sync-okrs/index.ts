@@ -1,5 +1,6 @@
 import { elofyGetAll } from "../_shared/elofy-client.ts";
 import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-client.ts";
+import { dedup } from "../_shared/utils.ts";
 
 const supabase = getSupabaseClient();
 
@@ -262,7 +263,7 @@ async function syncOkrsV2() {
     resultados_chave: r["resultados_chave"] ?? null,
     raw_data: r,
   }));
-  if (rows.length > 0) await upsertBatch(supabase, "elofy_okrs_v2", rows);
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_okrs_v2", dedup(rows));
   return rows.length;
 }
 
@@ -301,7 +302,7 @@ async function syncGoalsContractV2() {
     metas: r["metas"] ?? null,
     raw_data: r,
   }));
-  if (rows.length > 0) await upsertBatch(supabase, "elofy_goals_contract_v2", rows);
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_goals_contract_v2", dedup(rows));
   return rows.length;
 }
 
@@ -367,7 +368,7 @@ async function syncBaseIndicators() {
     metas_vinculadas: r["metas_vinculadas"] ?? null,
     raw_data: r,
   }));
-  if (rows.length > 0) await upsertBatch(supabase, "elofy_base_indicators", rows);
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_base_indicators", dedup(rows));
   return rows.length;
 }
 
