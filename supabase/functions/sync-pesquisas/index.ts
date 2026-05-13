@@ -32,7 +32,8 @@ async function getSurveyIds(): Promise<string[]> {
   const { data } = await supabase
     .from("elofy_surveys")
     .select("elofy_id")
-    .neq("situacao", "Encerrada");
+    .neq("situacao", "Encerrada")
+    .limit(20);
   return (data ?? []).map((r: { elofy_id: string }) => r.elofy_id).filter(Boolean);
 }
 
@@ -198,28 +199,22 @@ async function fetchSurveyData(id: string) {
 
 async function syncSurveyDetails(surveyIds: string[]) {
   const counts = { dismiss: 0, pulse: 0, standard: 0, temporal: 0 };
-  const BATCH = 4;
 
-  for (let i = 0; i < surveyIds.length; i += BATCH) {
-    const batch = surveyIds.slice(i, i + BATCH);
-    const results = await Promise.all(batch.map(fetchSurveyData));
-
-    const allDismiss = dedup(results.flatMap((r) => r.dismiss));
-    const allPulse = dedup(results.flatMap((r) => r.pulse));
-    const allStandard = dedup(results.flatMap((r) => r.standard));
-    const allTemporal = dedup(results.flatMap((r) => r.temporal));
+  // Processa um survey por vez (controla memória), mas os 4 tipos em paralelo (controla tempo)
+  for (const id of surveyIds) {
+    const { dismiss, pulse, standard, temporal } = await fetchSurveyData(id);
 
     await Promise.all([
-      allDismiss.length > 0 ? upsertBatch(supabase, "elofy_survey_dismiss", allDismiss) : Promise.resolve(),
-      allPulse.length > 0 ? upsertBatch(supabase, "elofy_survey_pulse", allPulse) : Promise.resolve(),
-      allStandard.length > 0 ? upsertBatch(supabase, "elofy_survey_standard", allStandard) : Promise.resolve(),
-      allTemporal.length > 0 ? upsertBatch(supabase, "elofy_survey_temporal", allTemporal) : Promise.resolve(),
+      dismiss.length > 0 ? upsertBatch(supabase, "elofy_survey_dismiss", dedup(dismiss)) : Promise.resolve(),
+      pulse.length > 0 ? upsertBatch(supabase, "elofy_survey_pulse", dedup(pulse)) : Promise.resolve(),
+      standard.length > 0 ? upsertBatch(supabase, "elofy_survey_standard", dedup(standard)) : Promise.resolve(),
+      temporal.length > 0 ? upsertBatch(supabase, "elofy_survey_temporal", dedup(temporal)) : Promise.resolve(),
     ]);
 
-    counts.dismiss += allDismiss.length;
-    counts.pulse += allPulse.length;
-    counts.standard += allStandard.length;
-    counts.temporal += allTemporal.length;
+    counts.dismiss += dismiss.length;
+    counts.pulse += pulse.length;
+    counts.standard += standard.length;
+    counts.temporal += temporal.length;
   }
 
   return counts;
