@@ -27,8 +27,7 @@ async function syncCompetencies() {
 async function syncCycleReviewConfig() {
   const items = await elofyGetAll<Record<string, unknown>>("/dataQuery/cycle_review_config");
   const rows = items.map((r) => ({
-    // composite: mesmo ciclo tem múltiplas etapas, id_revisao + etapa é único
-    elofy_id: `${String(r["id_revisao"])}_${String(r["etapa"])}`,
+    elofy_id: String(r["id_revisao_ciclo_fase"]),
     id_empresa: String(r["id_empresa"] ?? ""),
     nome_empresa: String(r["nome_empresa"] ?? ""),
     id_revisao: String(r["id_revisao"] ?? ""),
@@ -45,7 +44,7 @@ async function syncCycleReviewConfig() {
     trimestre_fim: String(r["trimestre_fim"] ?? ""),
     data_inicio_ciclo: String(r["data_inicio_ciclo"] ?? ""),
     data_fim_ciclo: String(r["data_fim_ciclo"] ?? ""),
-    dias_faltando: String(r["dias_faltando_para_fim_do_ciclo"] ?? ""),
+    dias_faltando: null,
     regua: String(r["regua"] ?? ""),
     data_corte_elegibilidade: String(r["data_corte_elegibilidade"] ?? ""),
     tipo_publico: String(r["tipo_publico"] ?? ""),
