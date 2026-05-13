@@ -1,5 +1,6 @@
 import { elofyGetAll } from "../_shared/elofy-client.ts";
 import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-client.ts";
+import { dedup } from "../_shared/utils.ts";
 
 const supabase = getSupabaseClient();
 
@@ -34,7 +35,7 @@ async function syncPdi() {
     data_criacao_iniciativa: r["data_criacao_iniciativa"],
     raw_data: r,
   }));
-  await upsertBatch(supabase, "elofy_pdi", rows);
+  await upsertBatch(supabase, "elofy_pdi", dedup(rows));
   return rows.length;
 }
 

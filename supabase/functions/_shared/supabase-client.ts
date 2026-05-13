@@ -43,11 +43,12 @@ export async function upsertBatch(
   table: string,
   rows: Record<string, unknown>[],
   conflictColumn = "elofy_id",
+  chunkSize = 200,
 ) {
   if (rows.length === 0) return;
-  const { error } = await supabase
-    .from(table)
-    .upsert(rows, { onConflict: conflictColumn });
-
-  if (error) throw new Error(`Upsert em ${table} falhou: ${error.message}`);
+  for (let i = 0; i < rows.length; i += chunkSize) {
+    const chunk = rows.slice(i, i + chunkSize);
+    const { error } = await supabase.from(table).upsert(chunk, { onConflict: conflictColumn });
+    if (error) throw new Error(`Upsert em ${table} falhou: ${error.message}`);
+  }
 }
