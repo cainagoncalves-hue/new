@@ -23,17 +23,7 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  // getSession reads JWT locally — no network call, reliable in Edge Runtime
   const { data: { session } } = await supabase.auth.getSession();
-
-  const { pathname } = request.nextUrl;
-
-  if (pathname.startsWith("/login") || pathname.startsWith("/auth") || pathname.startsWith("/api/")) {
-    if (session) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-    return supabaseResponse;
-  }
 
   if (!session) {
     return NextResponse.redirect(new URL("/login", request.url));
@@ -43,5 +33,9 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  // Only run middleware on protected app routes.
+  // /login, /auth/*, /api/* bypass middleware entirely via the matcher.
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|login|auth|api).*)",
+  ],
 };
