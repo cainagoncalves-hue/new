@@ -263,7 +263,9 @@ async function syncOkrsV2() {
     resultados_chave: r["resultados_chave"] ?? null,
     raw_data: r,
   }));
-  if (rows.length > 0) await upsertBatch(supabase, "elofy_okrs_v2", dedup(rows));
+  // chunk=50 — okrs_v2 has heavy JSONB fields (resultados_chave, raw_data)
+  // that cause statement timeout at the default chunk size of 200
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_okrs_v2", dedup(rows), "elofy_id", 50);
   return rows.length;
 }
 
@@ -302,7 +304,8 @@ async function syncGoalsContractV2() {
     metas: r["metas"] ?? null,
     raw_data: r,
   }));
-  if (rows.length > 0) await upsertBatch(supabase, "elofy_goals_contract_v2", dedup(rows));
+  // chunk=50 — goals_contract_v2 has heavy JSONB field (metas)
+  if (rows.length > 0) await upsertBatch(supabase, "elofy_goals_contract_v2", dedup(rows), "elofy_id", 50);
   return rows.length;
 }
 
