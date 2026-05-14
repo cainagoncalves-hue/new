@@ -5,8 +5,8 @@ import { Suspense } from "react";
 
 async function Topbar() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const name = user?.email?.split("@")[0] ?? "Usuário";
+  const { data: { session } } = await supabase.auth.getSession();
+  const name = session?.user?.email?.split("@")[0] ?? "Usuário";
 
   return (
     <header style={{
@@ -103,9 +103,9 @@ async function Topbar() {
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { session } } = await supabase.auth.getSession();
 
-  if (!user) redirect("/login");
+  if (!session) redirect("/login");
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>

@@ -1,5 +1,3 @@
-import { login } from "./actions";
-
 export default async function LoginPage({
   searchParams,
 }: {
@@ -17,7 +15,6 @@ export default async function LoginPage({
       padding: "24px",
     }}>
       <div style={{ width: "100%", maxWidth: 400 }}>
-        {/* Logo / Brand */}
         <div style={{ textAlign: "center", marginBottom: 40 }}>
           <div style={{
             display: "inline-flex",
@@ -44,12 +41,9 @@ export default async function LoginPage({
           }}>
             Sistema BP
           </h1>
-          <p style={{ color: "var(--text-500)", fontSize: 13 }}>
-            SIEG Gente &amp; Cultura
-          </p>
+          <p style={{ color: "var(--text-500)", fontSize: 13 }}>SIEG Gente &amp; Cultura</p>
         </div>
 
-        {/* Card */}
         <div style={{
           background: "var(--surface)",
           borderRadius: "var(--r)",
@@ -70,7 +64,11 @@ export default async function LoginPage({
             Acesse com suas credenciais corporativas
           </p>
 
-          <form action={login} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <form
+            action="/api/auth/login"
+            method="POST"
+            style={{ display: "flex", flexDirection: "column", gap: 14 }}
+          >
             <div>
               <label style={{
                 display: "block",
@@ -87,6 +85,7 @@ export default async function LoginPage({
                 type="email"
                 name="email"
                 required
+                autoComplete="email"
                 placeholder="seu@email.com"
                 style={{
                   width: "100%",
@@ -118,6 +117,7 @@ export default async function LoginPage({
                 type="password"
                 name="password"
                 required
+                autoComplete="current-password"
                 placeholder="••••••••"
                 style={{
                   width: "100%",
