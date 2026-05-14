@@ -24,6 +24,18 @@ async function invokeFunction(name: string): Promise<{ ok: boolean; error?: stri
   }
 }
 
+function buildResponse(
+  results: Record<string, unknown>,
+  hasError: boolean,
+  _tokenExpired: boolean,
+  _startedAt: string,
+): Response {
+  return new Response(
+    JSON.stringify({ ok: !hasError, results }),
+    { status: hasError ? 207 : 200, headers: { "Content-Type": "application/json" } },
+  );
+}
+
 Deno.serve(async () => {
   const startedAt = new Date().toISOString();
 
@@ -50,34 +62,34 @@ Deno.serve(async () => {
   let hasError = false;
   let tokenExpired = false;
 
-  // Fase 1: funções independentes em paralelo
-  const PHASE1 = [
-    "sync-estrutura", "sync-competencias", "sync-okrs",
-    "sync-pdi", "sync-feedback", "sync-one-one-sucessao",
-    "sync-pesquisas", "sync-integracao",
-  ];
-  const phase1Results = await Promise.all(PHASE1.map(fn => invokeFunction(fn)));
-  for (let i = 0; i < PHASE1.length; i++) {
-    results[PHASE1[i]] = phase1Results[i];
-    if (!phase1Results[i].ok) {
+  async function runAndRecord(name: string) {
+    const r = await invokeFunction(name);
+    results[name] = r;
+    if (!r.ok) {
       hasError = true;
-      if (phase1Results[i].error?.includes("Token do Elofy expirou") || phase1Results[i].token_expired) {
-        tokenExpired = true;
-      }
+      if (r.error?.includes("Token do Elofy expirou") || r.token_expired) tokenExpired = true;
     }
   }
 
-  // Fase 2: sync-avaliacoes depende de elofy_periods (sync-okrs) — roda após fase 1
-  if (!tokenExpired) {
-    const avalResult = await invokeFunction("sync-avaliacoes");
-    results["sync-avaliacoes"] = avalResult;
-    if (!avalResult.ok) {
-      hasError = true;
-      if (avalResult.error?.includes("Token do Elofy expirou") || avalResult.token_expired) {
-        tokenExpired = true;
-      }
-    }
-  }
+  // Fase 1: pares sequenciais para não sobrecarregar o rate limit da API Elofy
+  // Par 1 — funções leves
+  await Promise.all(["sync-estrutura", "sync-integracao"].map(runAndRecord));
+  if (tokenExpired) return buildResponse(results, hasError, tokenExpired, startedAt);
+
+  // Par 2 — médias
+  await Promise.all(["sync-competencias", "sync-one-one-sucessao"].map(runAndRecord));
+  if (tokenExpired) return buildResponse(results, hasError, tokenExpired, startedAt);
+
+  // Par 3 — pesadas (OKRs + Feedback)
+  await Promise.all(["sync-okrs", "sync-feedback"].map(runAndRecord));
+  if (tokenExpired) return buildResponse(results, hasError, tokenExpired, startedAt);
+
+  // Par 4 — pesadas (PDI + Pesquisas)
+  await Promise.all(["sync-pdi", "sync-pesquisas"].map(runAndRecord));
+  if (tokenExpired) return buildResponse(results, hasError, tokenExpired, startedAt);
+
+  // Fase 2: sync-avaliacoes depende de elofy_periods (sync-okrs) — roda por último
+  await runAndRecord("sync-avaliacoes");
 
   if (tokenExpired) {
     await notify({
