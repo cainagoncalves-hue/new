@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap");
+@import "tailwindcss";
+
+:root {
+  --bg: #F8F5FF;
+  --surface: #FFFFFF;
+  --surface-2: #F3F0FB;
+  --border: #EBE5F9;
+  --border-2: #D8D0F0;
+  --brand: #6D28D9;
+  --brand-mid: #7C3AED;
+  --brand-light: #8B5CF6;
+  --brand-pale: #EDE9FE;
+  --brand-dim: rgba(109,40,217,.07);
+  --text-900: #180A2C;
+  --text-700: #3B1A6A;
+  --text-500: #6B52A0;
+  --text-300: #A08CC8;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --green-text: #065F46;
+  --amber: #B45309;
+  --amber-bg: #FFFBEB;
+  --amber-text: #92400E;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --red-text: #991B1B;
+  --r: 12px;
+  --sh: 0 1px 3px rgba(109,40,217,.08),0 1px 2px rgba(0,0,0,.04);
+  --sh-md: 0 4px 16px rgba(109,40,217,.10),0 2px 6px rgba(0,0,0,.04);
+  --sh-lg: 0 8px 32px rgba(109,40,217,.12),0 4px 12px rgba(0,0,0,.05);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text-900);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up { animation: fadeUp .45s ease both; }
