@@ -1,25 +1,11 @@
-"use client";
-
-import { useState } from "react";
 import { login } from "./actions";
 
-export default function LoginPage() {
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    const formData = new FormData(e.currentTarget);
-    const result = await login(formData);
-
-    if (result?.error) {
-      setError(result.error);
-      setLoading(false);
-    }
-  }
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error } = await searchParams;
 
   return (
     <div style={{
@@ -30,7 +16,7 @@ export default function LoginPage() {
       justifyContent: "center",
       padding: "24px",
     }}>
-      <div className="animate-fade-up" style={{ width: "100%", maxWidth: 400 }}>
+      <div style={{ width: "100%", maxWidth: 400 }}>
         {/* Logo / Brand */}
         <div style={{ textAlign: "center", marginBottom: 40 }}>
           <div style={{
@@ -84,7 +70,7 @@ export default function LoginPage() {
             Acesse com suas credenciais corporativas
           </p>
 
-          <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <form action={login} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div>
               <label style={{
                 display: "block",
@@ -93,7 +79,7 @@ export default function LoginPage() {
                 color: "var(--text-700)",
                 marginBottom: 6,
                 letterSpacing: "0.02em",
-                textTransform: "uppercase",
+                textTransform: "uppercase" as const,
               }}>
                 E-mail
               </label>
@@ -111,10 +97,8 @@ export default function LoginPage() {
                   color: "var(--text-900)",
                   fontSize: 14,
                   outline: "none",
-                  transition: "border-color .15s",
+                  boxSizing: "border-box" as const,
                 }}
-                onFocus={e => (e.target.style.borderColor = "var(--brand)")}
-                onBlur={e => (e.target.style.borderColor = "var(--border-2)")}
               />
             </div>
 
@@ -126,7 +110,7 @@ export default function LoginPage() {
                 color: "var(--text-700)",
                 marginBottom: 6,
                 letterSpacing: "0.02em",
-                textTransform: "uppercase",
+                textTransform: "uppercase" as const,
               }}>
                 Senha
               </label>
@@ -144,10 +128,8 @@ export default function LoginPage() {
                   color: "var(--text-900)",
                   fontSize: 14,
                   outline: "none",
-                  transition: "border-color .15s",
+                  boxSizing: "border-box" as const,
                 }}
-                onFocus={e => (e.target.style.borderColor = "var(--brand)")}
-                onBlur={e => (e.target.style.borderColor = "var(--border-2)")}
               />
             </div>
 
@@ -159,31 +141,28 @@ export default function LoginPage() {
                 borderRadius: 8,
                 padding: "10px 12px",
                 fontSize: 13,
+                margin: 0,
               }}>
-                {error}
+                E-mail ou senha incorretos.
               </p>
             )}
 
             <button
               type="submit"
-              disabled={loading}
               style={{
                 width: "100%",
                 padding: "11px 16px",
                 borderRadius: 8,
                 border: "none",
-                background: loading
-                  ? "var(--text-300)"
-                  : "linear-gradient(135deg, var(--brand) 0%, var(--brand-mid) 100%)",
+                background: "linear-gradient(135deg, var(--brand) 0%, var(--brand-mid) 100%)",
                 color: "#fff",
                 fontSize: 14,
                 fontWeight: 600,
-                cursor: loading ? "not-allowed" : "pointer",
-                transition: "opacity .15s",
+                cursor: "pointer",
                 marginTop: 4,
               }}
             >
-              {loading ? "Entrando…" : "Entrar"}
+              Entrar
             </button>
           </form>
         </div>

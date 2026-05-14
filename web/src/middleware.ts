@@ -23,20 +23,19 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // getSession reads JWT locally — no network call, reliable in Edge Runtime
+  const { data: { session } } = await supabase.auth.getSession();
 
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/login") || pathname.startsWith("/auth")) {
-    if (user) {
+    if (session) {
       return NextResponse.redirect(new URL("/", request.url));
     }
     return supabaseResponse;
   }
 
-  if (!user) {
+  if (!session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
