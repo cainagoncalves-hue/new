@@ -1,9 +1,32 @@
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string }>;
-}) {
-  const { error } = await searchParams;
+"use client";
+
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+
+export default function LoginPage() {
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const supabase = createClient();
+
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    const form = e.currentTarget;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      setError("E-mail ou senha incorretos.");
+      setLoading(false);
+      return;
+    }
+
+    window.location.href = "/";
+  }
 
   return (
     <div style={{
@@ -64,11 +87,7 @@ export default async function LoginPage({
             Acesse com suas credenciais corporativas
           </p>
 
-          <form
-            action="/api/auth/login"
-            method="POST"
-            style={{ display: "flex", flexDirection: "column", gap: 14 }}
-          >
+          <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div>
               <label style={{
                 display: "block",
@@ -77,7 +96,7 @@ export default async function LoginPage({
                 color: "var(--text-700)",
                 marginBottom: 6,
                 letterSpacing: "0.02em",
-                textTransform: "uppercase" as const,
+                textTransform: "uppercase",
               }}>
                 E-mail
               </label>
@@ -96,7 +115,7 @@ export default async function LoginPage({
                   color: "var(--text-900)",
                   fontSize: 14,
                   outline: "none",
-                  boxSizing: "border-box" as const,
+                  boxSizing: "border-box",
                 }}
               />
             </div>
@@ -109,7 +128,7 @@ export default async function LoginPage({
                 color: "var(--text-700)",
                 marginBottom: 6,
                 letterSpacing: "0.02em",
-                textTransform: "uppercase" as const,
+                textTransform: "uppercase",
               }}>
                 Senha
               </label>
@@ -128,7 +147,7 @@ export default async function LoginPage({
                   color: "var(--text-900)",
                   fontSize: 14,
                   outline: "none",
-                  boxSizing: "border-box" as const,
+                  boxSizing: "border-box",
                 }}
               />
             </div>
@@ -143,26 +162,27 @@ export default async function LoginPage({
                 fontSize: 13,
                 margin: 0,
               }}>
-                E-mail ou senha incorretos.
+                {error}
               </p>
             )}
 
             <button
               type="submit"
+              disabled={loading}
               style={{
                 width: "100%",
                 padding: "11px 16px",
                 borderRadius: 8,
                 border: "none",
-                background: "linear-gradient(135deg, var(--brand) 0%, var(--brand-mid) 100%)",
+                background: loading ? "var(--text-300)" : "linear-gradient(135deg, var(--brand) 0%, var(--brand-mid) 100%)",
                 color: "#fff",
                 fontSize: 14,
                 fontWeight: 600,
-                cursor: "pointer",
+                cursor: loading ? "not-allowed" : "pointer",
                 marginTop: 4,
               }}
             >
-              Entrar
+              {loading ? "Entrando…" : "Entrar"}
             </button>
           </form>
         </div>
