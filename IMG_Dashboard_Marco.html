@@ -4,33 +4,108 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IMG Dashboard — Março/2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
-    color: #1a2332;
+    font-family: 'DM Sans', sans-serif;
+    background: #F8F5FF;
+    color: #1E1B4B;
     min-height: 100vh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 52px;
+    background: #fff;
+    border-bottom: 1px solid rgba(109,40,217,.10);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 32px;
+    box-shadow: 0 1px 8px rgba(109,40,217,.06);
+  }
+  .back-link {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #7C3AED;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    transition: color .15s;
+  }
+  .back-link:hover { color: #6D28D9; }
+  .topbar-sep {
+    width: 1px;
+    height: 18px;
+    background: rgba(109,40,217,.10);
+    flex-shrink: 0;
+  }
+  .sieg-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: #6D28D9;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+  .topbar-spacer { flex: 1; }
+  .filter-ctx-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 99px;
+    background: rgba(124,58,237,.10);
+    color: #7C3AED;
+    border: 1px solid rgba(124,58,237,.20);
+    display: none;
+    white-space: nowrap;
+  }
+  .filter-ctx-badge.visible { display: inline-flex; align-items: center; }
+  .period-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8B7EC8;
+    background: #F3F0FF;
+    border: 1px solid rgba(109,40,217,.10);
+    padding: 3px 12px;
+    border-radius: 99px;
+    flex-shrink: 0;
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
     padding: 32px 24px;
   }
-  .container { max-width: 1280px; margin: 0 auto; }
 
-  /* HEADER */
+  /* ── HEADER ── */
   header {
-    background: linear-gradient(135deg, #1e3a5f 0%, #2d5a8e 100%);
+    background: linear-gradient(135deg, #6D28D9 0%, #7C3AED 60%, #8B5CF6 100%);
     color: white;
     border-radius: 16px;
-    padding: 32px;
+    padding: 36px;
     margin-bottom: 28px;
-    box-shadow: 0 8px 24px rgba(30, 58, 95, 0.2);
+    box-shadow: 0 8px 24px rgba(109,40,217,.25);
   }
   header h1 {
+    font-family: 'Syne', sans-serif;
     font-size: 26px;
     font-weight: 700;
     margin-bottom: 4px;
   }
   header .subtitle {
-    color: #b8d1ed;
+    color: rgba(255,255,255,.65);
     font-size: 14px;
     margin-bottom: 24px;
   }
@@ -40,56 +115,66 @@
     gap: 16px;
   }
   .summary-card {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,.12);
     backdrop-filter: blur(10px);
     padding: 18px 20px;
     border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,.20);
   }
   .summary-card .label {
-    font-size: 12px;
-    color: #b8d1ed;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,.60);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.10em;
     margin-bottom: 6px;
   }
   .summary-card .value {
+    font-family: 'Syne', sans-serif;
     font-size: 28px;
     font-weight: 700;
+    color: #fff;
   }
   .summary-card .meta {
     font-size: 13px;
-    color: #d6e6f5;
+    color: rgba(255,255,255,.70);
     margin-top: 4px;
   }
 
-  /* FILTERS */
+  /* ── FILTERS ── */
   .filters {
     display: flex;
     gap: 8px;
     margin-bottom: 20px;
     flex-wrap: wrap;
+    position: sticky;
+    top: 52px;
+    z-index: 50;
+    background: #F8F5FF;
+    padding: 8px 0;
   }
   .filter-btn {
     padding: 8px 16px;
-    border: 1.5px solid #d4dbe5;
-    background: white;
+    border: 1.5px solid rgba(109,40,217,.18);
+    background: #fff;
     border-radius: 24px;
     cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
     font-size: 13px;
-    color: #4a5568;
+    color: #4C3D7D;
     font-weight: 500;
     transition: all 0.2s;
   }
-  .filter-btn:hover { border-color: #2d5a8e; color: #2d5a8e; }
+  .filter-btn:hover { border-color: #7C3AED; color: #6D28D9; background: #F3F0FF; }
   .filter-btn.active {
-    background: #2d5a8e;
+    background: #6D28D9;
     color: white;
-    border-color: #2d5a8e;
+    border-color: #6D28D9;
   }
 
-  /* AREA SECTIONS */
-  .area-section { margin-bottom: 28px; }
+  /* ── AREA SECTIONS ── */
+  .area-section { margin-bottom: 32px; }
   .area-header {
     display: flex;
     align-items: center;
@@ -98,31 +183,34 @@
     padding: 0 4px;
   }
   .area-title {
-    font-size: 17px;
-    font-weight: 600;
-    color: #1a2332;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1E1B4B;
   }
   .area-meta {
     font-size: 13px;
-    color: #6b7a8e;
+    color: #8B7EC8;
   }
 
-  /* LEADER CARDS */
+  /* ── LEADER CARDS ── */
   .leaders-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 14px;
+    gap: 12px;
   }
   .leader-card {
-    background: white;
+    background: #fff;
     border-radius: 14px;
-    border: 1px solid #e4e9f0;
+    border: 1px solid rgba(109,40,217,.10);
     overflow: hidden;
     transition: all 0.25s ease;
     cursor: pointer;
+    box-shadow: 0 1px 4px rgba(109,40,217,.04);
   }
   .leader-card:hover {
-    box-shadow: 0 8px 20px rgba(30, 58, 95, 0.08);
+    box-shadow: 0 6px 20px rgba(109,40,217,.10);
+    border-color: rgba(109,40,217,.22);
     transform: translateY(-2px);
   }
   .leader-card.expanded {
@@ -141,28 +229,34 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #2d5a8e 0%, #4a7bb0 100%);
+    background: linear-gradient(135deg, #6D28D9 0%, #8B5CF6 100%);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: 'Syne', sans-serif;
     font-weight: 700;
     font-size: 16px;
     flex-shrink: 0;
   }
   .leader-info { flex: 1; min-width: 0; }
   .leader-name {
+    font-family: 'DM Sans', sans-serif;
     font-size: 15px;
     font-weight: 600;
-    color: #1a2332;
+    color: #1E1B4B;
     margin-bottom: 2px;
   }
-  .leader-area { font-size: 12px; color: #6b7a8e; }
+  .leader-area {
+    font-size: 12px;
+    color: #8B7EC8;
+  }
   .leader-score {
     text-align: right;
     flex-shrink: 0;
   }
   .leader-score .pct {
+    font-family: 'Syne', sans-serif;
     font-size: 22px;
     font-weight: 700;
     line-height: 1;
@@ -171,30 +265,31 @@
     display: inline-block;
     padding: 3px 10px;
     border-radius: 20px;
+    font-family: 'DM Sans', sans-serif;
     font-size: 11px;
     font-weight: 600;
     margin-top: 4px;
   }
   .badge.avancado, .badge.excelencia {
-    background: #d1f5e0;
-    color: #066b3a;
+    background: rgba(5,150,105,.10);
+    color: #059669;
   }
   .badge.intermediario {
-    background: #fff4d6;
-    color: #8b5a00;
+    background: rgba(217,119,6,.10);
+    color: #D97706;
   }
   .badge.basico {
-    background: #fde0e0;
-    color: #9b1f1f;
+    background: rgba(220,38,38,.10);
+    color: #DC2626;
   }
-  .text-avancado, .text-excelencia { color: #066b3a; }
-  .text-intermediario { color: #8b5a00; }
-  .text-basico { color: #9b1f1f; }
+  .text-avancado, .text-excelencia { color: #059669; }
+  .text-intermediario { color: #D97706; }
+  .text-basico { color: #DC2626; }
 
-  /* PROGRESS BAR (mini, shown in card collapsed) */
+  /* MINI BAR */
   .mini-bar {
     height: 4px;
-    background: #eef2f7;
+    background: rgba(109,40,217,.08);
     margin: 0 20px 16px 20px;
     border-radius: 4px;
     overflow: hidden;
@@ -204,28 +299,27 @@
     border-radius: 4px;
     transition: width 0.4s;
   }
-  .fill-avancado, .fill-excelencia { background: linear-gradient(90deg, #10a85c, #14c870); }
-  .fill-intermediario { background: linear-gradient(90deg, #d49b00, #f0b427); }
-  .fill-basico { background: linear-gradient(90deg, #c43030, #e04545); }
+  .fill-avancado, .fill-excelencia { background: linear-gradient(90deg, #059669, #10B981); }
+  .fill-intermediario { background: linear-gradient(90deg, #D97706, #F59E0B); }
+  .fill-basico { background: linear-gradient(90deg, #DC2626, #EF4444); }
 
-  /* EXPANDED VIEW */
+  /* ── EXPANDED DETAIL ── */
   .leader-detail {
-    border-top: 1px solid #e4e9f0;
+    border-top: 1px solid rgba(109,40,217,.10);
     padding: 24px 28px;
     display: none;
-    background: #fafbfd;
+    background: #F8F5FF;
   }
   .leader-card.expanded .leader-detail { display: block; }
 
-  .detail-section {
-    margin-bottom: 24px;
-  }
+  .detail-section { margin-bottom: 24px; }
   .detail-section h3 {
-    font-size: 13px;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
     font-weight: 700;
-    color: #6b7a8e;
+    color: #8B7EC8;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.10em;
     margin-bottom: 14px;
   }
 
@@ -236,14 +330,15 @@
     gap: 12px;
   }
   .pillar-card {
-    background: white;
-    border: 1px solid #e4e9f0;
+    background: #fff;
+    border: 1px solid rgba(109,40,217,.10);
     border-radius: 10px;
     padding: 14px 16px;
   }
   .pillar-name {
+    font-family: 'DM Sans', sans-serif;
     font-size: 12px;
-    color: #6b7a8e;
+    color: #8B7EC8;
     margin-bottom: 6px;
     font-weight: 500;
   }
@@ -253,10 +348,14 @@
     justify-content: space-between;
     margin-bottom: 8px;
   }
-  .pillar-pct { font-size: 18px; font-weight: 700; }
+  .pillar-pct {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
   .pillar-bar {
     height: 6px;
-    background: #eef2f7;
+    background: rgba(109,40,217,.08);
     border-radius: 6px;
     overflow: hidden;
   }
@@ -270,33 +369,38 @@
   .indicators-table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
+    background: #fff;
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid #e4e9f0;
+    border: 1px solid rgba(109,40,217,.10);
   }
   .indicators-table th {
     text-align: left;
     padding: 12px 16px;
-    background: #f5f8fb;
-    font-size: 12px;
-    font-weight: 600;
-    color: #4a5568;
-    border-bottom: 1px solid #e4e9f0;
+    background: #F3F0FF;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: #8B7EC8;
+    border-bottom: 1px solid rgba(109,40,217,.10);
   }
   .indicators-table td {
     padding: 11px 16px;
-    border-bottom: 1px solid #eef2f7;
+    border-bottom: 1px solid rgba(109,40,217,.06);
+    font-family: 'DM Sans', sans-serif;
     font-size: 13px;
+    color: #1E1B4B;
   }
   .indicators-table tr:last-child td { border-bottom: none; }
-  .indicators-table tr.gap td { background: #fff8f8; }
-  .indicators-table tr.gap-warn td { background: #fffbf0; }
+  .indicators-table tr.gap td     { background: rgba(220,38,38,.04); }
+  .indicators-table tr.gap-warn td { background: rgba(217,119,6,.04); }
 
   .ind-bar {
     width: 100px;
     height: 6px;
-    background: #eef2f7;
+    background: rgba(109,40,217,.08);
     border-radius: 6px;
     overflow: hidden;
     display: inline-block;
@@ -310,89 +414,114 @@
 
   /* ANALYSIS BOXES */
   .analysis-box {
-    background: white;
-    border-left: 4px solid #2d5a8e;
+    background: #fff;
+    border-left: 4px solid #7C3AED;
     border-radius: 8px;
     padding: 18px 22px;
     margin-bottom: 12px;
-    border-top: 1px solid #e4e9f0;
-    border-right: 1px solid #e4e9f0;
-    border-bottom: 1px solid #e4e9f0;
+    border-top: 1px solid rgba(109,40,217,.10);
+    border-right: 1px solid rgba(109,40,217,.10);
+    border-bottom: 1px solid rgba(109,40,217,.10);
   }
-  .analysis-box.gap { border-left-color: #c43030; }
-  .analysis-box.intervention { border-left-color: #066b3a; }
+  .analysis-box.gap         { border-left-color: #DC2626; border-top-color: rgba(220,38,38,.12); border-right-color: rgba(220,38,38,.12); border-bottom-color: rgba(220,38,38,.12); }
+  .analysis-box.intervention { border-left-color: #059669; border-top-color: rgba(5,150,105,.12); border-right-color: rgba(5,150,105,.12); border-bottom-color: rgba(5,150,105,.12); }
   .analysis-box h4 {
+    font-family: 'Syne', sans-serif;
     font-size: 13px;
     font-weight: 700;
     margin-bottom: 8px;
-    color: #1a2332;
+    color: #1E1B4B;
   }
   .analysis-box p, .analysis-box li {
     font-size: 13.5px;
-    line-height: 1.6;
-    color: #2c3e50;
+    line-height: 1.65;
+    color: #4C3D7D;
   }
-  .analysis-box ul {
-    margin-top: 6px;
-    padding-left: 20px;
-  }
+  .analysis-box ul { margin-top: 6px; padding-left: 20px; }
   .analysis-box li { margin-bottom: 4px; }
-  .analysis-box strong { color: #1a2332; }
+  .analysis-box strong { color: #1E1B4B; }
 
   .expand-icon {
     margin-left: 8px;
-    color: #8a99ad;
+    color: #8B7EC8;
     font-size: 14px;
     transition: transform 0.25s;
   }
   .leader-card.expanded .expand-icon { transform: rotate(180deg); }
 
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 80px 40px;
+    color: #8B7EC8;
+  }
+  .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-state-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1E1B4B;
+    margin-bottom: 8px;
+  }
+
   .footer {
     text-align: center;
-    color: #8a99ad;
+    color: #8B7EC8;
     font-size: 12px;
     margin-top: 32px;
-    padding: 16px;
+    padding: 20px 16px;
+    border-top: 1px solid rgba(109,40,217,.10);
   }
 
   @media (max-width: 720px) {
-    body { padding: 16px 12px; }
-    header { padding: 22px; }
+    .container { padding: 20px 12px; }
+    header { padding: 24px; }
     .leader-detail { padding: 18px; }
   }
 </style>
 </head>
 <body>
-<div class="container">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="back-link">← Hub</a>
+  <div class="topbar-sep"></div>
+  <span class="sieg-badge">SIEG · RH BP</span>
+  <div class="topbar-spacer"></div>
+  <span id="ctx-badge" class="filter-ctx-badge"></span>
+  <span class="period-badge">Março 2026</span>
+</div>
+
+<div class="container" id="main-container">
 
   <header>
     <h1>IMG — Índice de Maturidade de Gestão</h1>
     <div class="subtitle">Check-in Março/2026 · Comercial e Marketing</div>
-    <div class="summary-grid">
+    <div class="summary-grid" id="summary-grid">
       <div class="summary-card">
-        <div class="label">IMG das suas áreas</div>
-        <div class="value">83,96%</div>
-        <div class="meta">Intermediário · Média (Comercial + MKT)</div>
+        <div class="label">IMG médio</div>
+        <div class="value" id="sum-avg">—</div>
+        <div class="meta" id="sum-avg-meta">—</div>
       </div>
       <div class="summary-card">
-        <div class="label">Comercial</div>
-        <div class="value">95,00%</div>
-        <div class="meta">Intermediário</div>
+        <div class="label">Avançado / Excelência</div>
+        <div class="value" id="sum-avancado">—</div>
+        <div class="meta" id="sum-avancado-meta">líderes</div>
       </div>
       <div class="summary-card">
-        <div class="label">Marketing</div>
-        <div class="value">72,92%</div>
-        <div class="meta">Intermediário</div>
+        <div class="label">Básico (atenção)</div>
+        <div class="value" id="sum-basico">—</div>
+        <div class="meta" id="sum-basico-meta">líderes</div>
       </div>
       <div class="summary-card">
         <div class="label">Líderes acompanhados</div>
-        <div class="value">11</div>
-        <div class="meta">5 Avançado · 5 Interm. · 1 Básico</div>
+        <div class="value" id="sum-total">—</div>
+        <div class="meta" id="sum-labels">—</div>
       </div>
     </div>
   </header>
 
-  <div class="filters">
+  <div class="filters" id="filters-bar">
     <button class="filter-btn active" data-filter="all">Todos</button>
     <button class="filter-btn" data-filter="Comercial Externo">Comercial Externo</button>
     <button class="filter-btn" data-filter="Vendas Internas">Vendas Internas</button>
@@ -412,338 +541,677 @@
 <script>
 const DATA = [
   {
-    area: "Comercial Externo", name: "Flavio", img: 1.0, label: "Avançado",
-    pillars: { Pessoas: 1, Planejamento: 1, Financeiro: 1, Resultados: 1 },
-    pillarLabels: { Pessoas: "Avançado", Planejamento: "Avançado", Financeiro: "Avançado", Resultados: "Avançado" },
-    indicators: [
-      { n: "Feedbacks registrados (1 por mês)", v: 1.0 },
-      { n: "ISO SIEG ≥ 75", v: 0.97 },
-      { n: "Talentos chave mapeados com plano de ação", v: 1.0 },
-      { n: "100% dos colaboradores com metas registradas", v: 1.0 },
-      { n: "Check-ins realizados no prazo", v: 1.0 },
-      { n: "Reunião de resultado realizada", v: 1.0 },
-      { n: "RDM elaborados no prazo", v: 1.0 },
-      { n: "Headcount dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Custo de folha dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Atingimento das metas (mín. 80% do time)", v: 0.8571 }
-    ],
-    gaps: ["Sem gaps relevantes. Todos os pilares em <strong>Avançado</strong>.","ISO SIEG em 97% e Atingimento de metas em 85,71% — estão na faixa intermediária mas não chegam a comprometer o IMG."],
-    intervention: "<strong>Sustentar e desafiar.</strong> Líder de alta performance, IMG em 100%. Conversa de check-in deve focar em ambição: o que faria essa equipe atingir Excelência (>100%)? Identificar projeto/desafio que tire o time da zona de conforto. Vale também usá-lo como referência para mentoria peer-to-peer com Rafael."
+    area:"Comercial Externo",
+    name:"Flavio",
+    fullName:"Flavio Simao De Lima",
+    bp:"caina",
+    img:1,label:"Avançado",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.97},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.8571}],
+    gaps:["Sem gaps críticos nos pilares.","Pontos de atenção: Atingimento das metas (mín. 80% do time)."],
+    intervention:"<strong>Sustentar e desafiar.</strong> IMG em Avançado (100%). Foco do check-in: ambição e desenvolvimento do time."
   },
   {
-    area: "Comercial Externo", name: "Marcos", img: 1.0, label: "Avançado",
-    pillars: { Pessoas: 1, Planejamento: 1, Financeiro: 1, Resultados: 1 },
-    pillarLabels: { Pessoas: "Avançado", Planejamento: "Avançado", Financeiro: "Avançado", Resultados: "Avançado" },
-    indicators: [
-      { n: "Feedbacks registrados (1 por mês)", v: 1.0 },
-      { n: "ISO SIEG ≥ 75", v: 0.99 },
-      { n: "Talentos chave mapeados com plano de ação", v: 1.0 },
-      { n: "100% dos colaboradores com metas registradas", v: 1.0 },
-      { n: "Check-ins realizados no prazo", v: 1.0 },
-      { n: "Reunião de resultado realizada", v: 1.0 },
-      { n: "RDM elaborados no prazo", v: 1.0 },
-      { n: "Headcount dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Custo de folha dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Atingimento das metas (mín. 80% do time)", v: 0.8095 }
-    ],
-    gaps: ["Sem gaps relevantes. Todos os pilares em <strong>Avançado</strong>.","Atingimento de metas em 80,95% (próximo do piso da régua). ISO em 99% — quase no limite superior."],
-    intervention: "<strong>Reforçar o que funciona.</strong> IMG em 100%, mas o atingimento de metas do time está no limite mínimo da régua (80%). Vale aprofundar com o líder se isso é resultado de meta agressiva ou de gargalo no time. ISO em 99% pode ser uma alavanca para empurrar para Excelência."
+    area:"Comercial Externo",
+    name:"Marcos",
+    fullName:"Marcos Flavio De Paiva Reis",
+    bp:"caina",
+    img:1,label:"Avançado",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.99},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.8095}],
+    gaps:["Sem gaps críticos nos pilares.","Pontos de atenção: Atingimento das metas (mín. 80% do time)."],
+    intervention:"<strong>Sustentar e desafiar.</strong> IMG em Avançado (100%). Foco do check-in: ambição e desenvolvimento do time."
   },
   {
-    area: "Comercial Externo", name: "Thiago", img: 0.95, label: "Intermediário",
-    pillars: { Pessoas: 1, Planejamento: 0.75, Financeiro: 1, Resultados: 1 },
-    pillarLabels: { Pessoas: "Avançado", Planejamento: "Intermediário", Financeiro: "Avançado", Resultados: "Avançado" },
-    indicators: [
-      { n: "Feedbacks registrados (1 por mês)", v: 1.0 },
-      { n: "ISO SIEG ≥ 75", v: 0.97 },
-      { n: "Talentos chave mapeados com plano de ação", v: 1.0 },
-      { n: "100% dos colaboradores com metas registradas", v: 1.0 },
-      { n: "Check-ins realizados no prazo", v: 1.0 },
-      { n: "Reunião de resultado realizada", v: 1.0 },
-      { n: "RDM elaborados no prazo", v: 0.5 },
-      { n: "Headcount dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Custo de folha dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Atingimento das metas (mín. 80% do time)", v: 0.8571 }
-    ],
-    gaps: ["<strong>RDM elaborados no prazo: 50%</strong> — único indicador puxando o IMG para baixo.","Pilar <strong>Planejamento em Intermediário (75%)</strong> reflete diretamente o gap de RDM."],
-    intervention: "<strong>Intervenção pontual e cirúrgica.</strong> O líder está praticamente em Avançado — a única correção necessária é a disciplina de RDM no prazo. Sugestão: 1) Conversa rápida (15min) para entender se é problema de fluxo (faltou input?), priorização ou desconhecimento do prazo. 2) Combinar lembrete na agenda 3 dias antes da entrega. 3) Revisitar no próximo check-in mensal."
+    area:"Comercial Externo",
+    name:"Thiago",
+    fullName:"Thiago Souza Silva",
+    bp:"caina",
+    img:0.95,label:"Intermediário",
+    pillars:{Pessoas:1,Planejamento:0.75,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Intermediário",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.97},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:0.5},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.8571}],
+    gaps:["Pilar <strong>Planejamento</strong> em Intermediário (75%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (95%). Priorizar <strong>Planejamento</strong> no check-in."
   },
   {
-    area: "Comercial Externo", name: "Jorge", img: 1.0, label: "Avançado",
-    pillars: { Pessoas: 1, Planejamento: 1, Financeiro: 1, Resultados: 1 },
-    pillarLabels: { Pessoas: "Avançado", Planejamento: "Avançado", Financeiro: "Avançado", Resultados: "Avançado" },
-    indicators: [
-      { n: "Feedbacks registrados (1 por mês)", v: 1.0 },
-      { n: "ISO SIEG ≥ 75", v: 0.88 },
-      { n: "Talentos chave mapeados com plano de ação", v: 1.0 },
-      { n: "100% dos colaboradores com metas registradas", v: 1.0 },
-      { n: "Check-ins realizados no prazo", v: 1.0 },
-      { n: "Reunião de resultado realizada", v: 1.0 },
-      { n: "RDM elaborados no prazo", v: 1.0 },
-      { n: "Headcount dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Custo de folha dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Atingimento das metas (mín. 80% do time)", v: 0.8519 }
-    ],
-    gaps: ["Sem gaps de pilar. Todos em <strong>Avançado</strong>.","ISO SIEG em <strong>88%</strong> é o ponto mais frágil — o mais distante de 100% entre os indicadores. Atingimento de metas em 85%."],
-    intervention: "<strong>Atenção ao clima.</strong> Apesar do IMG em 100%, o ISO em 88% é o menor entre os líderes Avançados de Comercial Externo. Vale uma escuta dirigida: o que está puxando o engajamento? Pode ser sinal antecipado que ainda não bateu nos resultados. Mantém o restante."
+    area:"Comercial Externo",
+    name:"Jorge",
+    fullName:"Jorge Do Nascimento Junior",
+    bp:"caina",
+    img:1,label:"Avançado",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.88},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.8519}],
+    gaps:["Sem gaps críticos nos pilares.","Pontos de atenção: Atingimento das metas (mín. 80% do time)."],
+    intervention:"<strong>Sustentar e desafiar.</strong> IMG em Avançado (100%). Foco do check-in: ambição e desenvolvimento do time."
   },
   {
-    area: "Comercial Externo", name: "Rafael", img: 0.85, label: "Intermediário",
-    pillars: { Pessoas: 0.6667, Planejamento: 0.75, Financeiro: 1, Resultados: 1 },
-    pillarLabels: { Pessoas: "Básico", Planejamento: "Intermediário", Financeiro: "Avançado", Resultados: "Avançado" },
-    indicators: [
-      { n: "Feedbacks registrados (1 por mês)", v: 0.0 },
-      { n: "ISO SIEG ≥ 75", v: 0.95 },
-      { n: "Talentos chave mapeados com plano de ação", v: 1.0 },
-      { n: "100% dos colaboradores com metas registradas", v: 1.0 },
-      { n: "Check-ins realizados no prazo", v: 1.0 },
-      { n: "Reunião de resultado realizada", v: 1.0 },
-      { n: "RDM elaborados no prazo", v: 0.5 },
-      { n: "Headcount dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Custo de folha dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Atingimento das metas (mín. 80% do time)", v: 0.9444 }
-    ],
-    gaps: ["<strong>Feedbacks registrados: 0%</strong> — nenhum feedback formal registrado no mês. Crítico, é a base da prática gerencial.","<strong>RDM elaborados: 50%</strong> — segunda falha de disciplina de processo.","Pilar <strong>Pessoas em Básico (66,67%)</strong> e Planejamento em Intermediário — ambos puxados pelos dois gaps acima.","Atingimento de metas em 94%, ISO em 95%: <strong>o time entrega bem, o gap é de gestão</strong>."],
-    intervention: "<strong>Intervenção prioritária — disciplina gerencial.</strong> Quadro clássico de líder operacionalmente bom (time entrega) mas frágil em ritual de gestão. Plano sugerido:<ul><li><strong>1:1 esta semana</strong> para entender root cause: é falta de tempo, prioridade, dúvida sobre o processo, ou resistência?</li><li><strong>Compromisso público:</strong> Rafael define data fixa no mês para registrar feedbacks (ex: toda primeira sexta) e RDMs.</li><li><strong>Mentoria peer-to-peer com Flavio ou Jorge</strong> (líderes Avançados da mesma área) para troca de práticas.</li><li><strong>Acompanhamento próximo no próximo mês</strong> — risco real de cair para Básico se Pessoas continuar em 66%.</li></ul>"
+    area:"Comercial Externo",
+    name:"Rafael",
+    fullName:"Rafael Nascimento Ribeiro",
+    bp:"caina",
+    img:0.85,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:0.75,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Intermediário",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:0.95},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:0.5},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.9444}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%) — abaixo de 70% da meta.","Pilar <strong>Planejamento</strong> em Intermediário (75%)."],
+    intervention:"<strong>Plano de recuperação.</strong> IMG em Básico (85%). Acompanhamento quinzenal recomendado até próximo ciclo."
   },
   {
-    area: "Vendas Internas", name: "Leonardo", img: 0.9917, label: "Intermediário",
-    pillars: { Pessoas: 1, Planejamento: 0.9583, Financeiro: 1, Resultados: 1 },
-    pillarLabels: { Pessoas: "Avançado", Planejamento: "Intermediário", Financeiro: "Avançado", Resultados: "Avançado" },
-    indicators: [
-      { n: "Feedbacks registrados (1 por mês)", v: 1.0 },
-      { n: "ISO SIEG ≥ 75", v: 0.89 },
-      { n: "Talentos chave mapeados com plano de ação", v: 1.0 },
-      { n: "100% dos colaboradores com metas registradas", v: 1.0 },
-      { n: "Check-ins realizados no prazo", v: 1.0 },
-      { n: "Reunião de resultado realizada", v: 0.9167 },
-      { n: "RDM elaborados no prazo", v: 1.0 },
-      { n: "Headcount dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Custo de folha dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Atingimento das metas (mín. 80% do time)", v: 1.0 }
-    ],
-    gaps: ["Praticamente sem gap. <strong>IMG em 99,17%</strong> — a 0,83 p.p. de Avançado.","Reunião de resultado em 91,67% (1 reunião faltou ou atrasou) e ISO em 89%."],
-    intervention: "<strong>Reconhecer e empurrar para Avançado.</strong> Leonardo está colado no piso de Avançado. A correção é mínima: garantir que a próxima reunião de resultado aconteça no calendário. Vale celebrar publicamente o resultado do mês e reforçar que está a um passo do Avançado consistente."
+    area:"Vendas Internas",
+    name:"Leonardo",
+    fullName:"Leonardo De Oliveira Gama",
+    bp:"caina",
+    img:0.99166667,label:"Intermediário",
+    pillars:{Pessoas:1,Planejamento:0.95833333,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Intermediário",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.89},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:0.91666667},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Sem gaps críticos nos pilares."],
+    intervention:"<strong>Manutenção com foco.</strong> IMG em Intermediário (99%). Identificar qual indicador elevaria para Avançado."
   },
   {
-    area: "Vendas Internas", name: "Tomas", img: 1.0, label: "Avançado",
-    pillars: { Pessoas: 1, Planejamento: 1, Financeiro: 1, Resultados: 1 },
-    pillarLabels: { Pessoas: "Avançado", Planejamento: "Avançado", Financeiro: "Avançado", Resultados: "Avançado" },
-    indicators: [
-      { n: "Feedbacks registrados (1 por mês)", v: 1.0 },
-      { n: "ISO SIEG ≥ 75", v: 0.93 },
-      { n: "Talentos chave mapeados com plano de ação", v: 1.0 },
-      { n: "100% dos colaboradores com metas registradas", v: 1.0 },
-      { n: "Check-ins realizados no prazo", v: 1.0 },
-      { n: "Reunião de resultado realizada", v: 1.0 },
-      { n: "RDM elaborados no prazo", v: 1.0 },
-      { n: "Headcount dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Custo de folha dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Atingimento das metas (mín. 80% do time)", v: 1.0 }
-    ],
-    gaps: ["Sem gaps. <strong>Todos os indicadores em 100%</strong> exceto ISO (93%, dentro da faixa Avançado)."],
-    intervention: "<strong>Candidato a Excelência.</strong> Linha base perfeita em rituais de gestão. Para empurrar para Excelência, o caminho é o pilar Resultados (>100% da meta). Vale conversa estratégica sobre projeto de scale-up ou meta esticada para o Q2."
+    area:"Vendas Internas",
+    name:"Tomas",
+    fullName:"Tomas Signorelli Navarro Lima",
+    bp:"caina",
+    img:1,label:"Avançado",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.93},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Sem gaps críticos nos pilares."],
+    intervention:"<strong>Sustentar e desafiar.</strong> IMG em Avançado (100%). Foco do check-in: ambição e desenvolvimento do time."
   },
   {
-    area: "Pré-vendas", name: "Arthur", img: 0.825, label: "Intermediário",
-    pillars: { Pessoas: 1, Planejamento: 1, Financeiro: 1, Resultados: 0.4167 },
-    pillarLabels: { Pessoas: "Avançado", Planejamento: "Avançado", Financeiro: "Avançado", Resultados: "Básico" },
-    indicators: [
-      { n: "Feedbacks registrados (1 por mês)", v: 1.0 },
-      { n: "ISO SIEG ≥ 75", v: 0.86 },
-      { n: "Talentos chave mapeados com plano de ação", v: 1.0 },
-      { n: "100% dos colaboradores com metas registradas", v: 1.0 },
-      { n: "Check-ins realizados no prazo", v: 1.0 },
-      { n: "Reunião de resultado realizada", v: 1.0 },
-      { n: "RDM elaborados no prazo", v: 1.0 },
-      { n: "Headcount dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Custo de folha dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Atingimento das metas (mín. 80% do time)", v: 0.7813 }
-    ],
-    gaps: ["<strong>Atingimento de metas: 78,13%</strong> — abaixo do mínimo (80%) e classifica o Pilar Resultados como Básico.","<strong>Pilar Resultados em Básico (41,67%)</strong> é o único pilar comprometido. Os outros 3 pilares estão em Avançado (100%).","Disciplina gerencial 100%, mas o time não está atingindo a meta — gap de execução, não de processo."],
-    intervention: "<strong>Foco em performance do time, não no líder.</strong> Arthur faz tudo certo no rito gerencial — o gap está no resultado do time. Hipóteses a investigar:<ul><li><strong>Meta calibrada?</strong> 78% pode indicar meta inflada ou mudança de cenário (volume de leads, qualificação, etc.).</li><li><strong>Capacidade do time?</strong> Como Pré-vendas tem 1 só líder, a defasagem impacta diretamente Comercial Externo (funil).</li><li><strong>Coaching de performance:</strong> apoiar Arthur a identificar 2-3 colaboradores que estão puxando para baixo e desenhar plano individual.</li></ul>Conversa com o gestor dele para revisar dimensionamento da meta vs. realidade do funil de pré-vendas no mês."
+    area:"Pré-Vendas",
+    name:"Arthur",
+    fullName:"Arthur Alexandre Fracalossi Carvalho",
+    bp:"caina",
+    img:0.825,label:"Intermediário",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:0.41666667},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Básico"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.86},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.7813}],
+    gaps:["Pilar <strong>Resultados</strong> em Básico (42%) — abaixo de 70% da meta."],
+    intervention:"<strong>Plano de recuperação.</strong> IMG em Básico (82%). Acompanhamento quinzenal recomendado até próximo ciclo."
   },
   {
-    area: "Marketing", name: "Deoclecio", img: 0.6208, label: "Básico",
-    pillars: { Pessoas: 1, Planejamento: 0.6042, Financeiro: 1, Resultados: 0 },
-    pillarLabels: { Pessoas: "Avançado", Planejamento: "Básico", Financeiro: "Avançado", Resultados: "Básico" },
-    indicators: [
-      { n: "Feedbacks registrados (1 por mês)", v: 1.0 },
-      { n: "ISO SIEG ≥ 75", v: 0.84 },
-      { n: "Talentos chave mapeados com plano de ação", v: 1.0 },
-      { n: "100% dos colaboradores com metas registradas", v: 1.0 },
-      { n: "Check-ins realizados no prazo", v: 0.7143 },
-      { n: "Reunião de resultado realizada", v: 1.0 },
-      { n: "RDM elaborados no prazo", v: 0.3333 },
-      { n: "Headcount dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Custo de folha dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Atingimento das metas (mín. 80% do time)", v: 0.6364 }
-    ],
-    gaps: ["<strong>IMG Básico (62%)</strong> — único líder das suas áreas em zona crítica.","<strong>Pilar Resultados: 0%</strong> — atingimento de metas em 63,64% derruba o pilar inteiro.","<strong>RDM elaborados: 33,33%</strong> — só 1 em cada 3 RDMs no prazo.","<strong>Check-ins no prazo: 71,43%</strong> — disciplina de ritual em risco.","Pilar Planejamento em Básico (60,42%) é consequência direta dos dois gaps acima."],
-    intervention: "<strong>Intervenção urgente — PDI estruturado.</strong> Cenário crítico em três frentes simultâneas (resultado, disciplina e planejamento). É o líder de maior risco da carteira.<ul><li><strong>1:1 imediato (esta semana)</strong> com escuta ativa: o gap é de capacidade técnica, sobrecarga, alinhamento com o gestor direto, ou desalinhamento de expectativa de papel?</li><li><strong>Plano de turnaround de 60 dias</strong> com check-ins quinzenais (você + gestor direto + Deoclecio).</li><li><strong>Quick-wins primeiro:</strong> recuperar disciplina de RDM e check-ins (são entregas controláveis pelo próprio líder) para destravar Planejamento.</li><li><strong>Pilar Resultados precisa de plano específico</strong> — analisar com o gestor se a meta do time está calibrada e se há recursos faltando.</li><li><strong>Decisão estruturada em 60 dias:</strong> se não houver evolução, conversa de fit (perfil x cargo) com o gestor.</li></ul>"
+    area:"Marketing",
+    name:"Deoclecio",
+    fullName:"Deoclecio Tadeu Jorge de Campos Filho",
+    bp:"caina",
+    img:0.62083333,label:"Básico",
+    pillars:{Pessoas:1,Planejamento:0.60416667,Financeiro:1,Resultados:0},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Básico",Financeiro:"Avançado",Resultados:"Básico"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.84},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:0.71428571},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:0.33333333},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.6364}],
+    gaps:["Pilar <strong>Planejamento</strong> em Básico (60%) — abaixo de 70% da meta.","Pilar <strong>Resultados</strong> zerado — nenhum indicador atingido."],
+    intervention:"<strong>Intervenção urgente.</strong> Pilar(es) <strong>Resultados</strong> zerado(s). Diagnóstico de causa-raiz antes do próximo check-in."
   },
   {
-    area: "Marketing", name: "Danilo", img: 1.0, label: "Avançado",
-    pillars: { Pessoas: 1, Planejamento: 1, Financeiro: 1, Resultados: 1 },
-    pillarLabels: { Pessoas: "Avançado", Planejamento: "Avançado", Financeiro: "Avançado", Resultados: "Avançado" },
-    indicators: [
-      { n: "Feedbacks registrados (1 por mês)", v: 1.0 },
-      { n: "ISO SIEG ≥ 75", v: 0.87 },
-      { n: "Talentos chave mapeados com plano de ação", v: 1.0 },
-      { n: "100% dos colaboradores com metas registradas", v: 1.0 },
-      { n: "Check-ins realizados no prazo", v: 1.0 },
-      { n: "Reunião de resultado realizada", v: 1.0 },
-      { n: "RDM elaborados no prazo", v: 1.0 },
-      { n: "Headcount dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Custo de folha dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Atingimento das metas (mín. 80% do time)", v: 0.8889 }
-    ],
-    gaps: ["Sem gaps. Todos os pilares em <strong>Avançado</strong>.","Atingimento de metas em 88,89% e ISO em 87% — pontos mais frágeis, mas dentro de Avançado."],
-    intervention: "<strong>Referência interna em Marketing.</strong> Único Avançado da área — usá-lo como espelho para Deoclecio e Gabrielle. Vale criar um momento estruturado de troca entre os 3 líderes (mentoria horizontal). Em paralelo, conversa estratégica para alinhar o que tira o time para Excelência."
+    area:"Marketing",
+    name:"Danilo",
+    fullName:"Danilo Jorge da Silva Novais",
+    bp:"caina",
+    img:1,label:"Avançado",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.87},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.8889}],
+    gaps:["Sem gaps críticos nos pilares.","Pontos de atenção: ISO SIEG ≥ 75."],
+    intervention:"<strong>Sustentar e desafiar.</strong> IMG em Avançado (100%). Foco do check-in: ambição e desenvolvimento do time."
   },
   {
-    area: "Marketing", name: "Gabrielle", img: 0.7458, label: "Intermediário",
-    pillars: { Pessoas: 1, Planejamento: 0.6042, Financeiro: 1, Resultados: 0.4167 },
-    pillarLabels: { Pessoas: "Avançado", Planejamento: "Básico", Financeiro: "Avançado", Resultados: "Básico" },
-    indicators: [
-      { n: "Feedbacks registrados (1 por mês)", v: 1.0 },
-      { n: "ISO SIEG ≥ 75", v: 1.0 },
-      { n: "Talentos chave mapeados com plano de ação", v: 1.0 },
-      { n: "100% dos colaboradores com metas registradas", v: 1.0 },
-      { n: "Check-ins realizados no prazo", v: 0.75 },
-      { n: "Reunião de resultado realizada", v: 1.0 },
-      { n: "RDM elaborados no prazo", v: 0.0 },
-      { n: "Headcount dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Custo de folha dentro do previsto (variação 5%)", v: 1.0 },
-      { n: "Atingimento das metas (mín. 80% do time)", v: 0.75 }
-    ],
-    gaps: ["<strong>RDM elaborados: 0%</strong> — nenhum RDM entregue no prazo no mês. Gap crítico de disciplina.","<strong>Atingimento de metas: 75%</strong> — abaixo do mínimo (80%), derruba Pilar Resultados para Básico.","<strong>Check-ins no prazo: 75%</strong> — 2 pilares em Básico (Planejamento e Resultados).","<strong>ISO em 100%</strong> e Pilar Pessoas em Avançado: o time gosta dela, o problema é processo + entrega."],
-    intervention: "<strong>Intervenção em duas camadas: disciplina + entrega.</strong>Quadro de líder com forte conexão com o time (ISO 100%, Pessoas Avançado) mas frágil em ritual de gestão e resultado.<ul><li><strong>1:1 esta semana</strong> com foco em RDM: o gap é técnico (não sabe estruturar) ou de priorização (deixou de fazer)? A resposta muda totalmente o tipo de intervenção.</li><li><strong>Plano 30 dias para Planejamento:</strong> compromisso de RDM e check-ins no prazo — bloqueio de agenda dedicado.</li><li><strong>Pilar Resultados:</strong> revisar com Gabrielle quais 2 pessoas do time estão puxando o atingimento para baixo e desenhar plano de performance individual.</li><li><strong>Risco a observar:</strong> se Planejamento não recuperar, IMG cai para Básico no próximo mês.</li><li><strong>Mentoria com Danilo</strong> (líder Avançado da mesma área) pode acelerar a virada de chave.</li></ul>"
+    area:"Marketing",
+    name:"Gabrielle",
+    fullName:"Gabrielle Vitoria Fernandes Tavares",
+    bp:"caina",
+    img:0.74583333,label:"Intermediário",
+    pillars:{Pessoas:1,Planejamento:0.60416667,Financeiro:1,Resultados:0.41666667},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Básico",Financeiro:"Avançado",Resultados:"Básico"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:1},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:0.75},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:0},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.75}],
+    gaps:["Pilar <strong>Planejamento</strong> em Básico (60%) — abaixo de 70% da meta.","Pilar <strong>Resultados</strong> em Básico (42%) — abaixo de 70% da meta."],
+    intervention:"<strong>Plano de recuperação.</strong> IMG em Básico (75%). Acompanhamento quinzenal recomendado até próximo ciclo."
+  },
+  {
+    area:"Adm. Financeiro",
+    name:"Walquiria",
+    fullName:"Walquiria Santos Correia",
+    bp:"izabela",
+    img:0.61666667,label:"Básico",
+    pillars:{Pessoas:1,Planejamento:0.95833333,Financeiro:0,Resultados:0.41666667},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Intermediário",Financeiro:"Básico",Resultados:"Básico"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.84},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:0.95},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.7813}],
+    gaps:["Pilar <strong>Financeiro</strong> zerado — nenhum indicador atingido.","Pilar <strong>Resultados</strong> em Básico (42%) — abaixo de 70% da meta."],
+    intervention:"<strong>Intervenção urgente.</strong> Pilar(es) <strong>Financeiro</strong> zerado(s). Diagnóstico de causa-raiz antes do próximo check-in."
+  },
+  {
+    area:"Adm. Financeiro",
+    name:"Victor",
+    fullName:"Victor Fernando Soares de Barros",
+    bp:"izabela",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:1},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (90%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"Adm. Financeiro",
+    name:"Anderson",
+    fullName:"Anderson Luis Lima da Silva",
+    bp:"izabela",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:1},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (90%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"CS",
+    name:"Aline",
+    fullName:"Aline Alves de Oliveira",
+    bp:"izabela",
+    img:1,label:"Avançado",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.8875},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Sem gaps críticos nos pilares."],
+    intervention:"<strong>Sustentar e desafiar.</strong> IMG em Avançado (100%). Foco do check-in: ambição e desenvolvimento do time."
+  },
+  {
+    area:"CS",
+    name:"Luana",
+    fullName:"Luana Dos Santos Silva",
+    bp:"izabela",
+    img:0.8,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:0.75,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Intermediário",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:0.8875},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:0},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.9831}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%).","Pilar <strong>Planejamento</strong> em Intermediário (75%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (80%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"CX",
+    name:"Gabriel",
+    fullName:"Gabriel Fidelis Gonzaga Dos Santos",
+    bp:"izabela",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:0.915},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (90%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"CX",
+    name:"Walisson",
+    fullName:"Walisson Deyvson Barbosa Pernambuco",
+    bp:"izabela",
+    img:1,label:"Avançado",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.91},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Sem gaps críticos nos pilares."],
+    intervention:"<strong>Sustentar e desafiar.</strong> IMG em Avançado (100%). Foco do check-in: ambição e desenvolvimento do time."
+  },
+  {
+    area:"CX",
+    name:"Rodrigo",
+    fullName:"Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    bp:"izabela",
+    img:1,label:"Avançado",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.915},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.9}],
+    gaps:["Sem gaps críticos nos pilares."],
+    intervention:"<strong>Sustentar e desafiar.</strong> IMG em Avançado (100%). Foco do check-in: ambição e desenvolvimento do time."
+  },
+  {
+    area:"Suporte",
+    name:"Edmilson",
+    fullName:"Jose Edmilson Da Silva",
+    bp:"izabela",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:0.9075},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (90%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"Suporte",
+    name:"Enock",
+    fullName:"Enock De Oliveira E Silva Neto",
+    bp:"izabela",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:0},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Básico"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.965},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:null}],
+    gaps:["Pilar <strong>Resultados</strong> zerado — nenhum indicador atingido."],
+    intervention:"<strong>Intervenção urgente.</strong> Pilar(es) <strong>Resultados</strong> zerado(s). Diagnóstico de causa-raiz antes do próximo check-in."
+  },
+  {
+    area:"Suporte",
+    name:"Gabriela",
+    fullName:"Gabriela Maria Araujo Peres",
+    bp:"izabela",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:0.9135},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.95}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (90%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"Suporte",
+    name:"Publio",
+    fullName:"Publio Maswell Matos Cavalcanti",
+    bp:"izabela",
+    img:1,label:"Avançado",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.8925},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.92857143}],
+    gaps:["Sem gaps críticos nos pilares."],
+    intervention:"<strong>Sustentar e desafiar.</strong> IMG em Avançado (100%). Foco do check-in: ambição e desenvolvimento do time."
+  },
+  {
+    area:"Suporte",
+    name:"Nathalia",
+    fullName:"Nathalia Vasconcelos Trajano Da Silva",
+    bp:"izabela",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:0.8925},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.95454545}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (90%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"Infraestrutura",
+    name:"João",
+    fullName:"Joao Henrique Da Silva",
+    bp:"renata_paula",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:1},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (90%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"Infraestrutura",
+    name:"Anderson",
+    fullName:"Anderson Frederick Bernardes De Oliveira",
+    bp:"renata_paula",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:0.935},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (90%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"Pesquisa & Produto",
+    name:"Camila",
+    fullName:"Camila Alves Da Silva",
+    bp:"renata_paula",
+    img:1,label:"Avançado",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.865},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Sem gaps críticos nos pilares."],
+    intervention:"<strong>Sustentar e desafiar.</strong> IMG em Avançado (100%). Foco do check-in: ambição e desenvolvimento do time."
+  },
+  {
+    area:"Pesquisa & Produto",
+    name:"Jefte",
+    fullName:"Jefte de Assumpcao Macedo",
+    bp:"renata_paula",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:0.9825},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (90%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"Desenvolvimento",
+    name:"Gilmar",
+    fullName:"Gilmar Oliveira E Silva Junior",
+    bp:"renata_paula",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:0.9075},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.83333333}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (90%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"Desenvolvimento",
+    name:"Leandro",
+    fullName:"Leandro dos Santos Machado",
+    bp:"renata_paula",
+    img:1,label:"Avançado",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.9125},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.92307692}],
+    gaps:["Sem gaps críticos nos pilares."],
+    intervention:"<strong>Sustentar e desafiar.</strong> IMG em Avançado (100%). Foco do check-in: ambição e desenvolvimento do time."
+  },
+  {
+    area:"Desenvolvimento",
+    name:"Jony",
+    fullName:"Jonialysson Bezerra De Oliveira",
+    bp:"renata_paula",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:0.9025},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.95}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (90%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"Desenvolvimento",
+    name:"Felipe",
+    fullName:"Felipe Ayres Lins",
+    bp:"renata_paula",
+    img:0.9,label:"Intermediário",
+    pillars:{Pessoas:0.66666667,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Básico",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:0},{n:"ISO SIEG ≥ 75",v:0.9075},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:1}],
+    gaps:["Pilar <strong>Pessoas</strong> em Básico (67%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (90%). Priorizar <strong>Pessoas</strong> no check-in."
+  },
+  {
+    area:"Gente & Cultura",
+    name:"Renata",
+    fullName:"Renata Oliveira De Moura Duarte",
+    bp:"renata_paula",
+    img:0.95,label:"Intermediário",
+    pillars:{Pessoas:1,Planejamento:0.875,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Intermediário",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.99},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:0.8},{n:"Reunião de resultado realizada",v:0.93333333},{n:"RDM elaborados no prazo",v:0.93333333},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.9259}],
+    gaps:["Pilar <strong>Planejamento</strong> em Intermediário (88%)."],
+    intervention:"<strong>Desenvolvimento direcionado.</strong> IMG em Intermediário (95%). Foco em melhoria contínua dos pilares."
+  },
+  {
+    area:"Gente & Cultura",
+    name:"Eluana",
+    fullName:"Elza Maria Eluana Da Silva Dias",
+    bp:"renata_paula",
+    img:1,label:"Avançado",
+    pillars:{Pessoas:1,Planejamento:1,Financeiro:1,Resultados:1},
+    pillarLabels:{Pessoas:"Avançado",Planejamento:"Avançado",Financeiro:"Avançado",Resultados:"Avançado"},
+    indicators:[{n:"Feedbacks registrados (1 por mês)",v:1},{n:"ISO SIEG ≥ 75",v:0.955},{n:"Talentos chave mapeados com plano de ação",v:1},{n:"100% dos colaboradores com metas registradas",v:1},{n:"Check-ins realizados no prazo",v:1},{n:"Reunião de resultado realizada",v:1},{n:"RDM elaborados no prazo",v:1},{n:"Headcount dentro do previsto (variação 5%)",v:1},{n:"Custo de folha dentro do previsto (variação 5%)",v:1},{n:"Atingimento das metas (mín. 80% do time)",v:0.8333}],
+    gaps:["Sem gaps críticos nos pilares."],
+    intervention:"<strong>Sustentar e desafiar.</strong> IMG em Avançado (100%). Foco do check-in: ambição e desenvolvimento do time."
   }
 ];
 
-const labelClass = l => l.toLowerCase().replace('í','i').replace('â','a').replace('ê','e').replace('ç','c');
+// ── URL FILTER ────────────────────────────────────────────────────────────────
+(function applyUrlFilter() {
+  const p      = new URLSearchParams(window.location.search);
+  const bp     = (p.get('bp') || 'geral').toLowerCase().trim();
+  const leader = (p.get('leader') || '').toLowerCase().trim();
+  const ctxBadge = document.getElementById('ctx-badge');
 
-function renderIndicator(ind) {
-  const pct = ind.v * 100;
-  const fill = pct >= 100 ? 'avancado' : (pct >= 70 ? 'intermediario' : 'basico');
-  const rowClass = pct < 70 ? 'gap' : (pct < 90 ? 'gap-warn' : '');
-  return `
-    <tr class="${rowClass}">
-      <td>${ind.n}</td>
-      <td style="white-space:nowrap;">
-        <span class="ind-bar"><span class="ind-bar-fill fill-${fill}" style="width:${Math.min(100,pct)}%"></span></span>
-        <span style="font-weight:600; color:${pct < 70 ? '#9b1f1f' : pct < 90 ? '#8b5a00' : '#066b3a'};">${pct.toFixed(2).replace('.',',')}%</span>
-      </td>
-    </tr>`;
+  const BP_LABELS = {
+    'caina':        'Cainã · Comercial & Marketing',
+    'izabela':      'Izabela · CS, CX & Suporte',
+    'renata_paula': 'Renata/Paula · Produto, Dev & G&C'
+  };
+
+  if (leader) {
+    const norm = leader.toLowerCase();
+    const idx  = DATA.findIndex(d =>
+      d.name.toLowerCase() === norm ||
+      (d.fullName && d.fullName.toLowerCase().includes(norm)) ||
+      norm.includes(d.name.toLowerCase().split(' ')[0])
+    );
+    if (idx >= 0) {
+      const kept = DATA[idx];
+      DATA.length = 0;
+      DATA.push(kept);
+      if (ctxBadge) {
+        ctxBadge.textContent = '\u{1F464} ' + (kept.fullName || kept.name);
+        ctxBadge.classList.add('visible');
+      }
+    }
+    return;
+  }
+
+  if (bp !== 'geral') {
+    const filtered = DATA.filter(d => d.bp === bp);
+    DATA.length = 0;
+    filtered.forEach(d => DATA.push(d));
+    if (ctxBadge && BP_LABELS[bp]) {
+      ctxBadge.textContent = '\u{1F464} ' + BP_LABELS[bp];
+      ctxBadge.classList.add('visible');
+    }
+  }
+})();
+
+// ── BASELINE (post URL-filter snapshot) ──────────────────────────────────────
+const BASE_DATA = [...DATA];
+
+// ── HEADER STATS (dynamic) ────────────────────────────────────────────────────
+function updateHeader() {
+  const d = BASE_DATA;
+  if (!d.length) return;
+
+  // Only leaders with real data (not all-null indicators)
+  const withData = d.filter(x => !x.indicators.every(i => i.v === null));
+
+  const avg = withData.length
+    ? withData.reduce((s,x) => s + x.img, 0) / withData.length
+    : 0;
+
+  const labelOf = v => v >= 1.0 ? 'Avançado' : v >= 0.875 ? 'Intermediário' : 'Básico';
+
+  const avancado    = d.filter(x => x.label === 'Avançado' || x.label === 'Excelência').length;
+  const intermediario = d.filter(x => x.label === 'Intermediário').length;
+  const basico      = d.filter(x => x.label === 'Básico').length;
+  const semDados    = d.filter(x => x.indicators.every(i => i.v === null)).length;
+
+  const lbl = labelOf(avg);
+  const areas = [...new Set(d.map(x => x.area))];
+
+  document.getElementById('sum-avg').textContent      = (avg * 100).toFixed(1).replace('.',',') + '%';
+  document.getElementById('sum-avg-meta').textContent = lbl + ' · ' + areas.slice(0,2).join(' + ') + (areas.length > 2 ? ' +' + (areas.length-2) : '');
+  document.getElementById('sum-avancado').textContent = avancado;
+  document.getElementById('sum-avancado-meta').textContent = 'de ' + d.length + ' líderes';
+  document.getElementById('sum-basico').textContent   = basico;
+  document.getElementById('sum-basico-meta').textContent  = basico > 0 ? 'requer acompanhamento' : 'sem gaps críticos';
+  document.getElementById('sum-total').textContent    = d.length;
+  document.getElementById('sum-labels').textContent   =
+    [avancado ? avancado + ' Avançado' : '',
+     intermediario ? intermediario + ' Interm.' : '',
+     basico ? basico + ' Básico' : '',
+     semDados ? semDados + ' S/D' : '']
+    .filter(Boolean).join(' · ');
 }
 
-function renderPillar(name, value, label) {
-  const pct = value * 100;
-  const cls = labelClass(label);
-  return `
-    <div class="pillar-card">
-      <div class="pillar-name">${name}</div>
-      <div class="pillar-value">
-        <span class="pillar-pct text-${cls}">${pct.toFixed(2).replace('.',',')}%</span>
-        <span class="badge ${cls}">${label}</span>
-      </div>
-      <div class="pillar-bar"><div class="pillar-bar-fill fill-${cls}" style="width:${Math.min(100,pct)}%"></div></div>
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+const labelClass = l => (l || '').toLowerCase()
+  .replace(/[íì]/g,'i').replace(/[âã]/g,'a')
+  .replace(/[êé]/g,'e').replace(/[óò]/g,'o')
+  .replace(/ç/g,'c').replace(/\s+/g,'');
+
+function initials(name) {
+  const parts = (name || '').trim().split(' ').filter(Boolean);
+  return parts.length >= 2
+    ? (parts[0][0] + parts[parts.length-1][0]).toUpperCase()
+    : (name || '??').slice(0,2).toUpperCase();
+}
+
+// ── DYNAMIC HEADER SUBTITLE ───────────────────────────────────────────────────
+(function updateSubtitle() {
+  const p  = new URLSearchParams(window.location.search);
+  const bp = (p.get('bp') || 'geral').toLowerCase().trim();
+  const sub = document.querySelector('header .subtitle');
+  if (!sub) return;
+  const map = {
+    'caina':        'Comercial & Marketing',
+    'izabela':      'CS, CX & Suporte',
+    'renata_paula': 'Produto, Dev & G&C',
+    'geral':        'Todas as Áreas'
+  };
+  sub.textContent = 'Check-in Março/2026 · ' + (map[bp] || 'Todas as Áreas');
+})();
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  const container = document.getElementById('content');
+  if (!DATA.length) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">\u{1F50D}</div>
+      <div class="empty-state-title">Nenhum líder encontrado</div>
+      <div>Ajuste os filtros ou volte ao hub.</div>
     </div>`;
-}
+    return;
+  }
 
-function renderLeader(L, idx) {
-  const cls = labelClass(L.label);
-  const pct = (L.img * 100).toFixed(2).replace('.', ',');
-  const initials = L.name.substring(0,2).toUpperCase();
-  return `
-    <div class="leader-card" data-idx="${idx}" data-area="${L.area}" data-haspgap="${L.label === 'Básico' || Object.values(L.pillars).some(v => v < 1) ? 'true' : 'false'}">
-      <div class="leader-header">
-        <div class="avatar">${initials}</div>
-        <div class="leader-info">
-          <div class="leader-name">${L.name}</div>
-          <div class="leader-area">${L.area}</div>
-        </div>
-        <div class="leader-score">
-          <div class="pct text-${cls}">${pct}%</div>
-          <span class="badge ${cls}">${L.label}</span>
-        </div>
-        <span class="expand-icon">▼</span>
-      </div>
-      <div class="mini-bar"><div class="mini-bar-fill fill-${cls}" style="width:${Math.min(100,L.img*100)}%"></div></div>
-      <div class="leader-detail">
+  const auto = DATA.length === 1;
 
-        <div class="detail-section">
-          <h3>Pilares</h3>
-          <div class="pillars-grid">
-            ${renderPillar('Pessoas', L.pillars.Pessoas, L.pillarLabels.Pessoas)}
-            ${renderPillar('Planejamento', L.pillars.Planejamento, L.pillarLabels.Planejamento)}
-            ${renderPillar('Financeiro', L.pillars.Financeiro, L.pillarLabels.Financeiro)}
-            ${renderPillar('Resultados', L.pillars.Resultados, L.pillarLabels.Resultados)}
+  // group by area
+  const byArea = {};
+  const areaOrder = [];
+  DATA.forEach(d => {
+    if (!byArea[d.area]) { byArea[d.area] = []; areaOrder.push(d.area); }
+    byArea[d.area].push(d);
+  });
+
+  container.innerHTML = areaOrder.map(area => {
+    const leaders = byArea[area];
+    const cardsHtml = leaders.map(d => {
+      const lc  = labelClass(d.label);
+      const allNull = d.indicators.every(i => i.v === null);
+      const pct = allNull ? null : Math.round(d.img * 100);
+      const scoreStr = pct === null ? 'S/D' : pct + '%';
+      const scoreColor = (lc === 'avancado' || lc === 'excelencia') ? '#059669'
+        : lc === 'intermediario' ? '#D97706' : '#DC2626';
+
+      const pillarsHtml = Object.entries(d.pillars).map(([k, v]) => {
+        const pl  = d.pillarLabels[k];
+        const plc = labelClass(pl);
+        const ppct = Math.round(v * 100);
+        return `<div class="pillar-card">
+          <div class="pillar-name">${k}</div>
+          <div class="pillar-value">
+            <span class="pillar-pct text-${plc}">${ppct}%</span>
+            <span class="badge ${plc}">${pl}</span>
           </div>
-        </div>
-
-        <div class="detail-section">
-          <h3>Indicadores (10)</h3>
-          <table class="indicators-table">
-            <thead><tr><th>Indicador</th><th style="width:200px;">Atingimento</th></tr></thead>
-            <tbody>${L.indicators.map(renderIndicator).join('')}</tbody>
-          </table>
-        </div>
-
-        <div class="detail-section">
-          <h3>Análise de gaps</h3>
-          <div class="analysis-box gap">
-            <h4>Onde está perdendo pontos</h4>
-            <ul>${L.gaps.map(g => `<li>${g}</li>`).join('')}</ul>
+          <div class="pillar-bar">
+            <div class="pillar-bar-fill fill-${plc}" style="width:${Math.min(ppct,100)}%"></div>
           </div>
-        </div>
+        </div>`;
+      }).join('');
 
-        <div class="detail-section">
-          <h3>Sugestão de intervenção</h3>
+      const indsHtml = d.indicators.map(ind => {
+        if (ind.v === null) {
+          return `<tr>
+            <td>${ind.n}</td>
+            <td><span class="ind-bar"><span class="ind-bar-fill" style="width:0%;background:#ccc"></span></span> N/D</td>
+            <td style="color:#8B7EC8">—</td>
+          </tr>`;
+        }
+        const ipct = Math.round(ind.v * 100);
+        const fc   = ind.v >= 1 ? 'fill-avancado' : ind.v >= 0.7 ? 'fill-intermediario' : 'fill-basico';
+        const rc   = ind.v < 0.7 ? 'gap' : ind.v < 1 ? 'gap-warn' : '';
+        const icon = ind.v >= 1 ? '✅' : ind.v >= 0.7 ? '⚠️' : '❌';
+        return `<tr class="${rc}">
+          <td>${ind.n}</td>
+          <td><span class="ind-bar"><span class="ind-bar-fill ${fc}" style="width:${Math.min(ipct,100)}%"></span></span> ${ipct}%</td>
+          <td>${icon}</td>
+        </tr>`;
+      }).join('');
+
+      const gapsHtml = d.gaps.map(g => `<li>${g}</li>`).join('');
+
+      return `<div class="leader-card${auto ? ' expanded' : ''}" onclick="this.classList.toggle('expanded')">
+        <div class="leader-header">
+          <div class="avatar">${initials(d.fullName || d.name)}</div>
+          <div class="leader-info">
+            <div class="leader-name">${d.fullName || d.name}</div>
+            <div class="leader-area">${d.area}</div>
+          </div>
+          <div class="leader-score">
+            <div class="pct" style="color:${scoreColor}">${scoreStr}</div>
+            <div class="badge ${lc}">${d.label}</div>
+          </div>
+          <span class="expand-icon">▼</span>
+        </div>
+        <div class="mini-bar">
+          <div class="mini-bar-fill fill-${lc}" style="width:${pct !== null ? Math.min(pct,100) : 0}%"></div>
+        </div>
+        <div class="leader-detail">
+          <div class="detail-section">
+            <h3>Pilares IMG</h3>
+            <div class="pillars-grid">${pillarsHtml}</div>
+          </div>
+          <div class="detail-section">
+            <h3>Indicadores Detalhados</h3>
+            <table class="indicators-table">
+              <thead><tr><th>Indicador</th><th>Resultado</th><th></th></tr></thead>
+              <tbody>${indsHtml}</tbody>
+            </table>
+          </div>
+          <div class="detail-section">
+            <h3>Gaps &amp; Recomendações</h3>
+            <div class="analysis-box gap"><ul>${gapsHtml}</ul></div>
+          </div>
           <div class="analysis-box intervention">
-            <p>${L.intervention}</p>
+            <p>${d.intervention}</p>
           </div>
         </div>
+      </div>`;
+    }).join('');
 
+    return `<div class="area-section">
+      <div class="area-header">
+        <span class="area-title">${area}</span>
+        <span class="area-meta">${leaders.length} líder${leaders.length > 1 ? 'es' : ''}</span>
       </div>
+      <div class="leaders-grid">${cardsHtml}</div>
     </div>`;
+  }).join('');
 }
 
-function render(filter='all') {
-  const areas = ['Comercial Externo', 'Vendas Internas', 'Pré-vendas', 'Marketing'];
-  const html = areas.map(area => {
-    let leaders = DATA.map((L, idx) => ({...L, idx})).filter(L => L.area === area);
-    if (filter !== 'all' && filter !== 'gap') leaders = leaders.filter(L => L.area === filter);
-    if (filter === 'gap') leaders = leaders.filter(L => L.label === 'Básico' || Object.values(L.pillars).some(v => v < 1));
-    if (leaders.length === 0) return '';
-    const avg = leaders.reduce((s, L) => s + L.img, 0) / leaders.length;
-    return `
-      <div class="area-section">
-        <div class="area-header">
-          <div class="area-title">${area}</div>
-          <div class="area-meta">${leaders.length} líder(es) · Média ${(avg*100).toFixed(2).replace('.',',')}%</div>
-        </div>
-        <div class="leaders-grid">${leaders.map(L => renderLeader(L, L.idx)).join('')}</div>
-      </div>`;
-  }).join('');
-  document.getElementById('content').innerHTML = html;
+// ── DYNAMIC FILTERS ───────────────────────────────────────────────────────────
+function initFilters() {
+  const bar = document.getElementById('filters-bar');
+  if (!bar) return;
 
-  document.querySelectorAll('.leader-card').forEach(card => {
-    card.querySelector('.leader-header').addEventListener('click', () => {
-      card.classList.toggle('expanded');
+  const areas = [...new Set(BASE_DATA.map(d => d.area))];
+
+  bar.innerHTML =
+    `<button class="filter-btn active" data-filter="all">Todos</button>` +
+    areas.map(a => `<button class="filter-btn" data-filter="${a}">${a}</button>`).join('') +
+    `<button class="filter-btn" data-filter="gap">Apenas com gaps</button>`;
+
+  bar.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      DATA.length = 0;
+      if (f === 'all') {
+        BASE_DATA.forEach(d => DATA.push(d));
+      } else if (f === 'gap') {
+        BASE_DATA.filter(d => d.label === 'Básico').forEach(d => DATA.push(d));
+      } else {
+        BASE_DATA.filter(d => d.area === f).forEach(d => DATA.push(d));
+      }
+      render();
     });
   });
 }
 
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    render(btn.dataset.filter);
-  });
-});
-
+// ── INIT ──────────────────────────────────────────────────────────────────────
+updateHeader();
+initFilters();
 render();
 </script>
 </body>

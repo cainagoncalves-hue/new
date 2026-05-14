@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NPS Dashboard — Carteira BP · SIEG</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:         #F8F5FF;
+  --surface:    #FFFFFF;
+  --surface-2:  #F3F0FB;
+  --surface-3:  #EDE9FE;
+  --border:     rgba(109,40,217,.10);
+  --border-h:   rgba(109,40,217,.26);
+  --border-glow:rgba(109,40,217,.45);
+
+  --violet:     #6D28D9;
+  --violet-l:   #7C3AED;
+  --violet-d:   #5B21B6;
+  --violet-dim: rgba(109,40,217,.08);
+
+  --text:       #180A2C;
+  --text-dim:   #6B52A0;
+  --text-muted: #A08CC8;
+
+  /* NPS semantic — legíveis em fundo claro */
+  --c-ex:  #059669;
+  --c-qu:  #7C3AED;
+  --c-ap:  #D97706;
+  --c-cr:  #DC2626;
+
+  --r: 16px;
+  --sh: 0 1px 3px rgba(109,40,217,.07), 0 1px 2px rgba(0,0,0,.04);
+  --sh-md: 0 4px 20px rgba(109,40,217,.10), 0 2px 6px rgba(0,0,0,.04);
+  --sh-lg: 0 8px 40px rgba(109,40,217,.13), 0 4px 12px rgba(0,0,0,.05);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── TOPBAR ─── */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 52px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--sh);
+}
+.topbar-left { display:flex; align-items:center; gap:16px; }
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 5px 10px 5px 4px;
+  border-radius: 8px;
+  transition: color .15s, background .15s;
+}
+.back-link:hover { color: var(--violet); background: var(--violet-dim); }
+.back-link svg { flex-shrink:0; }
+.topbar-sep { width:1px; height:24px; background:var(--border); }
+.brand { display:flex; align-items:center; gap:12px; }
+.sieg-badge-box {
+  background: var(--violet);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .12em;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.brand-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:var(--text); }
+.brand-sub { font-size:11px; color:var(--text-muted); letter-spacing:.04em; }
+.topbar-right { display:flex; align-items:center; gap:12px; }
+.period-badge {
+  background: var(--surface-3);
+  color: var(--violet);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(109,40,217,.15);
+}
+.filter-ctx-badge {
+  background: var(--violet);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: none;
+}
+.filter-ctx-badge.visible { display: inline-flex; align-items:center; gap:6px; }
+
+/* ─── HEADER ─── */
+.header {
+  padding: 40px 52px 32px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.header-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: .95;
+  color: var(--text);
+}
+.header-title em { font-style:normal; color:var(--violet-l); }
+
+.header-right { text-align:right; flex-shrink:0; }
+.header-period {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--violet);
+  line-height: 1;
+}
+.header-period-sub { font-size:12px; color:var(--text-muted); margin-top:4px; }
+
+/* ─── STATS ROW ─── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.stat-card {
+  padding: 24px 36px;
+  border-right: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  transition: background .2s;
+}
+.stat-card:last-child { border-right: none; }
+.stat-card:hover { background: var(--bg); }
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--violet), transparent);
+  opacity: 0;
+  transition: opacity .25s;
+}
+.stat-card:hover::after { opacity: 1; }
+
+.stat-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.stat-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+.stat-zone {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: var(--violet-dim);
+  color: var(--violet-l);
+}
+
+/* ─── FILTERS ─── */
+.filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 52px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-wrap: wrap;
+  position: sticky;
+  top: 64px;
+  z-index: 99;
+  box-shadow: var(--sh);
+}
+.filter-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+.filter-btn {
+  padding: 6px 16px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.filter-btn:hover { border-color: var(--border-h); color: var(--violet); background: var(--violet-dim); }
+.filter-btn.active {
+  background: var(--violet);
+  border-color: var(--violet);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(109,40,217,.28);
+}
+
+.sort-select {
+  margin-left: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  padding: 6px 28px 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236B52A0'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color .15s;
+}
+.sort-select:focus { border-color: var(--border-h); }
+
+/* ─── GRID ─── */
+.leaders-grid {
+  padding: 28px 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* ─── CARD ─── */
+.leader-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 24px;
+  cursor: pointer;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+  animation: cardIn .45s ease both;
+  box-shadow: var(--sh);
+}
+.leader-card:hover {
+  border-color: var(--border-h);
+  transform: translateY(-3px);
+  box-shadow: var(--sh-lg);
+}
+.card-accent-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: var(--r) var(--r) 0 0;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.card-avatar {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  flex-shrink: 0;
+  letter-spacing: -0.02em;
+  border: 1px solid rgba(109,40,217,.08);
+}
+.card-info { flex:1; min-width:0; }
+.card-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+  margin-bottom: 3px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.card-area {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.nps-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.nps-block {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.nps-block-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.nps-block-score {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.nps-block-n { font-size:11px; color:var(--text-muted); }
+
+.card-no-data { opacity:.35; pointer-events:none; }
+
+@keyframes cardIn {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(248,245,255,.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.modal-overlay.open { display:flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border-h);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 760px;
+  max-height: 92vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalIn .22s cubic-bezier(.16,1,.3,1);
+  box-shadow: var(--sh-lg);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-h) transparent;
+}
+.modal::-webkit-scrollbar { width: 4px; }
+.modal::-webkit-scrollbar-thumb { background: var(--border-h); border-radius: 4px; }
+
+.modal-top-bar { height: 4px; border-radius: 24px 24px 0 0; }
+.modal-inner { padding: 32px 36px 36px; }
+
+@keyframes modalIn {
+  from { opacity:0; transform:scale(.96) translateY(10px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+
+.modal-close {
+  position: absolute;
+  top: 18px; right: 18px;
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+  z-index: 10;
+}
+.modal-close:hover {
+  border-color: var(--border-h);
+  color: var(--violet);
+  background: var(--surface-3);
+}
+
+.modal-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--violet-l);
+  margin-bottom: 8px;
+}
+.modal-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 5px;
+  padding-right: 44px;
+  color: var(--text);
+}
+.modal-area { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+
+.alert-box {
+  background: rgba(217,119,6,.06);
+  border: 1px solid rgba(217,119,6,.2);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 12px;
+  color: #D97706;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Gauges */
+.gauges-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.gauge-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 18px;
+  text-align: center;
+}
+.gauge-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.gauge-desc { font-size:11px; color:var(--text-muted); margin-top:6px; line-height:1.45; }
+
+/* Breakdown */
+.section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.breakdown-block {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+}
+.breakdown-block-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.bar-row:last-child { margin-bottom:0; }
+.bar-label { font-size:12px; color:var(--text-dim); width:82px; flex-shrink:0; }
+.bar-track {
+  flex: 1;
+  height: 5px;
+  background: rgba(109,40,217,.08);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.bar-fill { height:100%; border-radius:100px; }
+.bar-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  width: 20px;
+  text-align: right;
+}
+
+/* Delta */
+.delta-block {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 22px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.delta-number {
+  font-family: 'Syne', sans-serif;
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.delta-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.delta-text { font-size:13px; color:var(--text-dim); line-height:1.55; }
+
+/* Empty */
+.empty-state {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 80px 40px;
+  color: var(--text-muted);
+}
+.empty-state .ico { font-size:36px; margin-bottom:12px; }
+.empty-state strong { display:block; font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:var(--text-dim); margin-bottom:8px; }
+
+/* FOOTER */
+.footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 18px 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 40px;
+}
+.foot-badge {
+  background: var(--violet);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: .1em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+.foot-text { font-size:12px; color:var(--text-muted); }
+
+@media(max-width:900px){
+  .topbar,.header,.filters-bar,.leaders-grid,.footer{padding-left:20px;padding-right:20px}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .header-title{font-size:28px}
+}
+
+  /* ── EXPANDED CARD DETAIL ── */
+  .nps-detail-leader {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .leader-card.expanded {
+    border-color: var(--violet);
+    box-shadow: 0 8px 32px rgba(109,40,217,.14);
+    grid-column: 1 / -1;
+  }
+  .leader-card.expanded:hover { transform: none; }
+
+  .card-chevron {
+    font-size: 14px;
+    color: var(--text-muted);
+    transition: transform .25s;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  .leader-card.expanded .card-chevron { transform: rotate(180deg); }
+
+  .card-detail {
+    display: none;
+    border-top: 1px solid var(--border);
+    margin-top: 16px;
+    padding-top: 18px;
+  }
+  .leader-card.expanded .card-detail { display: block; }
+
+  .nps-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media(max-width:520px){ .nps-detail-grid { grid-template-columns: 1fr; } }
+
+  .nps-detail-block {
+    background: #F8F5FF;
+    border: 1px solid rgba(109,40,217,.10);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .nps-detail-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .nps-detail-score {
+    font-family: 'Syne', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .nps-detail-n {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .nps-stack {
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 10px;
+  }
+  .nps-stack-prom { background: #059669; }
+  .nps-stack-pass { background: #D1D5DB; }
+  .nps-stack-detr { background: #DC2626; }
+  .nps-bd {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .nps-bd-item { display: flex; align-items: center; gap: 5px; }
+  .nps-bd-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <a class="back-link" href="index.html">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Hub
+    </a>
+    <div class="topbar-sep"></div>
+    <div class="brand">
+      <div class="sieg-badge-box">SIEG</div>
+      <div>
+        <div class="brand-title">NPS Dashboard</div>
+        <div class="brand-sub">Gente &amp; Cultura · BP Carteira</div>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span class="filter-ctx-badge" id="filterCtx"></span>
+    <span class="period-badge">1&ordm; TRI 2026</span>
+  </div>
+</header>
+
+<!-- HEADER -->
+<header class="header">
+  <div>
+    <h1 class="header-title">NPS <em>Dashboard</em><br>Líderes</h1>
+  </div>
+  <div class="header-right">
+    <div class="header-period">1º TRI<br>2026</div>
+    <div class="header-period-sub">LNPS &amp; eNPS</div>
+  </div>
+</header>
+
+<!-- STATS -->
+<div class="stats-row" id="statsRow"></div>
+
+<!-- FILTERS -->
+<div class="filters-bar">
+  <span class="filter-label">Área</span>
+  <span id="area-filter-btns">
+    <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
+  </span>
+  <select class="sort-select" onchange="setSort(this.value)">
+    <option value="lnps">Ordenar: LNPS ↓</option>
+    <option value="enps">Ordenar: eNPS ↓</option>
+    <option value="name">Ordenar: Nome A–Z</option>
+    <option value="delta">Ordenar: Maior delta</option>
+  </select>
+</div>
+
+<!-- GRID -->
+<div class="leaders-grid" id="leadersGrid"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="overlay">
+  <div class="modal" id="modal">
+    <div class="modal-top-bar" id="modalBar"></div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-inner" id="modalBody"></div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div>
+    <span class="foot-badge">SIEG</span>
+    <span class="foot-text">Gente &amp; Cultura · NPS Dashboard · Carteira BP</span>
+  </div>
+  <span class="foot-text">1&ordm; Trimestre 2026</span>
+</footer>
+
+<script>
+/* ════════════════════════════════
+   DATA
+════════════════════════════════ */
+const LEADERS = [
+  {
+    id:1, name:"Aline Alves de Oliveira", short:"Aline Oliveira",
+    initials:"AO", bp:"izabela", area:"CS",
+    lnps:{score:75.0,n:12,prom:9,pass:3,detr:0},
+    enps:{score:66.7,n:12,prom:8,pass:4,detr:0}
+  },
+  {
+    id:2, name:"Anderson Frederick Bernardes De Oliveira", short:"Anderson Oliveira",
+    initials:"AO", bp:"renata_paula", area:"NIX", smallSample:true,
+    lnps:{score:50.0,n:2,prom:1,pass:1,detr:0},
+    enps:{score:100.0,n:2,prom:2,pass:0,detr:0}
+  },
+  {
+    id:3, name:"Anderson Luis Lima da Silva", short:"Anderson Silva",
+    initials:"AS", bp:"izabela", area:"DIRETORIA FINANCEIRA",
+    lnps:{score:85.7,n:7,prom:6,pass:1,detr:0},
+    enps:{score:85.7,n:7,prom:6,pass:1,detr:0}
+  },
+  {
+    id:4, name:"Arthur Alexandre Fracalossi Carvalho", short:"Arthur Carvalho",
+    initials:"AC", bp:"caina", area:"PRÉ-VENDAS",
+    lnps:{score:54.5,n:11,prom:7,pass:3,detr:1},
+    enps:{score:81.8,n:11,prom:9,pass:2,detr:0}
+  },
+  {
+    id:5, name:"Camila Alves Da Silva", short:"Camila Silva",
+    initials:"CS", bp:"renata_paula", area:"PESQUISA & PRODUTO", smallSample:true,
+    lnps:{score:33.3,n:3,prom:2,pass:0,detr:1},
+    enps:{score:75.0,n:4,prom:3,pass:1,detr:0}
+  },
+  {
+    id:6, name:"Danilo Jorge da Silva Novais", short:"Danilo Novais",
+    initials:"DN", bp:"caina", area:"MARKETING -  DIGITAL",
+    lnps:{score:100.0,n:4,prom:4,pass:0,detr:0},
+    enps:{score:75.0,n:4,prom:3,pass:1,detr:0}
+  },
+  {
+    id:7, name:"Deoclecio Tadeu Jorge de Campos Filho", short:"Deoclecio Filho",
+    initials:"DF", bp:"caina", area:"DIRETORIA MARKETING",
+    lnps:{score:40.0,n:5,prom:2,pass:3,detr:0},
+    enps:{score:60.0,n:5,prom:3,pass:2,detr:0}
+  },
+  {
+    id:9, name:"Elza Maria Eluana Da Silva Dias", short:"Elza Dias",
+    initials:"ED", bp:"renata_paula", area:"DIRETORIA GENTE & CULTURA",
+    lnps:{score:100.0,n:4,prom:4,pass:0,detr:0},
+    enps:{score:100.0,n:4,prom:4,pass:0,detr:0}
+  },
+  {
+    id:10, name:"Enock De Oliveira E Silva Neto", short:"Enock Neto",
+    initials:"EN", bp:"izabela", area:"SUPORTE",
+    lnps:{score:90.0,n:10,prom:9,pass:1,detr:0},
+    enps:{score:100.0,n:10,prom:10,pass:0,detr:0}
+  },
+  {
+    id:11, name:"Felipe Ayres Lins", short:"Felipe Lins",
+    initials:"FL", bp:"renata_paula", area:"DEV - Time Leandro", smallSample:true,
+    lnps:{score:100.0,n:3,prom:3,pass:0,detr:0},
+    enps:{score:75.0,n:4,prom:3,pass:1,detr:0}
+  },
+  {
+    id:12, name:"Flavio Simao De Lima", short:"Flavio Lima",
+    initials:"FL", bp:"caina", area:"REGIONAL RJ",
+    lnps:{score:100.0,n:8,prom:8,pass:0,detr:0},
+    enps:{score:100.0,n:8,prom:8,pass:0,detr:0}
+  },
+  {
+    id:13, name:"Gabriel Fidelis Gonzaga Dos Santos", short:"Gabriel Santos",
+    initials:"GS", bp:"izabela", area:"CX", smallSample:true,
+    lnps:{score:100.0,n:3,prom:3,pass:0,detr:0},
+    enps:{score:66.7,n:3,prom:2,pass:1,detr:0}
+  },
+  {
+    id:14, name:"Gabriela Maria Araujo Peres", short:"Gabriela Peres",
+    initials:"GP", bp:"izabela", area:"SUPORTE - Time Gabriela",
+    lnps:{score:100.0,n:7,prom:7,pass:0,detr:0},
+    enps:{score:100.0,n:8,prom:8,pass:0,detr:0}
+  },
+  {
+    id:15, name:"Gabrielle Vitoria Fernandes Tavares", short:"Gabrielle Tavares",
+    initials:"GT", bp:"caina", area:"DIRETORIA MARKETING", smallSample:true,
+    lnps:{score:100.0,n:3,prom:3,pass:0,detr:0},
+    enps:{score:100.0,n:3,prom:3,pass:0,detr:0}
+  },
+  {
+    id:16, name:"Gilmar Oliveira E Silva Junior", short:"Gilmar Junior",
+    initials:"GJ", bp:"renata_paula", area:"DEV - Time Leandro",
+    lnps:{score:100.0,n:4,prom:4,pass:0,detr:0},
+    enps:{score:75.0,n:4,prom:3,pass:1,detr:0}
+  },
+  {
+    id:17, name:"Gustavo Carmellino", short:"Gustavo Carmellino",
+    initials:"GC", bp:"renata_paula", area:"DIRETORIA TECNOLOGIA",
+    lnps:{score:83.3,n:6,prom:5,pass:1,detr:0},
+    enps:{score:100.0,n:6,prom:6,pass:0,detr:0}
+  },
+  {
+    id:18, name:"Henrique Carmellino Filho", short:"Henrique Filho",
+    initials:"HF", bp:"caina", area:"DIRETORIA  GERAL",
+    lnps:{score:90.0,n:10,prom:9,pass:1,detr:0},
+    enps:{score:90.0,n:10,prom:9,pass:1,detr:0}
+  },
+  {
+    id:19, name:"Jefte de Assumpcao Macedo", short:"Jefte Macedo",
+    initials:"JM", bp:"renata_paula", area:"PESQUISA & PRODUTO",
+    lnps:{score:100.0,n:8,prom:8,pass:0,detr:0},
+    enps:{score:87.5,n:8,prom:7,pass:1,detr:0}
+  },
+  {
+    id:20, name:"Joao Henrique Da Silva", short:"Joao Silva",
+    initials:"JS", bp:"renata_paula", area:"DIRETORIA TECNOLOGIA",
+    lnps:{score:100.0,n:4,prom:4,pass:0,detr:0},
+    enps:{score:100.0,n:4,prom:4,pass:0,detr:0}
+  },
+  {
+    id:21, name:"Jonialysson Bezerra De Oliveira", short:"Jonialysson Oliveira",
+    initials:"JO", bp:"renata_paula", area:"DIRETORIA TECNOLOGIA",
+    lnps:{score:100.0,n:6,prom:6,pass:0,detr:0},
+    enps:{score:100.0,n:6,prom:6,pass:0,detr:0}
+  },
+  {
+    id:22, name:"Jorge Do Nascimento Junior", short:"Jorge Junior",
+    initials:"JJ", bp:"caina", area:"REGIONAL SP",
+    lnps:{score:66.7,n:9,prom:7,pass:1,detr:1},
+    enps:{score:80.0,n:10,prom:8,pass:2,detr:0}
+  },
+  {
+    id:23, name:"Jose Edmilson Da Silva", short:"Jose Silva",
+    initials:"JS", bp:"izabela", area:"SUPORTE",
+    lnps:{score:83.3,n:6,prom:5,pass:1,detr:0},
+    enps:{score:66.7,n:6,prom:5,pass:0,detr:1}
+  },
+  {
+    id:24, name:"Leandro dos Santos Machado", short:"Leandro Machado",
+    initials:"LM", bp:"renata_paula", area:"DIRETORIA TECNOLOGIA",
+    lnps:{score:100.0,n:11,prom:11,pass:0,detr:0},
+    enps:{score:90.9,n:11,prom:10,pass:1,detr:0}
+  },
+  {
+    id:25, name:"Leonardo De Oliveira Gama", short:"Leonardo Gama",
+    initials:"LG", bp:"caina", area:"VENDAS INTERNAS",
+    lnps:{score:80.0,n:10,prom:9,pass:0,detr:1},
+    enps:{score:80.0,n:10,prom:9,pass:0,detr:1}
+  },
+  {
+    id:26, name:"Luana Dos Santos Silva", short:"Luana Silva",
+    initials:"LS", bp:"izabela", area:"CS",
+    lnps:{score:25.0,n:12,prom:6,pass:3,detr:3},
+    enps:{score:61.5,n:13,prom:8,pass:5,detr:0}
+  },
+  {
+    id:27, name:"Marcos Flavio De Paiva Reis", short:"Marcos Reis",
+    initials:"MR", bp:"caina", area:"DIRETORIA COMERCIAL", smallSample:true,
+    lnps:{score:100.0,n:2,prom:2,pass:0,detr:0},
+    enps:{score:100.0,n:2,prom:2,pass:0,detr:0}
+  },
+  {
+    id:28, name:"Nathalia Vasconcelos Trajano Da Silva", short:"Nathalia Silva",
+    initials:"NS", bp:"izabela", area:"SUPORTE",
+    lnps:{score:100.0,n:7,prom:7,pass:0,detr:0},
+    enps:{score:100.0,n:7,prom:7,pass:0,detr:0}
+  },
+  {
+    id:29, name:"Paula Mikaelly Pimentel Silva Vieira", short:"Paula Vieira",
+    initials:"PV", bp:"renata_paula", area:"DIRETORIA GENTE & CULTURA", smallSample:true,
+    lnps:{score:100.0,n:2,prom:2,pass:0,detr:0},
+    enps:{score:100.0,n:2,prom:2,pass:0,detr:0}
+  },
+  {
+    id:30, name:"Publio Maswell Matos Cavalcanti", short:"Publio Cavalcanti",
+    initials:"PC", bp:"izabela", area:"CX", smallSample:true,
+    lnps:{score:66.7,n:3,prom:2,pass:1,detr:0},
+    enps:{score:100.0,n:3,prom:3,pass:0,detr:0}
+  },
+  {
+    id:31, name:"Rafael Nascimento Ribeiro", short:"Rafael Ribeiro",
+    initials:"RR", bp:"caina", area:"DIRETORIA COMERCIAL",
+    lnps:{score:85.7,n:7,prom:6,pass:1,detr:0},
+    enps:{score:100.0,n:7,prom:7,pass:0,detr:0}
+  },
+  {
+    id:32, name:"Renata Oliveira De Moura Duarte", short:"Renata Duarte",
+    initials:"RD", bp:"renata_paula", area:"GENTE & CULTURA",
+    lnps:{score:100.0,n:6,prom:6,pass:0,detr:0},
+    enps:{score:83.3,n:6,prom:5,pass:1,detr:0}
+  },
+  {
+    id:33, name:"Rodrigo Jose Anderson do Nascimento Goncalves da Silva", short:"Rodrigo Silva",
+    initials:"RS", bp:"izabela", area:"DIRETORIA OPERAÇÕES",
+    lnps:{score:100.0,n:5,prom:5,pass:0,detr:0},
+    enps:{score:100.0,n:5,prom:5,pass:0,detr:0}
+  },
+  {
+    id:34, name:"Thiago Souza Silva", short:"Thiago Silva",
+    initials:"TS", bp:"caina", area:"DIRETORIA COMERCIAL",
+    lnps:{score:28.6,n:7,prom:2,pass:5,detr:0},
+    enps:{score:100.0,n:7,prom:7,pass:0,detr:0}
+  },
+  {
+    id:35, name:"Tomas Signorelli Navarro Lima", short:"Tomas Lima",
+    initials:"TL", bp:"caina", area:"VENDAS INTERNAS",
+    lnps:{score:100.0,n:10,prom:10,pass:0,detr:0},
+    enps:{score:90.9,n:11,prom:10,pass:1,detr:0}
+  },
+  {
+    id:36, name:"Victor Fernando Soares de Barros", short:"Victor Barros",
+    initials:"VB", bp:"izabela", area:"DIRETORIA FINANCEIRA", smallSample:true,
+    lnps:{score:0.0,n:1,prom:0,pass:1,detr:0},
+    enps:{score:0.0,n:1,prom:0,pass:1,detr:0}
+  },
+  {
+    id:37, name:"Walisson Deyvson Barbosa Pernambuco", short:"Walisson Pernambuco",
+    initials:"WP", bp:"izabela", area:"SUPORTE", smallSample:true, noData:true,
+    lnps:{score:0,n:0,prom:0,pass:0,detr:0},
+    enps:{score:0,n:0,prom:0,pass:0,detr:0}
+  },
+  {
+    id:38, name:"Walquiria Santos Correia", short:"Walquiria Correia",
+    initials:"WC", bp:"izabela", area:"ADMINISTRATIVO/FINANCEIRO SP",
+    lnps:{score:25.0,n:12,prom:6,pass:3,detr:3},
+    enps:{score:75.0,n:12,prom:9,pass:3,detr:0}
+  }
+];
+
+/* ════════════════════════════════
+   URL PARAM FILTERING
+════════════════════════════════ */
+(function applyUrlFilter(){
+  const p = new URLSearchParams(window.location.search);
+  const bp = (p.get('bp') || 'geral').toLowerCase().trim();
+  const leader = (p.get('leader') || '').toLowerCase().trim();
+  const ctxBadge = document.getElementById('filterCtx');
+
+  const BP_LABELS = {
+    'caina': 'Cainã · Comercial & Marketing',
+    'izabela': 'Izabela · CS & Suporte',
+    'renata_paula': 'Renata/Paula · Produto, Dev & G&C'
+  };
+
+  // Filter by specific leader first
+  if(leader){
+    const norm = leader.toLowerCase();
+    const idx = LEADERS.findIndex(l =>
+      l.name.toLowerCase() === norm ||
+      l.short.toLowerCase() === norm ||
+      l.name.toLowerCase().startsWith(norm) ||
+      l.short.toLowerCase().startsWith(norm)
+    );
+    if(idx >= 0){
+      const kept = LEADERS[idx];
+      LEADERS.length = 0;
+      LEADERS.push(kept);
+      if(ctxBadge){ ctxBadge.textContent = '👤 ' + kept.short; ctxBadge.classList.add('visible'); }
+    }
+    return;
+  }
+
+  // Filter by BP
+  if(bp !== 'geral'){
+    const filtered = LEADERS.filter(l => l.bp === bp);
+    LEADERS.length = 0;
+    filtered.forEach(l => LEADERS.push(l));
+    if(ctxBadge && BP_LABELS[bp]){
+      ctxBadge.textContent = '👤 ' + BP_LABELS[bp];
+      ctxBadge.classList.add('visible');
+    }
+  }
+})();
+
+/* ════════════════════════════════
+   HELPERS
+════════════════════════════════ */
+function npsColor(s){
+  if(s>=75) return '#059669';
+  if(s>=50) return '#7C3AED';
+  if(s>=25) return '#D97706';
+  return '#DC2626';
+}
+function npsZone(s){
+  if(s>=75) return 'Excelência';
+  if(s>=50) return 'Qualidade';
+  if(s>=25) return 'Aperfeiçoamento';
+  return 'Crítico';
+}
+
+const PALETTES=[
+  ['rgba(109,40,217,.12)','#6D28D9'],
+  ['rgba(5,150,105,.12)', '#065F46'],
+  ['rgba(217,119,6,.12)', '#92400E'],
+  ['rgba(29,78,216,.12)', '#1D4ED8'],
+  ['rgba(220,38,38,.12)', '#991B1B'],
+  ['rgba(20,184,166,.12)','#0F766E'],
+  ['rgba(159,18,57,.12)', '#9F1239'],
+  ['rgba(124,58,237,.14)','#6D28D9'],
+];
+function palette(initials){
+  const i=(initials.charCodeAt(0)*3+initials.charCodeAt(1))%PALETTES.length;
+  return PALETTES[i];
+}
+
+/* ════════════════════════════════
+   STATS
+════════════════════════════════ */
+function renderStats(){
+  if(!LEADERS.length){
+    document.getElementById('statsRow').innerHTML='';
+    return;
+  }
+  const avgL=LEADERS.reduce((s,l)=>s+l.lnps.score,0)/LEADERS.length;
+  const avgE=LEADERS.reduce((s,l)=>s+l.enps.score,0)/LEADERS.length;
+  const totalN=LEADERS.reduce((s,l)=>s+l.lnps.n,0);
+  const atRisk=LEADERS.filter(l=>l.lnps.score<50||l.enps.score<50).length;
+
+  document.getElementById('statsRow').innerHTML=`
+    <div class="stat-card">
+      <div class="stat-eyebrow">LNPS Médio</div>
+      <div class="stat-value" style="color:${npsColor(avgL)}">${avgL.toFixed(1)}%</div>
+      <span class="stat-zone">${npsZone(avgL)}</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-eyebrow">eNPS Médio</div>
+      <div class="stat-value" style="color:${npsColor(avgE)}">${avgE.toFixed(1)}%</div>
+      <span class="stat-zone">${npsZone(avgE)}</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-eyebrow">Respostas — LNPS</div>
+      <div class="stat-value" style="color:var(--violet-l)">${totalN}</div>
+      <span class="stat-zone">${LEADERS.length} líder${LEADERS.length!==1?'es':''}</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-eyebrow">Atenção necessária</div>
+      <div class="stat-value" style="color:${atRisk>0?'#D97706':'#059669'}">${atRisk}</div>
+      <span class="stat-zone" style="${atRisk>0?'background:rgba(217,119,6,.10);color:#D97706':''}">
+        ${atRisk>0?'líderes <50%':'Todos ≥50%'}
+      </span>
+    </div>`;
+}
+
+/* ════════════════════════════════
+   FILTER / SORT
+════════════════════════════════ */
+let currentFilter='all', currentSort='lnps';
+
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid();
+}
+function setSort(v){ currentSort=v; renderGrid(); }
+
+function getList(){
+  let list=[...LEADERS];
+  if(currentFilter!=='all') list=list.filter(l=>l.area===currentFilter);
+  switch(currentSort){
+    case 'lnps':  list.sort((a,b)=>b.lnps.score-a.lnps.score); break;
+    case 'enps':  list.sort((a,b)=>b.enps.score-a.enps.score); break;
+    case 'name':  list.sort((a,b)=>a.short.localeCompare(b.short)); break;
+    case 'delta': list.sort((a,b)=>
+      Math.abs(b.enps.score-b.lnps.score)-Math.abs(a.enps.score-a.lnps.score)); break;
+  }
+  return list;
+}
+
+/* ════════════════════════════════
+   GRID
+════════════════════════════════ */
+function stackBar(nps){
+  const tot = nps.n || 1;
+  const pp  = Math.round(nps.prom / tot * 100);
+  const np  = Math.round(nps.pass / tot * 100);
+  const dp  = 100 - pp - np;
+  return `<div class="nps-stack">
+    <div class="nps-stack-prom" style="width:${pp}%"></div>
+    <div class="nps-stack-pass" style="width:${np}%"></div>
+    <div class="nps-stack-detr" style="width:${Math.max(0,dp)}%"></div>
+  </div>
+  <div class="nps-bd">
+    <span class="nps-bd-item"><span class="nps-bd-dot" style="background:#059669"></span>${nps.prom} Promotores</span>
+    <span class="nps-bd-item"><span class="nps-bd-dot" style="background:#D1D5DB"></span>${nps.pass} Neutros</span>
+    <span class="nps-bd-item"><span class="nps-bd-dot" style="background:#DC2626"></span>${nps.detr} Detratores</span>
+  </div>`;
+}
+
+function renderGrid(){
+  const list=getList();
+  const auto = list.length === 1;
+  if(!list.length){
+    document.getElementById('leadersGrid').innerHTML=
+      `<div class="empty-state">
+        <div class="ico">🔍</div>
+        <strong>Nenhum líder nessa área</strong>
+      </div>`;
+    return;
+  }
+  document.getElementById('leadersGrid').innerHTML=list.map((l,i)=>{
+    const [bg,fg]=palette(l.initials);
+    const lc=npsColor(l.lnps.score);
+    const ec=npsColor(l.enps.score);
+    const topC=npsColor(Math.min(l.lnps.score,l.enps.score));
+
+    return `
+      <div class="leader-card${auto?' expanded':''}" style="animation-delay:${i*.04}s" onclick="this.classList.toggle('expanded')">
+        <div class="card-accent-bar" style="background:linear-gradient(90deg,${topC}00,${topC},${topC}00)"></div>
+        <div class="card-header">
+          <div class="card-avatar" style="background:${bg};color:${fg}">${l.initials}</div>
+          <div class="card-info">
+            <div class="card-name">${l.short}</div>
+            <div class="card-area">${l.area}</div>
+          </div>
+          ${l.smallSample?`<span class="badge" style="background:rgba(217,119,6,.10);color:#D97706">N baixo</span>`:''}
+          <span class="card-chevron">▼</span>
+        </div>
+        <div class="nps-row">
+          <div class="nps-block">
+            <div class="nps-block-label">LNPS</div>
+            <div class="nps-block-score" style="color:${lc}">${l.lnps.score}%</div>
+            <div class="nps-block-n">N = ${l.lnps.n}</div>
+          </div>
+          <div class="nps-block">
+            <div class="nps-block-label">eNPS</div>
+            <div class="nps-block-score" style="color:${ec}">${l.enps.score}%</div>
+            <div class="nps-block-n">N = ${l.enps.n}</div>
+          </div>
+        </div>
+        <div class="card-detail">
+          <div class="nps-detail-leader">${l.name}</div>
+          <div class="nps-detail-grid">
+            <div class="nps-detail-block">
+              <div class="nps-detail-eyebrow">LNPS — Liderança</div>
+              <div class="nps-detail-score" style="color:${lc}">${l.lnps.score}%</div>
+              <div class="nps-detail-n">${l.lnps.n} respondentes · ${npsZone(l.lnps.score)}</div>
+              ${stackBar(l.lnps)}
+            </div>
+            <div class="nps-detail-block">
+              <div class="nps-detail-eyebrow">eNPS — Engajamento</div>
+              <div class="nps-detail-score" style="color:${ec}">${l.enps.score}%</div>
+              <div class="nps-detail-n">${l.enps.n} respondentes · ${npsZone(l.enps.score)}</div>
+              ${stackBar(l.enps)}
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+
+/* ════════════════════════════════
+   MODAL
+════════════════════════════════ */
+function gauge(score,n,id){
+  const color=npsColor(score);
+  const W=180,H=128,cx=90,cy=88,r=60;
+  const s0=-220, s1=40, arc=(s1-s0);
+
+  function pt(deg){
+    const rad=(deg-90)*Math.PI/180;
+    return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};
+  }
+  function path(a,b){
+    const A=pt(a),B=pt(b);
+    const lg=(b-a)>180?1:0;
+    return`M${A.x.toFixed(2)} ${A.y.toFixed(2)} A${r} ${r} 0 ${lg} 1 ${B.x.toFixed(2)} ${B.y.toFixed(2)}`;
+  }
+  const fillEnd=s0+(score/100)*arc;
+  const fillPath=score>0?path(s0,Math.min(fillEnd,s1)):'';
+
+  return`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    <path d="${path(s0,s1)}" fill="none" stroke="rgba(109,40,217,0.10)" stroke-width="10" stroke-linecap="round"/>
+    ${fillPath?`<path d="${fillPath}" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round"/>`:''}
+    <text x="${cx}" y="${cy-8}" text-anchor="middle" fill="${color}" font-family="Syne,sans-serif" font-size="30" font-weight="800">${score}%</text>
+    <text x="${cx}" y="${cy+10}" text-anchor="middle" fill="#A08CC8" font-family="DM Sans,sans-serif" font-size="9.5" font-weight="600" letter-spacing="1">${npsZone(score).toUpperCase()}</text>
+    <text x="${cx}" y="${cy+26}" text-anchor="middle" fill="#A08CC8" font-family="DM Sans,sans-serif" font-size="11">N = ${n}</text>
+  </svg>`;
+}
+
+function barBlock(data,label){
+  const pP=data.n?Math.round(data.prom/data.n*100):0;
+  const pN=data.n?Math.round(data.pass/data.n*100):0;
+  const pD=data.n?Math.round(data.detr/data.n*100):0;
+  return`<div class="breakdown-block">
+    <div class="breakdown-block-title">${label}</div>
+    <div class="bar-row">
+      <span class="bar-label">Promotores</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pP}%;background:#059669"></div></div>
+      <span class="bar-value" style="color:#059669">${data.prom}</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Neutros</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pN}%;background:#D97706"></div></div>
+      <span class="bar-value" style="color:#D97706">${data.pass}</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Detratores</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pD}%;background:#DC2626"></div></div>
+      <span class="bar-value" style="color:#DC2626">${data.detr}</span>
+    </div>
+  </div>`;
+}
+
+function openModal(id){
+  const l=LEADERS.find(x=>x.id===id);
+  if(!l) return;
+  const m=document.getElementById('modal');
+  const [bg,fg]=palette(l.initials);
+  const lc=npsColor(l.lnps.score);
+  const ec=npsColor(l.enps.score);
+
+  document.getElementById('modalBar').style.background=
+    `linear-gradient(90deg,${lc}22,${ec}22)`;
+
+  document.getElementById('modalBody').innerHTML=`
+    <div class="modal-header">
+      <div class="modal-avatar" style="background:${bg};color:${fg}">${l.initials}</div>
+      <div>
+        <div class="modal-name">${l.name}</div>
+        <div class="modal-meta">${l.area} &nbsp;·&nbsp; BP ${l.bp.replace('_',' / ')}</div>
+        <div style="display:flex;gap:10px;margin-top:6px">
+          <span class="modal-lnps-zone" style="font-size:11px;font-weight:700;letter-spacing:.04em;color:${lc}">${npsZone(l.lnps.score).toUpperCase()}</span>
+          <span class="modal-enps-zone" style="font-size:11px;font-weight:700;letter-spacing:.04em;color:${ec}">${npsZone(l.enps.score).toUpperCase()}</span>
+        </div>
+      </div>
+    </div>
+    ${l.smallSample?`<div class="modal-alert" style="display:flex;padding:8px 14px;background:rgba(217,119,6,.08);border-radius:8px;border:1px solid rgba(217,119,6,.2);font-size:12px;color:#D97706;margin-bottom:12px">&#9888; Amostra reduzida — interpretar com cautela</div>`:''}
+    <div class="modal-gauges">
+      <div>
+        <div style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">LNPS</div>
+        ${gauge(l.lnps.score,l.lnps.n,'L')}
+      </div>
+      <div>
+        <div style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">eNPS</div>
+        ${gauge(l.enps.score,l.enps.n,'E')}
+      </div>
+    </div>
+    <div class="modal-breakdown">
+      ${barBlock(l.lnps,'LNPS — Distribuição')}
+      ${barBlock(l.enps,'eNPS — Distribuição')}
+    </div>`;
+
+  m.style.display='flex';
+  requestAnimationFrame(()=>m.classList.add('open'));
+}
+
+function closeModal(){
+  const m=document.getElementById('modal');
+  m.classList.remove('open');
+  setTimeout(()=>{ m.style.display='none'; },300);
+}
+
+document.getElementById('modal').addEventListener('click',function(e){
+  if(e.target===this) closeModal();
+});
+
+/* ════════════════════════════════
+   AREA FILTER BUTTONS (dynamic)
+════════════════════════════════ */
+function renderFilterBtns(){
+  const container = document.getElementById('area-filter-btns');
+  if(!container) return;
+  const areas = [...new Set(LEADERS.map(l=>l.area))].sort();
+  container.innerHTML =
+    `<button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>` +
+    areas.map(a=>`<button class="filter-btn" onclick="setFilter('${a}',this)">${a}</button>`).join('');
+}
+
+/* ════════════════════════════════
+   INIT
+════════════════════════════════ */
+renderFilterBtns();
+renderStats();
+renderGrid();
+</script>
+</body>
+<

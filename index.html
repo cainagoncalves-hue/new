@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema BP · SIEG Gente & Cultura</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+:root{
+  --bg:#F8F5FF;
+  --surface:#FFFFFF;
+  --surface-2:#F3F0FB;
+  --border:#EBE5F9;
+  --border-2:#D8D0F0;
+  --brand:#6D28D9;
+  --brand-mid:#7C3AED;
+  --brand-light:#8B5CF6;
+  --brand-pale:#EDE9FE;
+  --brand-dim:rgba(109,40,217,.07);
+  --text-900:#180A2C;
+  --text-700:#3B1A6A;
+  --text-500:#6B52A0;
+  --text-300:#A08CC8;
+  --green:#059669;
+  --green-bg:#ECFDF5;
+  --green-text:#065F46;
+  --amber:#B45309;
+  --amber-bg:#FFFBEB;
+  --amber-text:#92400E;
+  --red:#DC2626;
+  --red-bg:#FEF2F2;
+  --red-text:#991B1B;
+  --r:12px;
+  --sh:0 1px 3px rgba(109,40,217,.08),0 1px 2px rgba(0,0,0,.04);
+  --sh-md:0 4px 16px rgba(109,40,217,.10),0 2px 6px rgba(0,0,0,.04);
+  --sh-lg:0 8px 32px rgba(109,40,217,.12),0 4px 12px rgba(0,0,0,.05);
+}
+
+body{background:var(--bg);color:var(--text-900);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh}
+
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 48px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sh)}
+.brand{display:flex;align-items:center;gap:14px}
+.sieg-badge{background:var(--brand);color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;letter-spacing:.12em;padding:5px 12px;border-radius:6px}
+.brand-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text-900)}
+.brand-sub{font-size:11px;color:var(--text-300);margin-top:1px;letter-spacing:.04em}
+.period-badge{background:var(--brand-pale);color:var(--brand);font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;border:1px solid rgba(109,40,217,.15)}
+
+/* FILTER BAR */
+.filter-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 48px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:64px;z-index:99}
+.bp-filters{display:flex;align-items:center;gap:6px}
+.bp-btn{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:20px;border:1px solid var(--border-2);background:transparent;color:var(--text-500);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .18s ease;white-space:nowrap}
+.bp-btn:hover{background:var(--brand-dim);border-color:var(--brand-light);color:var(--brand)}
+.bp-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.bp-avatar{width:20px;height:20px;border-radius:50%;background:var(--brand-pale);color:var(--brand);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;letter-spacing:-.03em;flex-shrink:0}
+.bp-btn.active .bp-avatar{background:rgba(255,255,255,.22);color:#fff}
+.leader-filter{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.leader-select{appearance:none;-webkit-appearance:none;background:var(--surface);border:1px solid var(--border-2);border-radius:8px;color:var(--text-500);font-family:'DM Sans',sans-serif;font-size:13px;padding:6px 32px 6px 12px;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B52A0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;min-width:210px;transition:border-color .18s;outline:none}
+.leader-select:focus{border-color:var(--brand-light)}
+.leader-clear{display:none;background:var(--brand-pale);border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;color:var(--brand);font-size:13px;align-items:center;justify-content:center;transition:background .18s}
+.leader-clear.visible{display:flex}
+.leader-clear:hover{background:var(--brand);color:#fff}
+
+/* MAIN */
+.main{max-width:1360px;margin:0 auto;padding:40px 48px}
+
+/* CONTEXT BANNER */
+.ctx-banner{display:none;background:var(--brand-pale);border:1px solid rgba(109,40,217,.2);border-radius:10px;padding:12px 20px;margin-bottom:28px;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.ctx-banner.visible{display:flex}
+.ctx-left{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ctx-icon{width:32px;height:32px;background:rgba(109,40,217,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.ctx-text{font-size:13px;font-weight:500;color:var(--brand)}
+.ctx-text strong{font-weight:700}
+.ctx-areas{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding-top:2px}
+.area-tag{font-size:11px;font-weight:500;padding:3px 9px;background:rgba(255,255,255,.7);border:1px solid rgba(109,40,217,.2);border-radius:10px;color:var(--text-700)}
+
+/* SECTION HEADER */
+.sec-hdr{display:flex;align-items:baseline;gap:10px;margin-bottom:20px}
+.sec-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text-900)}
+.sec-sub{font-size:12px;color:var(--text-300);font-weight:400}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:40px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:relative;overflow:hidden;box-shadow:var(--sh);transition:box-shadow .2s,transform .2s;animation:fadeUp .45s ease both}
+.kpi-card:nth-child(1){animation-delay:.04s}.kpi-card:nth-child(2){animation-delay:.09s}.kpi-card:nth-child(3){animation-delay:.14s}.kpi-card:nth-child(4){animation-delay:.19s}.kpi-card:nth-child(5){animation-delay:.24s}.kpi-card:nth-child(6){animation-delay:.29s}
+.kpi-card:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--brand),var(--brand-light));opacity:0;transition:opacity .2s}
+.kpi-card:hover::before{opacity:1}
+.kpi-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:18px}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-300);margin-bottom:7px}
+.kpi-value{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;color:var(--text-900);line-height:1;margin-bottom:6px}
+.kpi-suffix{font-size:18px;font-weight:600;color:var(--text-300)}
+.kpi-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;margin-top:3px}
+.kpi-badge.green{background:var(--green-bg);color:var(--green-text)}
+.kpi-badge.amber{background:var(--amber-bg);color:var(--amber-text)}
+.kpi-badge.red{background:var(--red-bg);color:var(--red-text)}
+.kpi-badge.brand{background:var(--brand-pale);color:var(--brand)}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:40px 0}
+
+/* MODULES GRID */
+.modules-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.mod-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;display:flex;gap:20px;align-items:flex-start;box-shadow:var(--sh);transition:box-shadow .2s,transform .2s,border-color .2s;text-decoration:none;animation:fadeUp .45s ease both}
+.mod-card:nth-child(1){animation-delay:.32s}.mod-card:nth-child(2){animation-delay:.37s}.mod-card:nth-child(3){animation-delay:.42s}.mod-card:nth-child(4){animation-delay:.47s}
+.mod-card:hover{box-shadow:var(--sh-lg);transform:translateY(-3px);border-color:var(--border-2)}
+.mod-icon{width:54px;height:54px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.mod-body{flex:1;min-width:0}
+.mod-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text-900);margin-bottom:5px}
+.mod-desc{font-size:13px;color:var(--text-500);line-height:1.55;margin-bottom:16px}
+.mod-foot{display:flex;align-items:center;justify-content:space-between}
+.mod-period{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-300)}
+.mod-cta{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--brand);padding:6px 14px;border-radius:8px;border:1px solid var(--brand-pale);background:var(--brand-pale);text-decoration:none;transition:all .18s;white-space:nowrap}
+.mod-cta:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.mod-cta svg{flex-shrink:0}
+
+/* FOOTER */
+.footer{background:var(--surface);border-top:1px solid var(--border);padding:22px 48px;display:flex;align-items:center;justify-content:space-between;margin-top:60px}
+.foot-l{display:flex;align-items:center;gap:12px}
+.foot-badge{background:var(--brand);color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:11px;letter-spacing:.1em;padding:3px 8px;border-radius:4px}
+.foot-text{font-size:12px;color:var(--text-300)}
+.foot-r{font-size:12px;color:var(--text-300)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:860px){.topbar,.filter-bar,.main,.footer{padding-left:20px;padding-right:20px}.kpi-grid{grid-template-columns:repeat(2,1fr)}.modules-grid{grid-template-columns:1fr}.bp-filters{overflow-x:auto;-webkit-overflow-scrolling:touch}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="sieg-badge">SIEG</div>
+    <div>
+      <div class="brand-title">Sistema BP · Gente &amp; Cultura</div>
+      <div class="brand-sub">Check-in de Metas · Business Partners</div>
+    </div>
+  </div>
+  <span class="period-badge">1&ordm; Trimestre 2026</span>
+</header>
+
+<div class="filter-bar">
+  <div class="bp-filters">
+    <button class="bp-btn active" data-bp="geral">Geral</button>
+    <button class="bp-btn" data-bp="caina"><span class="bp-avatar">C</span>Cainã · Comercial &amp; Marketing</button>
+    <button class="bp-btn" data-bp="izabela"><span class="bp-avatar">I</span>Izabela · CX/CS &amp; Financeiro</button>
+    <button class="bp-btn" data-bp="renata_paula"><span class="bp-avatar">R/P</span>Renata/Paula · Tecnologia &amp; RH</button>
+  </div>
+  <div class="leader-filter">
+    <select id="leaderSelect" class="leader-select"><option value="">Todos os líderes</option></select>
+    <button class="leader-clear" id="leaderClear" title="Limpar filtro por líder">&#x2715;</button>
+  </div>
+</div>
+
+<main class="main">
+  <div class="ctx-banner" id="ctxBanner">
+    <div class="ctx-left">
+      <div class="ctx-icon">&#127919;</div>
+      <div class="ctx-text" id="ctxText"></div>
+    </div>
+    <div class="ctx-areas" id="ctxAreas"></div>
+  </div>
+
+  <div class="sec-hdr">
+    <span class="sec-title">Indicadores</span>
+    <span class="sec-sub">1&ordm; TRI 2026 &middot; Fonte: Elofy</span>
+  </div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <div class="divider"></div>
+
+  <div class="sec-hdr">
+    <span class="sec-title">Módulos</span>
+    <span class="sec-sub">Dashboards e relatórios disponíveis</span>
+  </div>
+  <div class="modules-grid">
+    <a class="mod-card" id="mod-nps" data-base="NPS_Dashboard_BP.html" href="NPS_Dashboard_BP.html" target="_blank">
+      <div class="mod-icon" style="background:#EDE9FE">&#128202;</div>
+      <div class="mod-body">
+        <div class="mod-title">NPS Dashboard · Carteira BP</div>
+        <div class="mod-desc">eNPS e LNPS por Business Partner — análise de promotores, neutros e detratores com segmentação por carteira e área.</div>
+        <div class="mod-foot">
+          <span class="mod-period">1&ordm; TRI 2026</span>
+          <span class="mod-cta">Ver módulo <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
+        </div>
+      </div>
+    </a>
+    <a class="mod-card" id="mod-iso" data-base="ISO_Dashboard_Marco2026.html" href="ISO_Dashboard_Marco2026.html" target="_blank">
+      <div class="mod-icon" style="background:#ECFDF5">&#127970;</div>
+      <div class="mod-body">
+        <div class="mod-title">ISO · Saúde Organizacional</div>
+        <div class="mod-desc">Índice de saúde organizacional — análise por área, liderança e dimensões de clima: Pertencimento, Saúde Emocional, Carga de Trabalho e Apoio da Liderança.</div>
+        <div class="mod-foot">
+          <span class="mod-period">Março 2026</span>
+          <span class="mod-cta">Ver módulo <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
+        </div>
+      </div>
+    </a>
+    <a class="mod-card" id="mod-feedback" data-base="Feedback_Abril2026.html" href="Feedback_Abril2026.html" target="_blank">
+      <div class="mod-icon" style="background:#EFF6FF">&#128172;</div>
+      <div class="mod-body">
+        <div class="mod-title">Relatório de Feedback</div>
+        <div class="mod-desc">Feedbacks enviados e recebidos por área — análise de competências percebidas, qualidade do feedback e cobertura na organização.</div>
+        <div class="mod-foot">
+          <span class="mod-period">Abril 2026</span>
+          <span class="mod-cta">Ver módulo <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
+        </div>
+      </div>
+    </a>
+    <a class="mod-card" id="mod-img" data-base="IMG_Dashboard_Marco.html" href="IMG_Dashboard_Marco.html" target="_blank">
+      <div class="mod-icon" style="background:#FFF7ED">&#128200;</div>
+      <div class="mod-body">
+        <div class="mod-title">IMG · Verificação de Indicadores</div>
+        <div class="mod-desc">Dashboard de verificação IMG com headcount, movimentações e análise de métricas de gestão de pessoas por área e liderança.</div>
+        <div class="mod-foot">
+          <span class="mod-period">Março 2026</span>
+          <span class="mod-cta">Ver módulo <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
+        </div>
+      </div>
+    </a>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="foot-l">
+    <span class="foot-badge">SIEG</span>
+    <span class="foot-text">Gente &amp; Cultura · Sistema BP · Dados via Elofy</span>
+  </div>
+  <span class="foot-r">Atualizado: Abril/Maio 2026</span>
+</footer>
+
+<script>
+const AREA_DATA={"DIRETORIA  GERAL": {"hc": 3, "enps": [9], "lnps": [9], "isbe": [4, 3, 4, 4, 4, 4, 4], "fb": 7, "leaders": ["Henrique Carmellino Filho", "Z Elofy"]}, "ADMINISTRATIVO/FINANCEIRO REC": {"hc": 15, "enps": [10], "lnps": [10], "isbe": [3, 3, 3, 2, 2, 3, 4, 4, 4, 4, 3, 4, 4, 4], "fb": 0, "leaders": ["Anderson Luis Lima da Silva", "Walquiria Santos Correia"]}, "NIX": {"hc": 4, "enps": [10, 9, 9], "lnps": [10, 8, 9], "isbe": [3, 4, 4, 4, 4, 3, 4], "fb": 0, "leaders": ["Anderson Frederick Bernardes De Oliveira", "Gustavo Carmellino"]}, "REGIONAL ES": {"hc": 1, "enps": [9], "lnps": [10], "isbe": [4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Jorge Do Nascimento Junior"]}, "VENDAS INTERNAS": {"hc": 23, "enps": [6, 10, 10, 10, 10, 10, 10, 9, 8, 10, 10, 10, 10, 10, 9, 9, 10, 10, 10, 10, 10, 10], "lnps": [6, 9, 7, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10], "isbe": [3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 4, 3, 3, 3, 4, 4, 4, 4, 3, 4, 4, 3, 3, 4, 4, 4, 3, 3, 3, 3, 3, 4, 4, 4, 3, 3, 3, 4, 4, 3, 3, 3, 3, 3, 4, 3, 3, 4, 4, 3, 3, 4, 4, 3, 3, 3, 4, 3, 3, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 4, 3, 4, 3, 3, 4, 4, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 4, "leaders": ["Leonardo De Oliveira Gama", "Rafael Nascimento Ribeiro", "Tomas Signorelli Navarro Lima"]}, "DEV - Time Leandro": {"hc": 13, "enps": [9, 10, 9, 10, 10, 9, 10, 9, 10, 9, 7, 8], "lnps": [10, 10, 10, 10, 10, 9, 10, 10, 10, 8, 10, 10], "isbe": [3, 3, 3, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 4, 4, 3, 3, 3, 4, 4, 3, 3, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Gustavo Carmellino", "Leandro dos Santos Machado"]}, "SUPORTE - Time Gabriela": {"hc": 10, "enps": [9, 10, 10, 10, 10, 10, 10], "lnps": [10, 10, 10, 10, 10, 10], "isbe": [3, 3, 3, 3, 3, 3, 3, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Gabriela Maria Araujo Peres", "Publio Maswell Matos Cavalcanti"]}, "PRÉ-VENDAS": {"hc": 19, "enps": [9, 8, 10, 10, 9, 9, 10, 9, 10, 10, 10], "lnps": [9, 10, 10, 10, 9, 5, 7, 8, 10, 9, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 4, 4, 3, 4, 3, 3, 3, 2, 2, 4, 4, 4, 3, 3, 3, 3, 4, 4, 3, 3, 4, 2, 2, 4, 4, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 4, 3, 3, 3, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Arthur Alexandre Fracalossi Carvalho", "Danilo Jorge da Silva Novais"]}, "SUPORTE - Time Edmilson": {"hc": 11, "enps": [9, 10, 10, 10], "lnps": [8, 9, 7, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Jose Edmilson Da Silva"]}, "SUPORTE - Time Enock": {"hc": 14, "enps": [10, 9, 10, 10, 10, 10, 6, 10, 10, 10, 10, 10, 10], "lnps": [10, 9, 10, 10, 10, 10, 7, 10, 10, 10, 10, 10, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 3, 3, 3, 4, 4, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 4, 3, 3, 4, 4], "fb": 0, "leaders": ["Enock De Oliveira E Silva Neto"]}, "DEV - Time Jony": {"hc": 12, "enps": [10, 9, 10, 10, 10], "lnps": [10, 9, 10, 10, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 1, 3, 3, 4, 4, 3, 3, 4, 3, 3, 3, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Jonialysson Bezerra De Oliveira"]}, "PESQUISA & PRODUTO": {"hc": 15, "enps": [10, 9, 9, 10, 10, 10, 8, 10, 8, 9, 10, 10, 9], "lnps": [10, 9, 10, 10, 10, 6, 9, 10, 9, 10, 10, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 3, 3, 3, 4, 3, 3, 3, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 4, 3, 3, 3, 4, 4, 3, 4, 4, 3, 3, 4, 4, 3, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 3, 4, 4, 4, 4], "fb": 4, "leaders": ["Camila Alves Da Silva", "Gustavo Carmellino", "Jefte de Assumpcao Macedo"]}, "SUPORTE - Time Nathalia": {"hc": 11, "enps": [10, 9, 10, 10, 10, 10, 10], "lnps": [10, 10, 10, 10, 10, 10, 10], "isbe": [3, 3, 3, 4, 4, 3, 3, 4, 3, 4, 4, 4, 3, 3, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 3, 4, 3, 3, 3, 3, 4, 4, 4, 4, 3, 4, 4, 4, 3, 3, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3], "fb": 0, "leaders": ["Nathalia Vasconcelos Trajano Da Silva"]}, "ADMINISTRATIVO/FINANCEIRO SP": {"hc": 13, "enps": [9, 10, 10, 10, 9, 9, 7, 8, 8, 8], "lnps": [9, 4, 10, 8, 7, 9, 5, 7, 5, 7], "isbe": [2, 3, 4, 2, 3, 3, 4, 4, 4, 4, 2, 2, 3, 4, 4, 3, 3, 3, 4, 3, 2, 3, 3, 3, 4, 3, 4, 4, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 4, 3, 4, 4, 2, 2, 2, 3, 3, 3, 3, 3, 3, 1, 3, 3, 4, 2, 3, 3, 3, 2, 3, 4, 3, 3, 3, 2, 2, 3, 4, 3, 3, 3, 3, 3, 3, 4, 3, 3, 3, 3, 3, 3, 4], "fb": 0, "leaders": ["Anderson Luis Lima da Silva", "Victor Fernando Soares de Barros", "Walquiria Santos Correia"]}, "DIRETORIA MARKETING": {"hc": 3, "enps": [10, 10], "lnps": [10, 10], "isbe": [4, 3, 4, 3, 3, 4, 4], "fb": 0, "leaders": ["Henrique Carmellino Filho"]}, "REGIONAL SP": {"hc": 11, "enps": [7, 10, 8, 9, 9, 10, 8, 10, 9], "lnps": [1, 10, 7, 9, 7, 10, 9], "isbe": [3, 3, 3, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 3, 3, 3, 3, 3, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 3, 3, 3, 4, 4, 3, 3], "fb": 8, "leaders": ["Jorge Do Nascimento Junior", "Rafael Nascimento Ribeiro", "Tomas Signorelli Navarro Lima"]}, "TI - INFRAESTRUTURA": {"hc": 4, "enps": [10, 10, 9, 10], "lnps": [10, 10, 10, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Joao Henrique Da Silva"]}, "REGIONAL BA": {"hc": 2, "enps": [10], "lnps": [7], "isbe": [3, 3, 4, 4, 3, 4, 4], "fb": 0, "leaders": ["Thiago Souza Silva"]}, "CX - Time Gabriel": {"hc": 4, "enps": [8, 10, 10, 10], "lnps": [9, 10, 10, 10], "isbe": [3, 4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Gabriel Fidelis Gonzaga Dos Santos"]}, "DIRETORIA FINANCEIRA": {"hc": 3, "enps": [10, 8], "lnps": [10, 7], "isbe": [], "fb": 0, "leaders": ["Anderson Luis Lima da Silva", "Henrique Carmellino Filho", "Z Elofy"]}, "REGIONAL RJ": {"hc": 3, "enps": [10, 9, 10, 10], "lnps": [10, 9, 9, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 4, 3, 4, 3, 4, 4, 4, 4], "fb": 4, "leaders": ["Jorge Do Nascimento Junior", "Rafael Nascimento Ribeiro"]}, "CX": {"hc": 6, "enps": [10, 10, 10, 10], "lnps": [10, 10, 10, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 3, "leaders": ["Rodrigo Jose Anderson do Nascimento Goncalves da Silva"]}, "REGIONAL MG": {"hc": 4, "enps": [10], "lnps": [10], "isbe": [4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Marcos Flavio De Paiva Reis"]}, "DIRETORIA TECNOLOGIA": {"hc": 4, "enps": [10, 10], "lnps": [10, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4], "fb": 3, "leaders": ["Gustavo Carmellino", "Z Elofy"]}, "OSM": {"hc": 5, "enps": [10, 9, 10, 10, 10], "lnps": [10, 9, 10, 10, 10], "isbe": [3, 4, 4, 3, 4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 4, 3, 4, 3, 3, 4, 4], "fb": 0, "leaders": ["Anderson Luis Lima da Silva"]}, "MARKETING -  EVENTOS": {"hc": 4, "enps": [10, 10, 10, 10], "lnps": [10, 8, 10, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 3, 4, 4, 4], "fb": 0, "leaders": ["Gabrielle Vitoria Fernandes Tavares"]}, "SUPORTE": {"hc": 4, "enps": [10, 10, 10, 10], "lnps": [8, 10, 10, 10], "isbe": [4, 4, 4, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 11, "leaders": ["Publio Maswell Matos Cavalcanti"]}, "CS - Time Aline": {"hc": 16, "enps": [7, 8, 10, 10, 9, 9], "lnps": [8, 10, 10, 10, 10, 9], "isbe": [4, 3, 3, 3, 3, 3, 4, 3, 3, 3, 4, 4, 4, 3, 3, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 2, 3, 3, 4, 3, 3, 3, 3, 4, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 3, 4, 4, 4, 4], "fb": 0, "leaders": ["Aline Alves de Oliveira", "Luana Dos Santos Silva"]}, "REGIONAL MT": {"hc": 1, "enps": [10], "lnps": [10], "isbe": [4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Marcos Flavio De Paiva Reis"]}, "DEV - Time Felipe": {"hc": 6, "enps": [10, 7, 10, 10, 9, 10], "lnps": [10, 9, 10, 10, 10], "isbe": [2, 2, 3, 3, 3, 4, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 3, 4, 4], "fb": 0, "leaders": ["Felipe Ayres Lins"]}, "DIRETORIA COMERCIAL": {"hc": 3, "enps": [9, 10, 10], "lnps": [9, 10, 9], "isbe": [3, 3, 3, 3, 3, 4, 4, 4, 3, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Henrique Carmellino Filho", "Rafael Nascimento Ribeiro"]}, "SERVIÇOS GERAIS SP": {"hc": 3, "enps": [10, 10], "lnps": [10, 10], "isbe": [3, 3, 3, 3, 3, 3, 4, 3, 3, 4, 3, 3, 3, 4], "fb": 0, "leaders": ["Walquiria Santos Correia"]}, "SERVIÇOS GERAIS REC": {"hc": 3, "enps": [10], "lnps": [10], "isbe": [2, 4, 4, 4, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3], "fb": 0, "leaders": ["Walquiria Santos Correia"]}, "DIRETORIA GENTE & CULTURA": {"hc": 5, "enps": [10, 9, 10, 8], "lnps": [10, 10, 10, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 4, "leaders": ["Renata Oliveira De Moura Duarte"]}, "REGIONAL GO": {"hc": 1, "enps": [], "lnps": [], "isbe": [], "fb": 0, "leaders": ["Marcos Flavio De Paiva Reis"]}, "REGIONAL NE": {"hc": 5, "enps": [10, 10, 10, 10, 10, 10], "lnps": [8, 10, 7, 8, 9, 7], "isbe": [3, 2, 3, 2, 3, 3, 3, 3, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 3, 3, 4, 4, 3, 3, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Thiago Souza Silva"]}, "CS": {"hc": 4, "enps": [10, 10], "lnps": [10, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4], "fb": 4, "leaders": ["Luana Dos Santos Silva", "Rodrigo Jose Anderson do Nascimento Goncalves da Silva"]}, "DIRETORIA OPERAÇÕES": {"hc": 2, "enps": [10], "lnps": [10], "isbe": [4, 4, 4, 4, 4, 4, 4], "fb": 2, "leaders": ["Henrique Carmellino Filho", "Z Elofy"]}, "CS - Time Luana": {"hc": 16, "enps": [10, 8, 10, 9, 8, 10, 8, 8, 8, 8, 9, 9, 8, 10, 10, 10], "lnps": [10, 10, 10, 7, 3, 10, 7, 3, 8, 7, 9, 6, 10, 10, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 4, 4, 3, 4, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 1, 3, 4, 1, 1, 3, 3, 4, 3, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 4, 3, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 4, 4, 3, 3], "fb": 0, "leaders": ["Luana Dos Santos Silva"]}, "REGIONAL RS/SC": {"hc": 5, "enps": [9, 10, 10, 10, 10, 10, 9], "lnps": [9, 10, 10, 10, 10, 10, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Flavio Simao De Lima"]}, "CX - Reversão": {"hc": 6, "enps": [2, 10, 7, 10, 10, 10], "lnps": [5, 9, 8, 10, 8, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 3, 2, 2, 2, 3, 2, 2, 4, 4, 4, 3, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Walisson Deyvson Barbosa Pernambuco"]}, "Desenvolvimento Humano Organizacional": {"hc": 2, "enps": [9, 10], "lnps": [9, 10], "isbe": [3, 3, 3, 3, 2, 4, 4, 3, 3, 3, 3, 3, 4, 4], "fb": 0, "leaders": ["Renata Oliveira De Moura Duarte"]}, "MARKETING -  DIGITAL": {"hc": 16, "enps": [10, 9, 8, 10, 9, 10, 8, 8, 9, 10, 10, 8, 10], "lnps": [10, 9, 8, 10, 9, 10, 9, 7, 10, 10, 8, 8, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Danilo Jorge da Silva Novais", "Deoclecio Tadeu Jorge de Campos Filho", "Henrique Carmellino Filho"]}, "DEV - Time Gilmar": {"hc": 4, "enps": [9, 9, 10, 10], "lnps": [9, 10, 10, 10], "isbe": [3, 4, 3, 4, 3, 3, 4, 3, 3, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Gilmar Oliveira E Silva Junior"]}, "Recrutamento e Seleção": {"hc": 3, "enps": [10, 10], "lnps": [10, 10], "isbe": [3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Paula Mikaelly Pimentel Silva Vieira"]}, "REGIONAL PR": {"hc": 3, "enps": [10, 10], "lnps": [10, 10], "isbe": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3], "fb": 0, "leaders": ["Douglas Dos Santos Soares", "Flavio Simao De Lima"]}, "Departamento Pessoal": {"hc": 5, "enps": [9, 10, 10, 10], "lnps": [9, 10, 10, 10], "isbe": [3, 3, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Elza Maria Eluana Da Silva Dias"]}, "REGIONAL MS": {"hc": 1, "enps": [], "lnps": [], "isbe": [4, 4, 4, 4, 4, 4, 4], "fb": 0, "leaders": ["Marcos Flavio De Paiva Reis"]}};
+const LEADER_DATA={"Henrique Carmellino Filho": {"areas": ["DIRETORIA  GERAL", "DIRETORIA COMERCIAL", "DIRETORIA FINANCEIRA", "DIRETORIA MARKETING", "DIRETORIA OPERAÇÕES", "MARKETING -  DIGITAL"], "bp": "caina", "one_one": 0}, "Walquiria Santos Correia": {"areas": ["ADMINISTRATIVO/FINANCEIRO REC", "ADMINISTRATIVO/FINANCEIRO SP", "SERVIÇOS GERAIS REC", "SERVIÇOS GERAIS SP"], "bp": "izabela", "one_one": 1}, "Gustavo Carmellino": {"areas": ["DEV - Time Leandro", "DIRETORIA TECNOLOGIA", "NIX", "PESQUISA & PRODUTO"], "bp": "renata_paula", "one_one": 0}, "Jorge Do Nascimento Junior": {"areas": ["REGIONAL ES", "REGIONAL RJ", "REGIONAL SP"], "bp": "caina", "one_one": 0}, "Leonardo De Oliveira Gama": {"areas": ["VENDAS INTERNAS"], "bp": "caina", "one_one": 0}, "Leandro dos Santos Machado": {"areas": ["DEV - Time Leandro"], "bp": "renata_paula", "one_one": 2}, "Gabriela Maria Araujo Peres": {"areas": ["SUPORTE - Time Gabriela"], "bp": "izabela", "one_one": 3}, "Danilo Jorge da Silva Novais": {"areas": ["MARKETING -  DIGITAL", "PRÉ-VENDAS"], "bp": "caina", "one_one": 7}, "Jose Edmilson Da Silva": {"areas": ["SUPORTE - Time Edmilson"], "bp": "izabela", "one_one": 9}, "Enock De Oliveira E Silva Neto": {"areas": ["SUPORTE - Time Enock"], "bp": "izabela", "one_one": 0}, "Jonialysson Bezerra De Oliveira": {"areas": ["DEV - Time Jony"], "bp": "renata_paula", "one_one": 0}, "Jefte de Assumpcao Macedo": {"areas": ["PESQUISA & PRODUTO"], "bp": "renata_paula", "one_one": 12}, "Nathalia Vasconcelos Trajano Da Silva": {"areas": ["SUPORTE - Time Nathalia"], "bp": "izabela", "one_one": 7}, "Joao Henrique Da Silva": {"areas": ["TI - INFRAESTRUTURA"], "bp": "renata_paula", "one_one": 0}, "Thiago Souza Silva": {"areas": ["REGIONAL BA", "REGIONAL NE"], "bp": "caina", "one_one": 1}, "Gabriel Fidelis Gonzaga Dos Santos": {"areas": ["CX - Time Gabriel"], "bp": "izabela", "one_one": 0}, "Rafael Nascimento Ribeiro": {"areas": ["DIRETORIA COMERCIAL", "REGIONAL RJ", "REGIONAL SP", "VENDAS INTERNAS"], "bp": "caina", "one_one": 0}, "Rodrigo Jose Anderson do Nascimento Goncalves da Silva": {"areas": ["CS", "CX"], "bp": "izabela", "one_one": 0}, "Marcos Flavio De Paiva Reis": {"areas": ["REGIONAL GO", "REGIONAL MG", "REGIONAL MS", "REGIONAL MT"], "bp": "caina", "one_one": 7}, "Publio Maswell Matos Cavalcanti": {"areas": ["SUPORTE", "SUPORTE - Time Gabriela"], "bp": "izabela", "one_one": 0}, "Anderson Frederick Bernardes De Oliveira": {"areas": ["NIX"], "bp": "renata_paula", "one_one": 0}, "Camila Alves Da Silva": {"areas": ["PESQUISA & PRODUTO"], "bp": "renata_paula", "one_one": 7}, "Anderson Luis Lima da Silva": {"areas": ["ADMINISTRATIVO/FINANCEIRO REC", "ADMINISTRATIVO/FINANCEIRO SP", "DIRETORIA FINANCEIRA", "OSM"], "bp": "izabela", "one_one": 0}, "Gabrielle Vitoria Fernandes Tavares": {"areas": ["MARKETING -  EVENTOS"], "bp": "caina", "one_one": 4}, "Tomas Signorelli Navarro Lima": {"areas": ["REGIONAL SP", "VENDAS INTERNAS"], "bp": "caina", "one_one": 0}, "Aline Alves de Oliveira": {"areas": ["CS - Time Aline"], "bp": "izabela", "one_one": 0}, "Felipe Ayres Lins": {"areas": ["DEV - Time Felipe"], "bp": "renata_paula", "one_one": 7}, "Arthur Alexandre Fracalossi Carvalho": {"areas": ["PRÉ-VENDAS"], "bp": "caina", "one_one": 4}, "Renata Oliveira De Moura Duarte": {"areas": ["DIRETORIA GENTE & CULTURA", "Desenvolvimento Humano Organizacional"], "bp": "renata_paula", "one_one": 3}, "Luana Dos Santos Silva": {"areas": ["CS", "CS - Time Aline", "CS - Time Luana"], "bp": "izabela", "one_one": 11}, "Flavio Simao De Lima": {"areas": ["REGIONAL PR", "REGIONAL RS/SC"], "bp": "caina", "one_one": 9}, "Walisson Deyvson Barbosa Pernambuco": {"areas": ["CX - Reversão"], "bp": "izabela", "one_one": 0}, "Victor Fernando Soares de Barros": {"areas": ["ADMINISTRATIVO/FINANCEIRO SP"], "bp": "izabela", "one_one": 0}, "Gilmar Oliveira E Silva Junior": {"areas": ["DEV - Time Gilmar"], "bp": "renata_paula", "one_one": 0}, "Paula Mikaelly Pimentel Silva Vieira": {"areas": ["Recrutamento e Seleção"], "bp": "renata_paula", "one_one": 0}, "Deoclecio Tadeu Jorge de Campos Filho": {"areas": ["MARKETING -  DIGITAL"], "bp": "caina", "one_one": 0}, "Elza Maria Eluana Da Silva Dias": {"areas": ["Departamento Pessoal"], "bp": "renata_paula", "one_one": 4}, "Douglas Dos Santos Soares": {"areas": ["REGIONAL PR"], "bp": "caina", "one_one": 0}};
+const BP_AREAS={"caina": ["DIRETORIA COMERCIAL", "DIRETORIA MARKETING", "MARKETING -  DIGITAL", "MARKETING -  EVENTOS", "PRÉ-VENDAS", "VENDAS INTERNAS", "REGIONAL BA", "REGIONAL ES", "REGIONAL GO", "REGIONAL MG", "REGIONAL MS", "REGIONAL MT", "REGIONAL NE", "REGIONAL PR", "REGIONAL RJ", "REGIONAL RS/SC", "REGIONAL SP"], "izabela": ["CS", "CS - Time Aline", "CS - Time Luana", "CX", "CX - Reversão", "CX - Time Gabriel", "SUPORTE", "SUPORTE - Time Edmilson", "SUPORTE - Time Enock", "SUPORTE - Time Gabriela", "SUPORTE - Time Nathalia", "ADMINISTRATIVO/FINANCEIRO REC", "ADMINISTRATIVO/FINANCEIRO SP", "DIRETORIA FINANCEIRA", "OSM", "SERVIÇOS GERAIS REC", "SERVIÇOS GERAIS SP", "DIRETORIA OPERAÇÕES"], "renata_paula": ["DEV - Time Felipe", "DEV - Time Gilmar", "DEV - Time Jony", "DEV - Time Leandro", "DIRETORIA TECNOLOGIA", "TI - INFRAESTRUTURA", "PESQUISA & PRODUTO", "NIX", "Recrutamento e Seleção", "Desenvolvimento Humano Organizacional", "Departamento Pessoal", "DIRETORIA GENTE & CULTURA"]};
+const BP_ONEONE={geral:100,caina:32,izabela:31,renata_paula:33};
+
+function calcNPS(s){if(!s||!s.length)return null;const p=s.filter(v=>v>=9).length,d=s.filter(v=>v<=6).length;return Math.round(((p-d)/s.length)*100)}
+function calcFav(s){if(!s||!s.length)return null;return Math.round(s.filter(v=>v>=4).length/s.length*100)}
+function calcAvg(s){if(!s||!s.length)return null;return Math.round(s.reduce((a,b)=>a+b,0)/s.length*100)/100}
+function getMetrics(areas){let hc=0,enps=[],lnps=[],isbe=[],fb=0;for(const a of areas){const d=AREA_DATA[a];if(!d)continue;hc+=d.hc;enps=enps.concat(d.enps);lnps=lnps.concat(d.lnps);isbe=isbe.concat(d.isbe);fb+=d.fb}return{hc,enps:calcNPS(enps),lnps:calcNPS(lnps),isbe:calcAvg(isbe),fb}}
+function npsClass(v){if(v===null)return'';if(v>=75)return'green';if(v>=50)return'brand';if(v>=25)return'amber';return'red'}
+function npsLabel(v){if(v===null)return null;if(v>=75)return'Excelência';if(v>=50)return'Qualidade';if(v>=25)return'Atenção';return'Crítico'}
+function favClass(v){if(v===null)return'';if(v>=70)return'green';if(v>=50)return'amber';return'red'}
+function favLabel(v){if(v===null)return null;if(v>=70)return'Favorável';if(v>=50)return'Moderado';return'Atenção'}
+function avgClass(v){if(v===null)return'';if(v>=4)return'green';if(v>=3.5)return'brand';if(v>=3)return'amber';return'red'}
+function avgLabel(v){if(v===null)return null;if(v>=4)return'Excelente';if(v>=3.5)return'Favorável';if(v>=3)return'Moderado';return'Atenção'}
+
+function animVal(el,end,dur=700,dec=0){const t0=performance.now();(function tick(t){const p=Math.min((t-t0)/dur,1),e=1-Math.pow(1-p,3);const v=end*e;el.textContent=dec?v.toFixed(dec):Math.round(v);if(p<1)requestAnimationFrame(tick)})(t0)}
+
+function renderKPIs(m){
+  const cards=[
+    {icon:'👥',bg:'#EDE9FE',label:'Colaboradores',val:m.hc,suf:'',badge:null,cls:''},
+    {icon:'📊',bg:'#EDE9FE',label:'eNPS',val:m.enps,suf:'',badge:npsLabel(m.enps),cls:npsClass(m.enps)},
+    {icon:'⭐',bg:'#FFF7ED',label:'LNPS',val:m.lnps,suf:'',badge:npsLabel(m.lnps),cls:npsClass(m.lnps)},
+    {icon:'🌡️',bg:'#ECFDF5',label:'ISBE Média',val:m.isbe,suf:' / 5',badge:avgLabel(m.isbe),cls:avgClass(m.isbe),dec:2},
+    {icon:'💬',bg:'#EFF6FF',label:'Feedbacks Abril',val:m.fb,suf:'',badge:null,cls:''},
+    {icon:'🤝',bg:'#F0FDF4',label:'1:1 Realizados',val:m.oo,suf:'',badge:null,cls:''}
+  ];
+  const g=document.getElementById('kpiGrid');
+  g.innerHTML=cards.map(c=>`
+    <div class="kpi-card">
+      <div class="kpi-icon" style="background:${c.bg}">${c.icon}</div>
+      <div class="kpi-label">${c.label}</div>
+      <div class="kpi-value" id="kv_${c.label.replace(/\s/g,'_')}">
+        ${c.val!==null?c.val:'—'}${c.suf&&c.val!==null?`<span class="kpi-suffix">${c.suf}</span>`:''}
+      </div>
+      ${c.badge&&c.val!==null?`<span class="kpi-badge ${c.cls}">${c.badge}</span>`:''}
+    </div>`).join('');
+  cards.forEach((c,i)=>{
+    if(c.val===null)return;
+    const el=g.children[i].querySelector('.kpi-value');
+    el.innerHTML='';
+    const num=document.createElement('span');
+    num.textContent='0';
+    el.appendChild(num);
+    if(c.suf){const s=document.createElement('span');s.className='kpi-suffix';s.textContent=c.suf;el.appendChild(s)}
+    setTimeout(()=>animVal(num,c.val,700,c.dec||0),i*55);
+  });
+}
+
+function updateDropdown(){
+  const sel=document.getElementById('leaderSelect');
+  const prev=sel.value;
+  sel.innerHTML='<option value="">Todos os líderes</option>';
+  const leaders=(state.bp==='geral'?Object.keys(LEADER_DATA):Object.entries(LEADER_DATA).filter(([,d])=>d.bp===state.bp).map(([n])=>n)).sort();
+  leaders.forEach(n=>{const o=document.createElement('option');o.value=o.textContent=n;if(n===prev)o.selected=true;sel.appendChild(o)});
+  if(prev&&!leaders.includes(prev)){sel.value='';state.leader=''}
+}
+
+function updateBanner(){
+  const banner=document.getElementById('ctxBanner');
+  const text=document.getElementById('ctxText');
+  const areas=document.getElementById('ctxAreas');
+  const labels={caina:'Cainã · Comercial & Marketing',izabela:'Izabela · CX/CS & Financeiro',renata_paula:'Renata/Paula · Tecnologia & RH'};
+  if(state.leader){
+    const d=LEADER_DATA[state.leader];
+    banner.classList.add('visible');
+    text.innerHTML=`Líder: <strong>${state.leader}</strong>`;
+    areas.innerHTML=d.areas.map(a=>`<span class="area-tag">${a}</span>`).join('');
+  } else if(state.bp!=='geral'){
+    banner.classList.add('visible');
+    text.innerHTML=`Carteira: <strong>${labels[state.bp]}</strong>`;
+    const ar=BP_AREAS[state.bp]||[];
+    areas.innerHTML=ar.map(a=>`<span class="area-tag">${a}</span>`).join('');
+  } else {
+    banner.classList.remove('visible');
+    areas.innerHTML='';
+  }
+}
+
+function updateModuleLinks(){
+  const params=new URLSearchParams();
+  params.set('bp',state.bp);
+  if(state.leader)params.set('leader',state.leader);
+  document.querySelectorAll('.mod-card[data-base]').forEach(a=>{
+    a.href=a.dataset.base+'?'+params.toString();
+  });
+}
+
+function refresh(){
+  let m,oo;
+  if(state.leader&&LEADER_DATA[state.leader]){
+    const ld=LEADER_DATA[state.leader];
+    m=getMetrics(ld.areas);
+    oo=ld.one_one;
+  } else if(state.bp==='geral'){
+    m=getMetrics(Object.keys(AREA_DATA));
+    oo=BP_ONEONE.geral;
+  } else {
+    m=getMetrics(BP_AREAS[state.bp]||[]);
+    oo=BP_ONEONE[state.bp];
+  }
+  renderKPIs({...m,oo});
+  updateBanner();
+  updateModuleLinks();
+}
+
+const state={bp:'geral',leader:''};
+
+document.querySelectorAll('.bp-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.bp-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    state.bp=b.dataset.bp;
+    state.leader='';
+    document.getElementById('leaderSelect').value='';
+    document.getElementById('leaderClear').classList.remove('visible');
+    updateDropdown();
+    refresh();
+  });
+});
+
+document.getElementById('leaderSelect').addEventListener('change',e=>{
+  state.leader=e.target.value;
+  document.getElementById('leaderClear').classList.toggle('visible',!!state.leader);
+  refresh();
+});
+
+document.getElementById('leaderClear').addEventListener('click',()=>{
+  state.leader='';
+  document.getElementById('leaderSelect').value='';
+  document.getElementById('leaderClear').classList.remove('visible');
+  refresh();
+});
+
+updateDropdown();
+refresh();
+</script>
+</body>
+</html>

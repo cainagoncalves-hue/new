@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Feedback — Abril 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F8F5FF;
+    --surface: #FFFFFF;
+    --surface-2: #F3F0FF;
+    --border: rgba(109,40,217,.10);
+    --brand: #6D28D9;
+    --accent: #7C3AED;
+    --accent-soft: rgba(124,58,237,0.08);
+    --green: #059669;
+    --green-soft: rgba(5,150,105,0.08);
+    --yellow: #D97706;
+    --yellow-soft: rgba(217,119,6,0.08);
+    --red: #DC2626;
+    --red-soft: rgba(220,38,38,0.08);
+    --text-primary: #1E1B4B;
+    --text-secondary: #4C3D7D;
+    --text-muted: #8B7EC8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 52px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 32px;
+    box-shadow: 0 1px 8px rgba(109,40,217,.06);
+  }
+  .back-link {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    transition: color .15s;
+  }
+  .back-link:hover { color: var(--brand); }
+  .topbar-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+  .sieg-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--brand);
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+  .topbar-spacer { flex: 1; }
+  .filter-ctx-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 99px;
+    background: rgba(124,58,237,.10);
+    color: var(--accent);
+    border: 1px solid rgba(124,58,237,.20);
+    display: none;
+    white-space: nowrap;
+  }
+  .filter-ctx-badge.visible { display: inline-flex; align-items: center; }
+  .period-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 3px 12px;
+    border-radius: 99px;
+    flex-shrink: 0;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #6D28D9 0%, #7C3AED 60%, #8B5CF6 100%);
+    padding: 40px 40px 36px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.65);
+    margin-bottom: 6px;
+  }
+  .header-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 30px;
+    color: #fff;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+  .header-title em {
+    font-style: normal;
+    color: rgba(255,255,255,.75);
+  }
+  .header-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,.55);
+    margin-top: 8px;
+  }
+  .header-meta span { color: rgba(255,255,255,.85); }
+  .header-badge {
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.30);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    padding: 32px 40px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  /* ── SUMMARY CARDS ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  @media (max-width: 900px) { .summary-grid { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 500px) { .summary-grid { grid-template-columns: 1fr; } }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(109,40,217,.05);
+    transition: box-shadow .2s, border-color .2s;
+  }
+  .summary-card:hover { box-shadow: 0 4px 16px rgba(109,40,217,.10); border-color: rgba(109,40,217,.20); }
+  .summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    border-radius: 14px 14px 0 0;
+  }
+  .summary-card.green::before  { background: var(--green); }
+  .summary-card.red::before    { background: var(--red); }
+  .summary-card.yellow::before { background: var(--yellow); }
+  .summary-card.blue::before   { background: var(--accent); }
+
+  .card-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .card-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .summary-card.green .card-value  { color: var(--green); }
+  .summary-card.red .card-value    { color: var(--red); }
+  .summary-card.yellow .card-value { color: var(--yellow); }
+  .summary-card.blue .card-value   { color: var(--accent); }
+
+  .card-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── LEADER CARDS ── */
+  .leaders-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+
+  .leader-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(109,40,217,.04);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .leader-card:hover { border-color: rgba(109,40,217,.22); box-shadow: 0 3px 12px rgba(109,40,217,.08); }
+
+  .leader-header {
+    display: grid;
+    grid-template-columns: 1fr 160px 100px 120px 160px;
+    align-items: center;
+    padding: 18px 24px;
+    cursor: pointer;
+    gap: 16px;
+    user-select: none;
+  }
+  @media (max-width: 900px) {
+    .leader-header { grid-template-columns: 1fr auto; }
+    .leader-header .col-total, .leader-header .col-sem, .leader-header .col-via { display: none; }
+  }
+
+  .leader-name {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+  }
+  .leader-role {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .col-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+  .col-value {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  /* Progress bar */
+  .progress-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(109,40,217,.08);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .progress-pct {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 40px;
+    text-align: right;
+  }
+
+  /* Status badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 99px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .status-badge.ok {
+    background: var(--green-soft);
+    border-color: rgba(5,150,105,.25);
+    color: var(--green);
+  }
+  .status-badge.parcial {
+    background: var(--yellow-soft);
+    border-color: rgba(217,119,6,.25);
+    color: var(--yellow);
+  }
+  .status-badge.critico {
+    background: var(--red-soft);
+    border-color: rgba(220,38,38,.25);
+    color: var(--red);
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  /* Toggle chevron */
+  .chevron {
+    color: var(--text-muted);
+    font-size: 16px;
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  .leader-card.open .chevron { transform: rotate(180deg); }
+
+  /* Leader body (expandable) */
+  .leader-body {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 20px 24px;
+    background: var(--bg);
+    animation: fadeIn 0.2s ease;
+  }
+  .leader-card.open .leader-body { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 700px) { .body-grid { grid-template-columns: 1fr; } }
+
+  .body-section-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .body-section-label.done    { color: var(--green); }
+  .body-section-label.pending { color: var(--red); }
+
+  .pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    padding: 4px 10px;
+    border-radius: 99px;
+    border: 1px solid;
+    line-height: 1.4;
+  }
+  .pill.done {
+    background: var(--green-soft);
+    border-color: rgba(5,150,105,.20);
+    color: var(--green);
+  }
+  .pill.pending {
+    background: var(--red-soft);
+    border-color: rgba(220,38,38,.20);
+    color: var(--red);
+  }
+
+  .empty-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* ── TABLE HEADER ── */
+  .table-header {
+    display: grid;
+    grid-template-columns: 1fr 160px 100px 120px 160px;
+    padding: 0 24px 10px;
+    gap: 16px;
+  }
+  .th {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  @media (max-width: 900px) { .table-header { display: none; } }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    display: none;
+    text-align: center;
+    padding: 80px 40px;
+    color: var(--text-muted);
+  }
+  .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-state-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 24px 40px 40px;
+    color: var(--text-muted);
+    font-size: 11px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .footer span { color: var(--text-secondary); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="back-link">← Hub</a>
+  <div class="topbar-sep"></div>
+  <span class="sieg-badge">SIEG · RH BP</span>
+  <div class="topbar-spacer"></div>
+  <span id="ctx-badge" class="filter-ctx-badge"></span>
+  <span class="period-badge">Abril 2026</span>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-eyebrow">SIEG Soluções Fiscais · RH Business Partner</div>
+    <h1 class="header-title">Relatório de <em>Feedback</em> Mensal</h1>
+    <div class="header-meta">Referência: <span>Abril 2026</span> &nbsp;·&nbsp; Fonte: <span>Elofy (Feedback + 1-1 realizados)</span> &nbsp;·&nbsp; Gerado em: <span>03/05/2026</span></div>
+  </div>
+  <div class="header-badge">Competência Abril / 2026</div>
+</div>
+
+<!-- EMPTY STATE (shown when filter yields no match) -->
+<div class="empty-state" id="empty-state" style="display:none">
+  <div class="empty-state-icon">&#9888;</div>
+  <div class="empty-state-title">Nenhum l&#237;der encontrado</div>
+  <div>O filtro selecionado n&#227;o encontrou resultados.</div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main-content">
+
+  <!-- SUMMARY -->
+  <div class="summary-grid" id="summary-grid">
+    <div class="summary-card green">
+      <div class="card-label">L&#237;deres 100%</div>
+      <div class="card-value" id="sum-completos">5</div>
+      <div class="card-sub" id="sum-completos-sub">de 38 l&#237;deres com todos os feedbacks</div>
+    </div>
+    <div class="summary-card red">
+      <div class="card-label">L&#237;deres sem feedback</div>
+      <div class="card-value" id="sum-sem">15</div>
+      <div class="card-sub">nenhum liderado contemplado</div>
+    </div>
+    <div class="summary-card yellow">
+      <div class="card-label">L&#237;deres parciais</div>
+      <div class="card-value" id="sum-parciais">18</div>
+      <div class="card-sub">pelo menos 1 liderado sem feedback</div>
+    </div>
+    <div class="summary-card blue">
+      <div class="card-label">Cobertura geral</div>
+      <div class="card-value" id="sum-cobertura">32%</div>
+      <div class="card-sub" id="sum-sub">103 de 326 liderados contemplados</div>
+    </div>
+  </div>
+
+  <!-- TABLE HEADER -->
+  <div class="table-header" id="table-header">
+    <div class="th">L&#237;der</div>
+    <div class="th">Cobertura</div>
+    <div class="th">Total time</div>
+    <div class="th">Sem feedback</div>
+    <div class="th">Status</div>
+  </div>
+
+  <!-- LEADERS -->
+  <div class="leaders-grid" id="leaders-grid">
+
+    <div class="leader-card" data-leader="aline alves de oliveira" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Aline Alves de Oliveira</div>
+          <div class="leader-role">Supervisor de Cs/cx · Cs</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:7%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">7%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">15</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">14</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Jean Manoel Schott <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Adna Kely Maria dos Santos Sales</span><span class="pill pending">Ana Beatriz Silva Vaz Curado de Aguiar</span><span class="pill pending">Fernanda Maria de Barros</span><span class="pill pending">Gabriele Nayara da Luz</span><span class="pill pending">Jeniffer Barbosa de Lima</span><span class="pill pending">Joshua Otavio Silva Rufino</span><span class="pill pending">Maria Eduarda Barbosa de Lima</span><span class="pill pending">Maria Julia Crasto Guimaraes de Barros</span><span class="pill pending">Maria Renata Nogueira de Melo Ribeiro da Silva</span><span class="pill pending">Pedro Augusto de Andrade Cerquinho</span><span class="pill pending">Rayane Karolyne de Medeiros Santos</span><span class="pill pending">Samuel Queiroz da Silva</span><span class="pill pending">Tais Cabral Correia</span><span class="pill pending">Williane Soares Lira de Melo</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="anderson frederick bernardes de oliveira" data-bp="renata_paula" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Anderson Frederick Bernardes De Oliveira</div>
+          <div class="leader-role">Gerente de Projetos · Nix</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">3</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">3</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Gustavo da Silva Morais</span><span class="pill pending">Pablo Renan Rodrigues Nogueira</span><span class="pill pending">Pedro Marcio Felix Cristovam</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="anderson luis lima da silva" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Anderson Luis Lima da Silva</div>
+          <div class="leader-role">Diretor Financeiro · Diretoria Financeira</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">12</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">12</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Bruna Mirella de Sa Agra</span><span class="pill pending">Fausto Santos da Silva</span><span class="pill pending">Jamerson Camilo Cruz de Souza</span><span class="pill pending">Luciana Miranda Cavalcanti</span><span class="pill pending">Maria Fabiana Holanda Cavalcanti</span><span class="pill pending">Mavio Jose Silva de Oliveira</span><span class="pill pending">Mozart Dantas Costa Mendes</span><span class="pill pending">Rebeca de Lima Barboza</span><span class="pill pending">Taciana Farias Ferreira de Lima</span><span class="pill pending">Valquiria Maria Ramos</span><span class="pill pending">Victor Fernando Soares de Barros</span><span class="pill pending">Walquiria Santos Correia</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="arthur alexandre fracalossi carvalho" data-bp="caina" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Arthur Alexandre Fracalossi Carvalho</div>
+          <div class="leader-role">Analista Comercial Iii · Pré-vendas</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:17%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">17%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">18</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">15</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Arthur Magno Caccuri <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Caio Monteiro Machado <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Mayara Soares dos Santos Lima <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Alexandre Alves Vieira da Silva</span><span class="pill pending">Aline de Jesus Silva</span><span class="pill pending">Emerson Alexandre Francisco da Silva</span><span class="pill pending">Erick Meirelles Nascimento da Silva</span><span class="pill pending">Fernando Gomes Oliveira Rodrigues</span><span class="pill pending">Gabriela Melo Rocha</span><span class="pill pending">Gabrielly de Moura Caumo</span><span class="pill pending">Gilvan Caparroz de Freitas</span><span class="pill pending">Jader Jose de Oliveira Goncalves</span><span class="pill pending">Joao Manoel Fernandes Neves</span><span class="pill pending">Lenira Brites Gomes</span><span class="pill pending">Leticia Pimentel Martinelli</span><span class="pill pending">Lucas da Silva Ribeiro</span><span class="pill pending">Matheus Felizola Gomes de Souza</span><span class="pill pending">Victor Hugo Barros Araujo</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="camila alves da silva" data-bp="renata_paula" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Camila Alves Da Silva</div>
+          <div class="leader-role">Líder Técnico de Pesquisa & Produto · Pesquisa & Produto</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="progress-pct" style="color:var(--green)">100%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">4</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value">0</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge ok"><span class="status-dot"></span>Completo</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Gabriela Nely Moraes Ferreira <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Halef Victor Mendes <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Luiz Eduardo Azevedo da Silva <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Stefany Barbosa de Lima Santana Olescuck <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="empty-note">Todos os liderados foram contemplados.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="danilo jorge da silva novais" data-bp="caina" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Danilo Jorge da Silva Novais</div>
+          <div class="leader-role">Analista de Growth Sr · Marketing - Digital</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:50%;background:var(--yellow)"></div></div>
+            <div class="progress-pct" style="color:var(--yellow)">50%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">6</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">3</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Joao Victor Vasconcelos do Espirito Santo <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Thiago Martins Bezerra <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Vanessa Rodrigues Felicio <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Arthur Alexandre Fracalossi Carvalho</span><span class="pill pending">Jackson Jose da Silva</span><span class="pill pending">Mickaele Oliveira dos Santos</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="deoclecio tadeu jorge de campos filho" data-bp="caina" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Deoclecio Tadeu Jorge de Campos Filho</div>
+          <div class="leader-role">Supervisor de Conteúdo · Diretoria Marketing</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">6</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">6</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Igor Matheus Guarana Pereira</span><span class="pill pending">Jade Alencar Rodrigues</span><span class="pill pending">Luis Bispo de Andrade</span><span class="pill pending">Manuela Bulhoes de Godoy</span><span class="pill pending">Ricardo Pereira da Silva</span><span class="pill pending">Vinicius Matheus da Silva Santos</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="elza maria eluana da silva dias" data-bp="renata_paula" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Elza Maria Eluana Da Silva Dias</div>
+          <div class="leader-role">Supervisor (a) de Dp · Diretoria Gente & Cultura</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="progress-pct" style="color:var(--green)">100%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">5</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value">0</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge ok"><span class="status-dot"></span>Completo</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Amanda Maria de Melo Dornelas <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Carla Maria Barbosa Tenorio Pinto <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Elizabeth Luiza do Vale <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Evelyn Eugenia da Silva Lemos <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Tatiane Ednauria Batista da Silva Brandao <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="empty-note">Todos os liderados foram contemplados.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="enock de oliveira e silva neto" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Enock De Oliveira E Silva Neto</div>
+          <div class="leader-role">Supervisor de Suporte · Suporte</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:29%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">29%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">14</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">10</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Joao Paulo da Silva Lacerda <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Luiz Victor Trovao e Silva <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Marcelo Menezes Cavalcanti <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Thiago Henrique Ferreira da Luz <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Alysson Ygor Cavalcanti Brasileiro</span><span class="pill pending">Brunna Karolyne Almeida Dias</span><span class="pill pending">Derek Adrian Almeida de Assis</span><span class="pill pending">Edna de Lima da Silva</span><span class="pill pending">Eduardo Henrique Lobo de Morais</span><span class="pill pending">Gabrielle Louise Pinheiro Rodrigues Talmon de Oliveira</span><span class="pill pending">Hillary Gabrielly Borges de Lima Silva</span><span class="pill pending">Kelly Priscilla de Siqueira Melo</span><span class="pill pending">Wennyo Gustavo da Silva Pontes</span><span class="pill pending">Yasmin Gomes Brasil</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="felipe ayres lins" data-bp="renata_paula" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Felipe Ayres Lins</div>
+          <div class="leader-role">Gerente de Projetos · Dev - Time Leandro</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:67%;background:var(--yellow)"></div></div>
+            <div class="progress-pct" style="color:var(--yellow)">67%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">6</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">2</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Eduardo Faria Gobatti <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Fabio Francisco da Silva <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Marcelo Luiz da Silva <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Vinicius Barbosa dos Santos <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Alex Eudes de Oliveira Silva</span><span class="pill pending">Daniel Gouveia Barbosa</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="flavio simao de lima" data-bp="caina" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Flavio Simao De Lima</div>
+          <div class="leader-role">Gerente de Vendas Regional · Regional Rj</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="progress-pct" style="color:var(--green)">100%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">7</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value">0</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge ok"><span class="status-dot"></span>Completo</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Helbert Fernando Leme <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Lucas Cardoso Tico <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Marcio Hunemeier Corbellini <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Marcos Willyan Padilha dos Santos <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Marivaldo Costa do Vale <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Reginaldo Vasseur <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Tiago de Oliveira Fiorelli <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="empty-note">Todos os liderados foram contemplados.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="gabriel fidelis gonzaga dos santos" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Gabriel Fidelis Gonzaga Dos Santos</div>
+          <div class="leader-role">Supervisor(a) de Enablement · Cx</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">4</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">4</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Eltton Lucas de Souza Pereira</span><span class="pill pending">Izabela Cristina Barboza Campos</span><span class="pill pending">Mateus Moises de Santana Silva</span><span class="pill pending">Mirely Silva de Melo Oliveira</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="gabriela maria araujo peres" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Gabriela Maria Araujo Peres</div>
+          <div class="leader-role">Supervisor de Suporte · Suporte - Time Gabriela</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:33%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">33%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">9</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">6</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Antonio Eduardo Modesto <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Elivelton Pereira dos Santos <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Michelle Lira Franco <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Clara Avelina da Silva</span><span class="pill pending">Deborah Rayane de Lima Alves</span><span class="pill pending">Geraldo Jose de Barros Junior</span><span class="pill pending">Leonardo Leonidas Mendonca Soares</span><span class="pill pending">Marcilio de Queiroz Pinto</span><span class="pill pending">Sophia Helena de Franca Sales</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="gabrielle vitoria fernandes tavares" data-bp="caina" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Gabrielle Vitoria Fernandes Tavares</div>
+          <div class="leader-role">Supervisor (a) de Eventos · Diretoria Marketing</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="progress-pct" style="color:var(--green)">100%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">4</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value">0</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge ok"><span class="status-dot"></span>Completo</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Ana Luiza da Cruz Zeza <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Jessica Cristina da Silva Araujo <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Roberta Santina de Souza <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Thamyres Eliza Sant Ana de Andrade <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="empty-note">Todos os liderados foram contemplados.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="gilmar oliveira e silva junior" data-bp="renata_paula" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Gilmar Oliveira E Silva Junior</div>
+          <div class="leader-role">Tech Lider · Dev - Time Leandro</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">4</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">4</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Hugo Vynicius Queiroz Agostinho</span><span class="pill pending">Lohhan Guilherme Bibiano da Silva</span><span class="pill pending">Marcelo Marques Alves Filho</span><span class="pill pending">Vivian Cordeiro de Oliveira Nascimento</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="gustavo carmellino" data-bp="renata_paula" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Gustavo Carmellino</div>
+          <div class="leader-role">Socio · Diretoria Tecnologia</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">7</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">7</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Anderson Frederick Bernardes de Oliveira</span><span class="pill pending">Felipe Ayres Lins</span><span class="pill pending">Gilmar Oliveira e Silva Junior</span><span class="pill pending">Jefte de Assumpcao Macedo</span><span class="pill pending">Joao Henrique da Silva</span><span class="pill pending">Jonialysson Bezerra de Oliveira</span><span class="pill pending">Leandro dos Santos Machado</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="henrique carmellino filho" data-bp="caina" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Henrique Carmellino Filho</div>
+          <div class="leader-role">Socio · Diretoria Geral</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">12</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">12</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Adriano Ferreira</span><span class="pill pending">Anderson Luis Lima da Silva</span><span class="pill pending">Danilo Jorge da Silva Novais</span><span class="pill pending">Deoclecio Tadeu Jorge de Campos Filho</span><span class="pill pending">Gabrielle Vitoria Fernandes Tavares</span><span class="pill pending">Giovanna Novaes Cruz</span><span class="pill pending">Isabella Covre</span><span class="pill pending">Iverson Dantas Martim</span><span class="pill pending">Levi Guimaraes Cardoso</span><span class="pill pending">Rafael Nascimento Ribeiro</span><span class="pill pending">Renata Oliveira de Moura Duarte</span><span class="pill pending">Rodrigo Jose Anderson do Nascimento Goncalves da Silva</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="jefte de assumpcao macedo" data-bp="renata_paula" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Jefte de Assumpcao Macedo</div>
+          <div class="leader-role">Gerente de P&p · Pesquisa & Produto</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:90%;background:var(--yellow)"></div></div>
+            <div class="progress-pct" style="color:var(--yellow)">90%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">10</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">1</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Alessandro Rodrigues de Oliveira Lima <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Gustavo Antonio Ferreira do Nascimento <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Jessica Caroline Goncalves de Oliveira <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Mariana de Morais Pinto Santos <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Mariana Queiroz de Castro Lins <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Mario Gomes Barbosa <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Matheus Cavalcanti Leite Canziani <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Renato Marques de Oliveira <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Thiago Jose da Silva <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Camila Alves da Silva</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="joao henrique da silva" data-bp="renata_paula" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Joao Henrique Da Silva</div>
+          <div class="leader-role">Líder Tecnico de Infraestrutura de Ti · Diretoria Tecnologia</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">4</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">4</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Edezio Jose de Santana Barros</span><span class="pill pending">Jader Bezerra de Souza</span><span class="pill pending">Jovelino Gomes da Silva Junior</span><span class="pill pending">Lucas Ribeiro Penhoela</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="jonialysson bezerra de oliveira" data-bp="renata_paula" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Jonialysson Bezerra De Oliveira</div>
+          <div class="leader-role">Gerente de Projetos · Diretoria Tecnologia</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">12</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">12</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Bruno Jose Reis Vieira</span><span class="pill pending">Danilo Augusto Alves da Rocha</span><span class="pill pending">Erick Goldberg Bezerra</span><span class="pill pending">Estyvison Linhares de Albuquerque</span><span class="pill pending">Gabriel Lins Ferreira</span><span class="pill pending">Igor Samuel Cesar da Silva</span><span class="pill pending">Jose Silvio Henrique Barros de Souza</span><span class="pill pending">Jose Vanildo Cavalcante Machado Filho</span><span class="pill pending">Luan Albuquerque Candeia</span><span class="pill pending">Levi de Almeida Portugal</span><span class="pill pending">Lucas Gabriel Oliveira da Silva</span><span class="pill pending">Pedro Augusto Rodrigues de Melo</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="jorge do nascimento junior" data-bp="caina" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Jorge Do Nascimento Junior</div>
+          <div class="leader-role">Gerente de Vendas Senior · Regional Sp</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:58%;background:var(--yellow)"></div></div>
+            <div class="progress-pct" style="color:var(--yellow)">58%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">12</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">5</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Alexandre Pereira Monnerat <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Diego Costa dos Santos <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Fabricio Bezerra da Silva <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Gabriel Rodrigues Vasseur <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Gustavo Rodrigues dos Santos <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Ramon Furtado de Oliveira <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Thiago Pereira da Silva <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Andre Cesar Lopes</span><span class="pill pending">Gabriel Honorio da Silva</span><span class="pill pending">Lincoln Henry Augusto</span><span class="pill pending">Roberval Bruno dos Santos</span><span class="pill pending">Wellington Fernando Soares</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="jose edmilson da silva" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Jose Edmilson Da Silva</div>
+          <div class="leader-role">Supervisor de Cs/cx · Suporte</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:82%;background:var(--yellow)"></div></div>
+            <div class="progress-pct" style="color:var(--yellow)">82%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">11</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">2</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Caio Vinicius Ferreira da Silva Firmino <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Carlos Alberto Rodrigues de Lima Filho <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Daniel do Monte Almeida <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Edson de Oliveira Campitelli Junior <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Eduardo Henrique da Silva <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Isabel Cristina Berto de Souza Faustino <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Jamilly Mirelly Paulino Eloi <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Rafael Marques do Monte <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Thiago Cardozo da Conceicao <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Bruna Stephanie da Silva</span><span class="pill pending">Diogo Henrique Rodrigues da Silva</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="leandro dos santos machado" data-bp="renata_paula" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Leandro dos Santos Machado</div>
+          <div class="leader-role">Gerente de Projetos · Diretoria Tecnologia</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:9%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">9%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">11</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">10</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Vinicius Lima Ribeiro <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Andre Cristovao da Silva</span><span class="pill pending">Andrey Anderson de Lima Souza</span><span class="pill pending">Asafe da Fonseca Alves</span><span class="pill pending">Bruno Oliveira Brandão de Lima</span><span class="pill pending">Daylane Maria Carvalho do Nascimento</span><span class="pill pending">Emmanuel Guerra Maranhão</span><span class="pill pending">Hatus Galvao Cavalcanti Ferreira</span><span class="pill pending">Luana Gabriella Silva Moreira</span><span class="pill pending">Vinicius Menezes Canepa</span><span class="pill pending">Yago Alexander Souza Oliveira</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="leonardo de oliveira gama" data-bp="caina" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Leonardo De Oliveira Gama</div>
+          <div class="leader-role">Líder de Vendas Interna · Vendas Internas</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:33%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">33%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">12</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">8</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Beatriz Silva Alves <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Cauana Cabral Bochniak <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Clayton Furbino dos Santos <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Gabriel Batista Barros <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Alexandre Maciel de Paiva</span><span class="pill pending">Ana Julia Silva Vaz Curado de Aguiar</span><span class="pill pending">Andre Tavares de Melo</span><span class="pill pending">Edna Aparecida dos Santos Mota</span><span class="pill pending">Ladislau Pedro de Oliveira Junior</span><span class="pill pending">Paulo Eduardo de Morais Santos</span><span class="pill pending">Tainara Juliana Quirino Santos</span><span class="pill pending">Wagner Sampaio de Souza</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="luana dos santos silva" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Luana Dos Santos Silva</div>
+          <div class="leader-role">Coordenador de Sucesso do Cliente · Cs</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:35%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">35%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">20</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">13</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Aline Alves de Oliveira <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Francielly Silva de Oliveira <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Gilza Gabriela Bezerra da Silva Farias <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Pablo Moacir Gomes da Silva <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Pollyanne da Silva Ramos <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Simao Pedro de Souza <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Thais Ramos da Silva Xavier <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Adriana Carolina Leite Figueiroa</span><span class="pill pending">Carlos Andre Vasconcelos da Silva</span><span class="pill pending">Daniel Antonio de Oliveira Filho</span><span class="pill pending">Danilo Ribeiro de França</span><span class="pill pending">Erik Carlos Menezes e Silva</span><span class="pill pending">Gabriel Romao dos Santos</span><span class="pill pending">Guilherme Fernandes de Oliveira</span><span class="pill pending">Jhenifer Kelly Monteiro de Santana</span><span class="pill pending">Lucas Rodrigues Oliveira da Silva</span><span class="pill pending">Maria Eduarda Gomes Leitao Nunes</span><span class="pill pending">Thyago Porto Pereira de Melo</span><span class="pill pending">Wanessa Waleria da Paz Alves Barbosa</span><span class="pill pending">Yann Xavier</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="marcos flavio de paiva reis" data-bp="caina" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Marcos Flavio De Paiva Reis</div>
+          <div class="leader-role">Gerente de Vendas Senior · Diretoria Comercial</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="progress-pct" style="color:var(--green)">100%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">7</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value">0</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge ok"><span class="status-dot"></span>Completo</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Carlos Alberto Goncalves Lima Junior <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Gabriel Labanca Santos <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Jefferson de Almeida Souza <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Luiz Augusto Silveira Cordeiro <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Rafael Bonsolio de Azevedo <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Vinicius Soares Freitas <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Willian Ventura Hoffmonn <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="empty-note">Todos os liderados foram contemplados.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="nathalia vasconcelos trajano da silva" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Nathalia Vasconcelos Trajano Da Silva</div>
+          <div class="leader-role">Supervisor de Suporte · Suporte</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:55%;background:var(--yellow)"></div></div>
+            <div class="progress-pct" style="color:var(--yellow)">55%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">11</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">5</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Augusto Bezerra Moraes <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Herven Felipe Cavalcanti Lira <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Joao Victor Barbosa de Souza <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Phelipe Lira Simoes <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Rafael Albuquerque Magalhaes <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Thais da Fonseca Ribeiro <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Cristiangile Soares da Silva</span><span class="pill pending">Douglas Santos Cavalcanti</span><span class="pill pending">Jackson Erlan Ramos da Silva</span><span class="pill pending">Marcello Eugenio Marinho Lins Silva</span><span class="pill pending">Marcelo Francisco Matos</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="paula mikaelly pimentel silva vieira" data-bp="renata_paula" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Paula Mikaelly Pimentel Silva Vieira</div>
+          <div class="leader-role">Supervisor (a) de Rh · Diretoria Gente & Cultura</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">3</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">3</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Kamile Vitoria Santiago Maciel da Silva</span><span class="pill pending">Nicolly Taina Gomes Ribeiro</span><span class="pill pending">Whemilliann da Cunha Pereira</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="publio maswell matos cavalcanti" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Publio Maswell Matos Cavalcanti</div>
+          <div class="leader-role">Coordenador (a) de Suporte · Cx</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:60%;background:var(--yellow)"></div></div>
+            <div class="progress-pct" style="color:var(--yellow)">60%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">5</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">2</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Gabriela Maria Araujo Peres <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Jose Edmilson da Silva <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Nathalia Vasconcelos Trajano da Silva <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Enock de Oliveira e Silva Neto</span><span class="pill pending">Walisson Deyvson Barbosa Pernambuco</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="rafael nascimento ribeiro" data-bp="caina" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Rafael Nascimento Ribeiro</div>
+          <div class="leader-role">Diretor Comercial · Diretoria Comercial</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">6</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">6</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Flavio Simao de Lima</span><span class="pill pending">Jorge do Nascimento Junior</span><span class="pill pending">Leonardo de Oliveira Gama</span><span class="pill pending">Marcos Flavio de Paiva Reis</span><span class="pill pending">Thiago Souza Silva</span><span class="pill pending">Tomas Signorelli Navarro Lima</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="renata oliveira de moura duarte" data-bp="renata_paula" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Renata Oliveira De Moura Duarte</div>
+          <div class="leader-role">Diretora de Rh · Gente & Cultura</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:86%;background:var(--yellow)"></div></div>
+            <div class="progress-pct" style="color:var(--yellow)">86%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">7</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">1</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Caina Dias Goncalves <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Elza Maria Eluana da Silva Dias <span style="font-size:10px;color:var(--muted)">(Feedback + 1-1)</span></span><span class="pill done">Izabela de Vasconcelos Santos Alves Fernandes <span style="font-size:10px;color:var(--muted)">(1-1)</span></span><span class="pill done">Julia Campinas de Lima <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Kameron Roque Farias <span style="font-size:10px;color:var(--muted)">(Feedback + 1-1)</span></span><span class="pill done">Larissa das Neves Sobrinho de Melo <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Paula Mikaelly Pimentel Silva Vieira</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="rodrigo jose anderson do nascimento goncalves da silva" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Rodrigo Jose Anderson do Nascimento Goncalves da Silva</div>
+          <div class="leader-role">Gerente de Cs/cx · Diretoria Operações</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:14%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">14%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">7</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">6</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">William Silva Ferreira <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Gabriel Fidelis Gonzaga dos Santos</span><span class="pill pending">Irla Barbosa de Miranda</span><span class="pill pending">Luana dos Santos Silva</span><span class="pill pending">Publio Maswell Matos Cavalcanti</span><span class="pill pending">Thayna Kelen Brasileiro Almeida</span><span class="pill pending">Wesley Thiago Leandro Campos</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="thiago souza silva" data-bp="caina" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Thiago Souza Silva</div>
+          <div class="leader-role">Gerente de Vendas Regional · Diretoria Comercial</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:14%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">14%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">7</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">6</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Gabriel Ponciano Filizola Guimaraes <span style="font-size:10px;color:var(--muted)">(1-1)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Alexander Islan Nascimento Ferreira</span><span class="pill pending">Eliosmar Henrique de Jesus Santos</span><span class="pill pending">Igor Alves de Carvalho Pena</span><span class="pill pending">Ivo Victor Grandi Lopes dos Santos</span><span class="pill pending">Matheus Policarpo Souza Silva</span><span class="pill pending">Rennan Maciel do Nascimento</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="tomas signorelli navarro lima" data-bp="caina" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Tomas Signorelli Navarro Lima</div>
+          <div class="leader-role">Consultor (a) de Vendas Internas I · Vendas Internas</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">10</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">10</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Alexandre Saturnino da Silva</span><span class="pill pending">Ana Carolina Faustino Ferreira</span><span class="pill pending">Barbara Silva de Lima</span><span class="pill pending">Gabriela Sargo Luis de Oliveira</span><span class="pill pending">Jose Fredson do Nascimento Silva</span><span class="pill pending">Jose Lucas Mendes Pereira</span><span class="pill pending">Lucas Antonio Zeferino Araujo</span><span class="pill pending">Marcia Fernanda Soares</span><span class="pill pending">Pedro Henrique de Sousa Rocha</span><span class="pill pending">Tiago Alves de Oliveira</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="victor fernando soares de barros" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Victor Fernando Soares de Barros</div>
+          <div class="leader-role">Gerente de Controladoria · Diretoria Financeira</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">1</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">1</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Cicero Jose da Silva</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="walisson deyvson barbosa pernambuco" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Walisson Deyvson Barbosa Pernambuco</div>
+          <div class="leader-role">Supervisor de Suporte · Suporte</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:67%;background:var(--yellow)"></div></div>
+            <div class="progress-pct" style="color:var(--yellow)">67%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">6</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">2</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge parcial"><span class="status-dot"></span>Parcial</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="pill-list"><span class="pill done">Allan Viana de Carvalho <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Marllon Silva Laurindo <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Pedro Henrique Braga Soares de Albuquerque <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span><span class="pill done">Rafaella Constantino Sena Silva <span style="font-size:10px;color:var(--muted)">(Feedback)</span></span></div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Aline Diana Louzado</span><span class="pill pending">Amanda Dal Colletto Ronchi</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="leader-card" data-leader="walquiria santos correia" data-bp="izabela" onclick="toggle(this)">
+      <div class="leader-header">
+        <div>
+          <div class="leader-name">Walquiria Santos Correia</div>
+          <div class="leader-role">Supervisor(a) Administrativo Financeiro · Administrativo/financeiro Sp</div>
+        </div>
+        <div class="progress-col">
+          <div class="col-label">Cobertura</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div>
+            <div class="progress-pct" style="color:var(--red)">0%</div>
+          </div>
+        </div>
+        <div class="col-total"><div class="col-label">Total time</div><div class="col-value">27</div></div>
+        <div class="col-sem"><div class="col-label">Sem feedback</div><div class="col-value" style="color:var(--red)">27</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="status-badge critico"><span class="status-dot"></span>Crítico</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="leader-body">
+        <div class="body-grid">
+          <div>
+            <div class="body-section-label done">&#10003; Receberam feedback</div>
+            <div class="empty-note">Nenhum liderado recebeu feedback.</div>
+          </div>
+          <div>
+            <div class="body-section-label pending">&#10005; N&#227;o receberam feedback</div>
+            <div class="pill-list"><span class="pill pending">Adriely Alves da Rocha</span><span class="pill pending">Ana Paula da Silva Castro</span><span class="pill pending">Brenna Bune Araujo</span><span class="pill pending">Claudia Valeria Queiroz da Silva</span><span class="pill pending">Damiana Machado Ferreira</span><span class="pill pending">Debora Maria da Silva Barros Caetano</span><span class="pill pending">Diego Lopes Caldeira</span><span class="pill pending">Edvan Salazar Pequeno</span><span class="pill pending">Elisabeth Melo Martinelli</span><span class="pill pending">Fernanda Izidorio da Silva</span><span class="pill pending">Francineuda Oliveira Melo Pereira</span><span class="pill pending">Iara Jane Aquino Carneiro Botelho</span><span class="pill pending">Isabel Christina de Souza Muniz Mesquita</span><span class="pill pending">Jessica Carla Pereira Gomes dos Santos</span><span class="pill pending">Jose Edvaldo da Silva</span><span class="pill pending">Kaua Leal da Silva</span><span class="pill pending">Michele Cristina Fernandes</span><span class="pill pending">Monica da Costa Venceslau</span><span class="pill pending">Marcelo Jose Amorim da Silva</span><span class="pill pending">Maria Anita Maciel Barroso</span><span class="pill pending">Nivea Maria da Silva</span><span class="pill pending">Patricia Maria da Silva</span><span class="pill pending">Raissa Lina da Silva</span><span class="pill pending">Raissa Vitoria Silva</span><span class="pill pending">Thayanne Marques da Rocha Batista de Castro</span><span class="pill pending">Thamara Silva Santana Passos</span><span class="pill pending">Wanderley Levy Fernandes</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /leaders-grid -->
+
+</div><!-- /main -->
+
+<footer class="footer">
+  <div>
+    <span class="foot-badge">SIEG</span>
+    <span class="foot-text">Gente &amp; Cultura &middot; Feedback &amp; 1-1 &middot; Abril 2026</span>
+  </div>
+  <span class="foot-text">Cobertura de feedback por l&#237;der</span>
+</footer>
+
+<script>
+(function applyUrlFilter() {
+  var p      = new URLSearchParams(window.location.search);
+  var bp     = (p.get('bp') || 'geral').toLowerCase().trim();
+  var leader = (p.get('leader') || '').toLowerCase().trim();
+  var ctxBadge = document.getElementById('ctx-badge');
+
+  var BP_LABELS = {
+    'caina':        'Cainã · Comercial & Marketing',
+    'izabela':      'Izabela · CS, Suporte & Financeiro',
+    'renata_paula': 'Renata / Paula · Tech & Produto'
+  };
+
+  var allCards = document.querySelectorAll('.leader-card');
+  var summaryGrid = document.getElementById('summary-grid');
+  var tableHeader = document.getElementById('table-header');
+  var leadersGrid = document.getElementById('leaders-grid');
+  var emptyState  = document.getElementById('empty-state');
+
+  function updateSummary(visibleCards) {
+    var completos = 0, semFb = 0, parciais = 0, totalCov = 0, totalTeam = 0;
+    visibleCards.forEach(function(card) {
+      var pct    = parseInt(card.querySelector('.progress-pct').textContent);
+      var total  = parseInt(card.querySelector('.col-total .col-value').textContent);
+      var sem    = parseInt(card.querySelector('.col-sem .col-value').textContent);
+      totalCov  += (total - sem);
+      totalTeam += total;
+      if (pct === 100) completos++;
+      else if (pct === 0) semFb++;
+      else parciais++;
+    });
+    var pctGeral = totalTeam ? Math.round(totalCov / totalTeam * 100) : 0;
+    document.getElementById('sum-completos').textContent = completos;
+    document.getElementById('sum-sem').textContent = semFb;
+    document.getElementById('sum-parciais').textContent = parciais;
+    document.getElementById('sum-cobertura').textContent = pctGeral + '%';
+    document.getElementById('sum-sub').textContent = totalCov + ' de ' + totalTeam + ' liderados contemplados';
+    var sub2 = document.getElementById('sum-completos-sub');
+    if (sub2) sub2.textContent = 'de ' + visibleCards.length + ' líderes com todos os feedbacks';
+  }
+
+  // Filter by specific leader
+  if (leader) {
+    var matchedCard = null;
+    allCards.forEach(function(card) {
+      var cardLeader = (card.dataset.leader || '').toLowerCase();
+      var firstToken = leader.split(' ')[0];
+      var matches = cardLeader.includes(leader) || cardLeader.includes(firstToken);
+      if (matches) {
+        card.style.display = '';
+        matchedCard = card;
+        card.classList.add('open');
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    if (summaryGrid) summaryGrid.style.display = 'none';
+    if (tableHeader) tableHeader.style.display = 'none';
+    if (matchedCard) {
+      var name = matchedCard.querySelector('.leader-name').textContent;
+      if (ctxBadge) { ctxBadge.textContent = '👤 ' + name; ctxBadge.classList.add('visible'); }
+    } else {
+      if (emptyState) emptyState.style.display = 'block';
+      if (leadersGrid) leadersGrid.style.display = 'none';
+    }
+    return;
+  }
+
+  // Filter by BP
+  if (bp !== 'geral') {
+    var visible = [];
+    allCards.forEach(function(card) {
+      if ((card.dataset.bp || '') === bp) {
+        card.style.display = '';
+        visible.push(card);
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    if (ctxBadge && BP_LABELS[bp]) {
+      ctxBadge.textContent = '👤 ' + BP_LABELS[bp];
+      ctxBadge.classList.add('visible');
+    }
+    updateSummary(visible);
+    return;
+  }
+
+  // Show all
+  var all = Array.from(allCards);
+  all.forEach(function(c) { c.style.display = ''; });
+  updateSummary(all);
+})();
+
+function toggle(headerEl) {
+  var card = headerEl.closest('.leader-card');
+  card.classList.toggle('open');
+}
+</script>
+</body>

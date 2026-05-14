@@ -1,0 +1,1 @@
+- [Carteira BP - Áreas e Líderes](project_bp_carteira.md) — Áreas (Comercial, Vendas Int/Ext, Pré-Vendas, Marketing) e ids dos 18 líderes atendidos por Cainã como BP

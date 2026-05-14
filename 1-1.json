@@ -1,0 +1,4288 @@
+[
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 373139,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 273047,
+    "nome_usuario_remetente": "Renata Oliveira De Moura Duarte",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 273047,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "07/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 302801,
+    "nome_usuario_convidado": "Izabela De Vasconcelos Santos Alves Fernandes",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento das prioridades",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Mapeamento dos Talentos Chaves - conforme modelo no chatSimulação da avaliação de desempenho do 1º Tri para calculo de PLRPlanejamento - entender a aceitação de Fausto e a liderança de Bruna",
+            "status": "Ativo",
+            "id_nota": 677984
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Seleção de Suporte - previsão de  29 a 35 vagas ",
+            "status": "Ativo",
+            "id_nota": 677986
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 373141,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 273047,
+    "nome_usuario_remetente": "Renata Oliveira De Moura Duarte",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 273047,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "06/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 487268,
+    "nome_usuario_convidado": "Kameron Roque Farias",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Migração do Education Journey para Sieg Academy - cancelamento da Education Journey em maio/26",
+            "status": "Ativo",
+            "id_nota": 677998
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Rampagem/ ROI - já temos o números iniciais. Validar próxima semana e executar em maio com a entrada do time comercial.Verificar Playbook Comercial e alinhar com GabrielValidar novos KPIsStatus do Treinamento ObrigatóriosImportante1º Tri alinhamento, estruturação - fechamos dentro do esperadoAinda mais com entregas que não estavam previstas como Pesquisa Lugares Incríveis, GPTW, Alceu ValençaMas agora é hora de se desafiar mais com novos projetos e execução ",
+            "status": "Ativo",
+            "id_nota": 678002
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 373148,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 273047,
+    "nome_usuario_remetente": "Renata Oliveira De Moura Duarte",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 273047,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "06/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 299802,
+    "nome_usuario_convidado": "Elza Maria Eluana Da Silva Dias",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Curso de Gestão da Mudança - Renata na SIEG AcademyTermo de uso do cartão de estacionamentoProjeto ISO 9001 no modelo Gestão da Mudança",
+            "status": "Ativo",
+            "id_nota": 678008
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Reforçando a autonomia e a liderança que precisa exercer no time todo de RH, em todos os aspectos e em especial no tema da ISO",
+            "status": "Ativo",
+            "id_nota": 678012
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376128,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278270,
+    "nome_usuario_remetente": "Arthur Alexandre Fracalossi Carvalho",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278337,
+    "nome_gestor_remetente": "Danilo Jorge da Silva Novais",
+    "data": "14/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 351630,
+    "nome_usuario_convidado": "Jader Bezerra De Souza",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento Semanal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 309417,
+        "talking_point": "Resultados",
+        "notas": [
+          {
+            "nota": "16 AGENDAS ATUAIS.Meta de semana, 20 agendas. 4 por dia.Chegando ao total de 36 agendas.",
+            "status": "Ativo",
+            "id_nota": 682356
+          }
+        ]
+      },
+      {
+        "id_talking_point": 309427,
+        "talking_point": "BANCO DE HORAS",
+        "notas": [
+          {
+            "nota": "Jader tem 1 hora positivaVai trabalhar dia 20/04",
+            "status": "Ativo",
+            "id_nota": 682378
+          }
+        ]
+      },
+      {
+        "id_talking_point": 309429,
+        "talking_point": "Home Office",
+        "notas": [
+          {
+            "nota": "Jader vai começar Fazer modelo Hibrido a partir de Maio.",
+            "status": "Ativo",
+            "id_nota": 682379
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376157,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278270,
+    "nome_usuario_remetente": "Arthur Alexandre Fracalossi Carvalho",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278270,
+    "nome_gestor_remetente": "Danilo Jorge da Silva Novais",
+    "data": "14/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 640938,
+    "nome_usuario_convidado": "Caio Monteiro Machado",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento Semanal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 309439,
+        "talking_point": "Resultado ",
+        "notas": [
+          {
+            "nota": "Meta desse mês é de 30 SQL.Atualmente com 4 SQL.Meta semanal é finanizar 19 agendas essa semana.Melhorias: alterar DDD para região norte e nordeste (71 até 77) + ddd 83Caio vai me passar 3 cidades estratégicas da Bahia para trabalhar essa semana. Continuar trabalhando com perdidos reagendar Noshow.Verificar se GOTO da para fazer o Download da ligação.",
+            "status": "Ativo",
+            "id_nota": 682429
+          }
+        ]
+      },
+      {
+        "id_talking_point": 309441,
+        "talking_point": "Banco de horas",
+        "notas": [
+          {
+            "nota": "Caio tem 42 minutos positivos, ficará de banco de horas na segunda dia 20/04.11 dias pagando 40m a mais.",
+            "status": "Ativo",
+            "id_nota": 682398
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376192,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278270,
+    "nome_usuario_remetente": "Arthur Alexandre Fracalossi Carvalho",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278270,
+    "nome_gestor_remetente": "Danilo Jorge da Silva Novais",
+    "data": "14/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 614190,
+    "nome_usuario_convidado": "Mayara Soares Dos Santos Lima",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento Semanal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 309459,
+        "talking_point": "Resultado",
+        "notas": [
+          {
+            "nota": "META 60 SQLAtualmente tem está com 16.Meta semanal, chegar em 35 até o dia 17/04Meta por dia são 4/5 agendas por dia.",
+            "status": "Ativo",
+            "id_nota": 682452
+          }
+        ]
+      },
+      {
+        "id_talking_point": 309461,
+        "talking_point": "Banco de Horas",
+        "notas": [
+          {
+            "nota": "Mayara está devendo 3:47 minutos e vai trabalhar no dia 20/04.Pagar 30m por dias, tendo em vista que ela não consegue entrar as 8h todos os dias.Então ela vai compensar das 18h as 18:30h",
+            "status": "Ativo",
+            "id_nota": 682440
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376242,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278270,
+    "nome_usuario_remetente": "Arthur Alexandre Fracalossi Carvalho",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278270,
+    "nome_gestor_remetente": "Danilo Jorge da Silva Novais",
+    "data": "14/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 629515,
+    "nome_usuario_convidado": "Arthur Magno Caccuri",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento semanal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 309478,
+        "talking_point": "Banco de Horas",
+        "notas": [
+          {
+            "nota": "Está com 5 horas positivas, Não vai precisar fazer horas extras. Vai fazer cirurgia dia 17/04 e vai ficar de atestado posteriormente.",
+            "status": "Ativo",
+            "id_nota": 682513
+          }
+        ]
+      },
+      {
+        "id_talking_point": 309483,
+        "talking_point": "Resultado",
+        "notas": [
+          {
+            "nota": "META DE 45Está com 12Precisa finalizar essa semana com 26 agendas. 4 agendas por dia.Verificar região do RAFAEL BONSOLIO (Enviar email para as cidades estratégicas para ligação essa semana)",
+            "status": "Ativo",
+            "id_nota": 682516
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 381068,
+    "template": "Acordos",
+    "status_one_one": "Inativo",
+    "id_usuario_remetente": 278277,
+    "nome_usuario_remetente": "Camila Alves Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278277,
+    "nome_gestor_remetente": "Jefte de Assumpcao Macedo",
+    "data": "27/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 544688,
+    "nome_usuario_convidado": "Gabriela Nely Moraes Ferreira",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Rascunho",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 141438,
+        "talking_point": "O que foi alinhado neste 1:1 em relação a novas prioridades, fluxos ou rotinas?",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 381651,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278277,
+    "nome_usuario_remetente": "Camila Alves Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278277,
+    "nome_gestor_remetente": "Jefte de Assumpcao Macedo",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 544688,
+    "nome_usuario_convidado": "Gabriela Nely Moraes Ferreira",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Ser mais objetiva na escrita, com foco direto na execuçãoAdaptar a documentação ao perfil do time (devs tendem a não ler conteúdos longos)Buscar formatos mais rápidos de entendimento (ex: tópicos, critérios claros, exemplos)Explorar ferramentas de IA para ajudar na síntese e clareza",
+            "status": "Ativo",
+            "id_nota": 691340
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Capacidade analítica e atenção a detalhes",
+            "status": "Ativo",
+            "id_nota": 691359
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": [
+          {
+            "nota": "Documentações que geram dúvidas recorrentes no time (ex: QA precisando validar constantemente entendimento)Produzir conteúdo mais detalhado do que o necessário para o contexto atual do time",
+            "status": "Ativo",
+            "id_nota": 691358
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 381682,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278277,
+    "nome_usuario_remetente": "Camila Alves Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278277,
+    "nome_gestor_remetente": "Jefte de Assumpcao Macedo",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278397,
+    "nome_usuario_convidado": "Stefany Barbosa De Lima Santana Olescuck",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382514,
+    "template": "Acordos",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278277,
+    "nome_usuario_remetente": "Camila Alves Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278277,
+    "nome_gestor_remetente": "Jefte de Assumpcao Macedo",
+    "data": "29/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278328,
+    "nome_usuario_convidado": "Halef Victor Mendes",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 141438,
+        "talking_point": "O que foi alinhado neste 1:1 em relação a novas prioridades, fluxos ou rotinas?",
+        "notas": [
+          {
+            "nota": "Esse 1:1 foi focado em acompanhar a evolução dos pontos do mês anterior (\"Lições aprendidas, 25/03/2026), olhando o que saiu do plano e foi aplicado na prática.Halef mostrou avanços na relação com devs, maior colaboração para destravar demandas e melhor uso do contato com CS para gerar melhorias no produto. Também começou a estruturar melhor ideias com o time, saindo mais do conceitual para execução.Como ponto de atenção, ainda há dificuldade em lidar com mudanças de escopo sob pressão e múltiplas demandas.Reforcei que 1:1 não é só sobre feedback, mas sobre evolução contínua, e que o espaço é dele,  tanto para desenvolver como pessoa de produto quanto para contribuir com o amadurecimento do time.",
+            "status": "Ativo",
+            "id_nota": 692784
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 383469,
+    "template": "Acordos",
+    "status_one_one": "Inativo",
+    "id_usuario_remetente": 278277,
+    "nome_usuario_remetente": "Camila Alves Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278277,
+    "nome_gestor_remetente": "Jefte de Assumpcao Macedo",
+    "data": "30/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 443966,
+    "nome_usuario_convidado": "Luiz Eduardo Azevedo Da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 mensal",
+    "situacao": "Rascunho",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 141438,
+        "talking_point": "O que foi alinhado neste 1:1 em relação a novas prioridades, fluxos ou rotinas?",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 383518,
+    "template": "Engajamento",
+    "status_one_one": "Inativo",
+    "id_usuario_remetente": 278277,
+    "nome_usuario_remetente": "Camila Alves Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278277,
+    "nome_gestor_remetente": "Jefte de Assumpcao Macedo",
+    "data": "30/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 443966,
+    "nome_usuario_convidado": "Luiz Eduardo Azevedo Da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 mensal",
+    "situacao": "Rascunho",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 39399,
+        "talking_point": "O que brilha teus olhos hoje?",
+        "notas": null
+      },
+      {
+        "id_talking_point": 39400,
+        "talking_point": "O que tira tua energia hoje?",
+        "notas": null
+      },
+      {
+        "id_talking_point": 39401,
+        "talking_point": "Como eu posso te ajudar a continuar te motivando?",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 383519,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278277,
+    "nome_usuario_remetente": "Camila Alves Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278277,
+    "nome_gestor_remetente": "Jefte de Assumpcao Macedo",
+    "data": "29/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 443966,
+    "nome_usuario_convidado": "Luiz Eduardo Azevedo Da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Trazer mais contexto quando for acionar alguém (problema, objetivo, cenário), evitando retrabalho e idas e vindasSe desenvolver em comunicação — sugeri cursos de oratória e formas de praticar isso no dia a dia, mas principalmente organizar melhor o raciocínio antes de falar",
+            "status": "Ativo",
+            "id_nota": 694352
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Ir atrás das demandasAcompanhar o que está acontecendo no timeBuscar mais entendimento do produtoSe conectar com outras pessoas e áreas",
+            "status": "Ativo",
+            "id_nota": 694353
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": [
+          {
+            "nota": "Acionar pares sem contexto suficienteGerar dependência de explicações adicionais por falta de clareza na comunicação",
+            "status": "Ativo",
+            "id_nota": 694484
+          }
+        ]
+      },
+      {
+        "id_talking_point": 314479,
+        "talking_point": "Evolução no período",
+        "notas": [
+          {
+            "nota": "Luiz vem evoluindo bem no time, principalmente na postura mais ativa, indo atrás das demandas, acompanhando melhor o que está acontecendo, buscando mais entendimento do produto e se conectando com outras pessoas. Mostra um movimento claro de mais protagonismo no dia a dia.O próximo passo agora é evoluir a forma como se comunica, trazendo mais contexto e clareza nas interações com o time.",
+            "status": "Ativo",
+            "id_nota": 694487
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382605,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278313,
+    "nome_usuario_remetente": "Flavio Simao De Lima",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278313,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 503731,
+    "nome_usuario_convidado": "Lucas Cardoso Tico",
+    "status_convidado": "Ativo",
+    "motivo": "Neste mes de abril, realizamos um treinamento técnico de todo o processo comercial. O objetivo é fortalecer os conceitos do negócio afim de superar os desafios atuais do estado, que é atingimento dos resultados. Estamos com boas expectativas, pois estamos com ações do comercial,marketing, CS.",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [
+      {
+        "id_iniciativa": 82990,
+        "iniciativa": "META PROGRESSIVA 50/% - 75% - 100% "
+      }
+    ],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382615,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278313,
+    "nome_usuario_remetente": "Flavio Simao De Lima",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278313,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 519051,
+    "nome_usuario_convidado": "Marcos Willyan Padilha dos Santos",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [
+      {
+        "id_iniciativa": 82992,
+        "iniciativa": "META PROGRESSIVA 50/% - 75% - 100% "
+      }
+    ],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382617,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278313,
+    "nome_usuario_remetente": "Flavio Simao De Lima",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278313,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "02/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 415549,
+    "nome_usuario_convidado": "Marcio Hunemeier Corbellini",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [
+      {
+        "id_iniciativa": 82993,
+        "iniciativa": "META PROGRESSIVA 50/% - 75% - 100% "
+      }
+    ],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382633,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278313,
+    "nome_usuario_remetente": "Flavio Simao De Lima",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278313,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "01/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 532118,
+    "nome_usuario_convidado": "Tiago de Oliveira Fiorelli",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382666,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278313,
+    "nome_usuario_remetente": "Flavio Simao De Lima",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278313,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "01/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 606595,
+    "nome_usuario_convidado": "Marivaldo Costa Do Vale",
+    "status_convidado": "Ativo",
+    "motivo": "ALINHAMENTO DE PROCESSOS COMERCIAIS",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [
+      {
+        "id_iniciativa": 83002,
+        "iniciativa": "META PROGRESSIVA 50/% - 75% - 100% "
+      }
+    ],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382674,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278313,
+    "nome_usuario_remetente": "Flavio Simao De Lima",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278313,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "06/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 611050,
+    "nome_usuario_convidado": "Reginaldo Vasseur",
+    "status_convidado": "Ativo",
+    "motivo": "ALINHAMENTO DOS PROCESSOS DO COMERCIAL",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [
+      {
+        "id_iniciativa": 83003,
+        "iniciativa": "META PROGRESSIVA 50/% - 75% - 100% "
+      }
+    ],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 383309,
+    "template": "Engajamento",
+    "status_one_one": "Inativo",
+    "id_usuario_remetente": 278313,
+    "nome_usuario_remetente": "Flavio Simao De Lima",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278313,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "30/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 503729,
+    "nome_usuario_convidado": "Helbert Fernando Leme",
+    "status_convidado": "Ativo",
+    "motivo": "ENGAJAR TODO O TIME DA REGIONAL SUL - ATRAVÉS DE AÇÕES E RESULTADO",
+    "situacao": "Rascunho",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 39399,
+        "talking_point": "O que brilha teus olhos hoje?",
+        "notas": null
+      },
+      {
+        "id_talking_point": 39400,
+        "talking_point": "O que tira tua energia hoje?",
+        "notas": null
+      },
+      {
+        "id_talking_point": 39401,
+        "talking_point": "Como eu posso te ajudar a continuar te motivando?",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 383310,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278313,
+    "nome_usuario_remetente": "Flavio Simao De Lima",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278313,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "16/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 503729,
+    "nome_usuario_convidado": "Helbert Fernando Leme",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 383311,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278313,
+    "nome_usuario_remetente": "Flavio Simao De Lima",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278299,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "16/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 629506,
+    "nome_usuario_convidado": "Fabricio Falzone Moreira",
+    "status_convidado": "Ativo",
+    "motivo": "APLICAÇÃO DOS PROCESSOS COMERCIAIS - PARA ATINGIMENTO DE RESULTADOS",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 372148,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278319,
+    "nome_usuario_remetente": "Gabriela Maria Araujo Peres",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278319,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "30/03/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 540266,
+    "nome_usuario_convidado": "Elivelton Pereira dos Santos",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Buscar maior aprofundamento técnico nos módulos SIEG IRIS, SIEG IR e Emissor, utilizando materiais internos, treinamentos e apoio do time para ganho de segurança nas análises.",
+            "status": "Ativo",
+            "id_nota": 676358
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Manter o bom desempenho nos atendimentos relacionados aos módulos HUB, APP e AutodocS, onde já demonstra segurança.Seguir com postura positiva, engajamento e boa adaptação à rotina do chat.",
+            "status": "Ativo",
+            "id_nota": 676359
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": [
+          {
+            "nota": "Evitar insegurança na condução dos atendimentos sem antes buscar apoio ou consultar materiais disponíveis, reduzindo riscos de erros ou retrabalho.",
+            "status": "Ativo",
+            "id_nota": 676360
+          }
+        ]
+      },
+      {
+        "id_talking_point": 306822,
+        "talking_point": "Alinhamento",
+        "notas": [
+          {
+            "nota": "Durante o 1:1 com o analista Elivelton, iniciei a conversa entendendo como ele está em relação ao trabalho. O analista relatou estar bem e se sentindo feliz no ambiente profissional. Ao falar sobre a rotina, comentou que a semana no chat foi mais tranquila em comparação às anteriores.Na percepção do próprio analista, destacou como pontos fortes os atendimentos relacionados aos módulos HUB, APP e AutodocS, demonstrando maior segurança nesses temas.Em relação aos pontos de desenvolvimento, Elivelton mencionou possuir dificuldades e inseguranças nos módulos SIEG IRIS, SIEG IR e Emissor, indicando a necessidade de evolução técnica nesses assuntos.",
+            "status": "Ativo",
+            "id_nota": 676355
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 380527,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278319,
+    "nome_usuario_remetente": "Gabriela Maria Araujo Peres",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278319,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "24/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 590137,
+    "nome_usuario_convidado": "Michelle Lira Franco",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 312228,
+        "talking_point": "Alinhamento",
+        "notas": [
+          {
+            "nota": "Em reunião realizada com a colaboradora Michelle, foram alinhados os seguintes pontos:Banco de horas (20/04 – evento CX em Cena): devido à indisponibilidade de transmissão pelo link disponibilizado na agenda, a gestão da SIEG orientou a utilização do banco de horas na referida data.Saldo de banco: após a utilização no dia 20/04, a colaboradora permaneceu com saldo de 6h38, optando por não completar a jornada de 8 horas e, consequentemente, não manter a folga previamente agendada para o dia 29/04. Saldo do banco de horas será compensado nos dias posteriores. Comunicação de ausências: foi reforçada a necessidade de informar previamente a realização de exames e consultas, com antecedência mínima de 24 horas e, preferencialmente, de 48 horas, para ciência e organização da gestão.",
+            "status": "Ativo",
+            "id_nota": 689485
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382272,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278319,
+    "nome_usuario_remetente": "Gabriela Maria Araujo Peres",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278319,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "29/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278268,
+    "nome_usuario_convidado": "Antonio Eduardo Modesto",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 313743,
+        "talking_point": "1:1 Mensal (Março/Abril)",
+        "notas": [
+          {
+            "nota": "Registro de 1:1 – Antonio EduardoContexto: Análise de desempenho com base nos resultados de março e abril.Pontos positivos:Alta qualidade técnica, com IQA consistente em 100%Bons resultados de satisfação (CSAT próximo/atingindo meta e NPS positivo)Boa gestão de atendimentos, mantendo equilíbrio entre qualidade e tempoPonto de desenvolvimento:Oportunidade de evolução em comunicação estratégica, principalmente na condução de cenários com maior impacto ao cliente, reforçando empatia, senso de urgência e acompanhamento.Adicionalmente, o analista relatou menor segurança nos módulos Íris, IR e Emissor, por menor familiaridade.Orientações alinhadas:Revisar treinamentos disponíveis no SIEG AcademyRealizar acompanhamento de atendimentos com colegas mais experientes nesses módulosCriar um banco pessoal de dúvidas e soluções para apoio no dia a diaResumo: Analista com desempenho consistente e acima da média, com oportunidades pontuais de desenvolvimento técnico em módulos específicos e refinamento da comunicação para evolução da experiência do cliente.",
+            "status": "Ativo",
+            "id_nota": 692371
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 381804,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278320,
+    "nome_usuario_remetente": "Gabrielle Vitoria Fernandes Tavares",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278320,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 589252,
+    "nome_usuario_convidado": "Ana Luiza da Cruz Zeza",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento mensal Foco no mes em todos os brindes de eventos patrocinados e proprios. Mês muito agitado, com muita demanda o que trouxe movimento e interação. Foco em continuar desenvolvendo a comunicação e3 interação com time e outros setores, e as tomadas de decisão e resolução das coisas.",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 313251,
+        "talking_point": "Alinhamento ",
+        "notas": [
+          {
+            "nota": "Foco no mes em todos os brindes de eventos patrocinados e proprios. Mês muito agitado, com muita demanda o que trouxe movimento e interação. Foco em continuar desenvolvendo a comunicação e3 interação com time e outros setores, e as tomadas de decisão e resolução das coisas. Aproximação com comercial, para entendimento do produto e clientes",
+            "status": "Ativo",
+            "id_nota": 691595
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 381811,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278320,
+    "nome_usuario_remetente": "Gabrielle Vitoria Fernandes Tavares",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278320,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 503710,
+    "nome_usuario_convidado": "Roberta Santina de Souza",
+    "status_convidado": "Ativo",
+    "motivo": "alinhamento mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 313260,
+        "talking_point": "Alinhamento",
+        "notas": [
+          {
+            "nota": "Mês de estruturação no Elofy, minutas e organização de documentos para OSM. Melhor comunicação com o financeiro. Alinhamento sobre adm e financeiro do MKT, controle dos processos.",
+            "status": "Ativo",
+            "id_nota": 691631
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382112,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278320,
+    "nome_usuario_remetente": "Gabrielle Vitoria Fernandes Tavares",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278320,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "29/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 374222,
+    "nome_usuario_convidado": "Thamyres Eliza Sant Ana de Andrade",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 313597,
+        "talking_point": "Alinhamento mensal",
+        "notas": [
+          {
+            "nota": "Alinhamento sobre as expectativas e atividades no primeiro mes no setor. Importante destacar os sentimentos e demandas. Eliza esta se encaixando bem no setor e nas demandas propostas, entendendo o sentido e o que é proposto. Respondendo bem as expectativas e ao cargo. ",
+            "status": "Ativo",
+            "id_nota": 692131
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382504,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278320,
+    "nome_usuario_remetente": "Gabrielle Vitoria Fernandes Tavares",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278320,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "29/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278336,
+    "nome_usuario_convidado": "Jessica Cristina da Silva Araujo",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 313907,
+        "talking_point": "Alinhamento Mensal",
+        "notas": [
+          {
+            "nota": "Alinhamento sobre as demandas realizadas no mês e pendencias. Foco maior no SIEG tour Brasil que terá 40 edições. Premiere dia 28/05 em andamento. Patrocinados em andamento. foco em gestão das demandas e delegação das atividades para o time. ",
+            "status": "Ativo",
+            "id_nota": 692977
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376068,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278345,
+    "nome_usuario_remetente": "Jose Edmilson Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278345,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 531715,
+    "nome_usuario_convidado": "Thiago Cardozo da Conceicao",
+    "status_convidado": "Ativo",
+    "motivo": "Alinha alguns pontos de melhoria continua.",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 309385,
+        "talking_point": "Alinhamento",
+        "notas": [
+          {
+            "nota": "Thiago demonstra estar bem no ambiente de trabalho, se identifica com os processos que executa atualmente e tem apresentado bom envolvimento com a rotina da área. Atua hoje na frente de tickets, tratando os chamados dentro do SLA de 24 horas, e alcançou com sucesso a meta do mês de março.Como ponto de desenvolvimento, é importante que continue buscando novos desafios para sair da zona de conforto e ampliar ainda mais seu aprendizado. Também pode evoluir gradualmente em análises mais detalhadas, principalmente em alguns módulos em que ainda possui menos domínio. Diante dos números apresentados, percebemos que ele tem potencial para entregar ainda mais do que vem apresentando atualmente. Por isso, é importante buscar uma evolução gradual no seu ritmo de entrega. Esse desenvolvimento será acompanhado de perto, com apoio e direcionamento ao longo do processo.No geral, Thiago apresenta boa adaptação à função e tem potencial para continuar evoluindo ao longo da sua jornada.",
+            "status": "Ativo",
+            "id_nota": 682263
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376070,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278345,
+    "nome_usuario_remetente": "Jose Edmilson Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278345,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 503684,
+    "nome_usuario_convidado": "Caio Vinicius Ferreira da Silva Firmino",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 309387,
+        "talking_point": "Alinhamento ",
+        "notas": [
+          {
+            "nota": "Caio demonstra estar bem, feliz na empresa e confortável com a rotina de trabalho. Segue firme nos processos do dia a dia e vem apresentando uma evolução consistente na sua atuação.Quero destacar que o resultado entregue no mês de março foi muito positivo, e ele está de parabéns por isso. Ao longo da sua jornada, vem ampliando seu conhecimento nos módulos da SIEG e mostrando interesse genuíno em aprender cada vez mais. Sua base técnica é boa, ele gosta de desafios e já demonstra interesse em crescer para frentes mais analíticas.Um ponto muito positivo é que Caio não tem se limitado apenas à rotina atual. Ele vem buscando novos desafios e já demonstra identificação com possibilidades futuras dentro do suporte, como uma atuação no N2, por exemplo.Como contribuição para a operação, trouxe também percepções importantes sobre limitações de acesso ao AnyDesk e a possibilidade de avaliar mais acessos simultâneos, além de sugestões como contato via telefone e GoTo para apoiar ainda mais os atendimentos.No geral, Caio vem construindo uma trajetória positiva, com boa entrega, crescimento em conhecimento e potencial para assumir desafios cada vez maiores.",
+            "status": "Ativo",
+            "id_nota": 682264
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376655,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278345,
+    "nome_usuario_remetente": "Jose Edmilson Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278345,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "15/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 590663,
+    "nome_usuario_convidado": "Carlos Alberto Rodrigues De Lima Filho",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento Mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Como próximos passos de desenvolvimento, é importante começar a identificar oportunidades de melhoria nos processos do dia a dia, como em fluxos de ligação, análises de problemas e extração de dados que apoiem decisões mais assertivas. Esse olhar mais analítico e voltado para resolução de problemas pode contribuir bastante para sua evolução.",
+            "status": "Ativo",
+            "id_nota": 683205
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Também é importante que continue realizando os atendimentos com empatia, mantendo atenção às metas do processo e foco em buscar a melhor solução para os clientes no chat.",
+            "status": "Ativo",
+            "id_nota": 683208
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": [
+          {
+            "nota": "Como ponto de ajuste, vale trabalhar a forma de trazer questionamentos e opiniões, para que sua comunicação continue contribuindo de forma positiva, sem gerar a percepção de oposição. Seu ponto de vista é importante e deve continuar sendo trazido, apenas com atenção à forma de expressão. Além disso, é necessário reforçar o cuidado com horário e pontualidade na rotina de trabalho.",
+            "status": "Ativo",
+            "id_nota": 683210
+          }
+        ]
+      },
+      {
+        "id_talking_point": 309750,
+        "talking_point": "Como se sente hoje na SIEG",
+        "notas": [
+          {
+            "nota": "Carlos demonstra estar bem na função e motivado com sua atuação no suporte N1. Reconhece que ainda há um caminho importante de desenvolvimento pela frente, mas se mostra disponível e preparado para novos desafios. Também entende que a rotina tem exigido equilíbrio entre os processos do dia a dia, as metas e a dinâmica intensa do atendimento.Quero registrar os parabéns pelo resultado entregue no mês de março. Esse desempenho mostra seu potencial e reforça sua capacidade de evolução dentro da área. Além disso, é positivo ver que ele já projeta crescimento na carreira, estudando na área de TI e tendo como objetivo futuro uma atuação no N2.",
+            "status": "Ativo",
+            "id_nota": 683201
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376753,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278345,
+    "nome_usuario_remetente": "Jose Edmilson Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278345,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "15/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 539942,
+    "nome_usuario_convidado": "Rafael Marques do Monte",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento Mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [
+      {
+        "id_iniciativa": 81919,
+        "iniciativa": "Autodesenvolvimento"
+      }
+    ],
+    "talking_points": [
+      {
+        "id_talking_point": 309802,
+        "talking_point": "Conversa de Alinhamento",
+        "notas": [
+          {
+            "nota": "Rafael demonstra estar bem e se identifica com os processos que executa atualmente. Ao longo da sua jornada, já teve a oportunidade de atuar no chat, apoiando o atendimento por cerca de dois meses, experiência que contribuiu para ampliar sua visão sobre a operação e a importância desse conhecimento no dia a dia.Atualmente, atua 100% na gestão dos tickets. Neste momento, seu desempenho está abaixo do esperado, e ele mesmo reconhece que isso tem relação com a rotina intensa de provas e demandas acadêmicas. Ainda assim, demonstra maturidade ao reconhecer esse cenário e sinaliza o compromisso de melhorar, buscando mais foco e objetividade em suas análises.Em relação ao trabalho, Rafael se mostra bem e entende que pode continuar se desenvolvendo, inclusive buscando novos desafios para sair da zona de conforto e ampliar seu aprendizado. Como ponto de atenção, ainda encontra dificuldades em algumas análises mais detalhadas por conta do conhecimento técnico ainda em construção em determinados módulos.",
+            "status": "Ativo",
+            "id_nota": 683328
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 379757,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278345,
+    "nome_usuario_remetente": "Jose Edmilson Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278345,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "23/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 531717,
+    "nome_usuario_convidado": "Jamilly Mirelly Paulino Eloi",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento Mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 311806,
+        "talking_point": "Alinhamento e Entregas",
+        "notas": [
+          {
+            "nota": "Jamilly relata estar bem no ambiente de trabalho e se identifica com os processos que executa atualmente. Hoje atua principalmente nas demandas de e-mail e também apoia no GT quando necessário.Como ponto positivo, vem demonstrando boa adaptação à rotina, apoio ao time e bom desempenho nas entregas, tendo alcançado o SLA previsto no mês de março.Como oportunidade de desenvolvimento, precisa buscar mais desafios para sair da zona de conforto e fortalecer seu domínio técnico em alguns módulos, especialmente em análises mais detalhadas, onde ainda apresenta certa dificuldade.Atualmente atende os módulos HUB, Aplicativo e Iris, precisando se desafiar no emissor e IR.De forma geral, apresenta boa evolução e tem potencial para crescer com mais segurança e autonomia à medida que amplia seu repertório técnico e prático.Pontos de atenção e desenvolvimento:Buscar mais segurança em análises detalhadasDesenvolver maior domínio técnico de alguns módulosSair gradualmente da zona de confortoAmpliar o repertório prático dentro da operação",
+            "status": "Ativo",
+            "id_nota": 688169
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 379928,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278345,
+    "nome_usuario_remetente": "Jose Edmilson Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278345,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "23/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 510332,
+    "nome_usuario_convidado": "Daniel do Monte Almeida",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento Mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 311912,
+        "talking_point": "Alinhamento",
+        "notas": [
+          {
+            "nota": "Como está se sentindo?Daniel relata que está bem, se identifica com os processos atuais e gosta bastante do que faz. Hoje atua com e-mail e GT, além de já ter tido experiência no chat.Como se sente em relação ao trabalho?Em relação ao trabalho, demonstra boa adaptação à rotina, mas precisa buscar mais desafios para ampliar seu desenvolvimento, especialmente no aprofundamento dos módulos Íris, Emissor e IR.Dificuldades / Obstáculos:&nbsp;Como dificuldade, ainda encontra barreiras em análises mais detalhadas de alguns módulos, o que pode impactar sua segurança em determinados atendimentos. Atualmente atende os módulos HUB e Aplicativo.Como ponto positivo, teve um bom resultado no mês de março de 2026, o que mostra seu potencial e dedicação.&nbsp;Como atenção, é importante ter mais cuidado no tratamento dos chamados, já que em alguns casos foi necessário retornar para nova análise. Também precisa retomar a consistência na volumetria, buscando voltar ao nível de entrega anterior sem perder qualidade.PDI:Estudar os módulos que ainda tem dificuldades, como Emissor e IRPF.Prazo: Fim de maio de 2026",
+            "status": "Ativo",
+            "id_nota": 688505
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382695,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278345,
+    "nome_usuario_remetente": "Jose Edmilson Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278345,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 503707,
+    "nome_usuario_convidado": "Eduardo Henrique da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 314008,
+        "talking_point": "Alinhamento Mensal",
+        "notas": [
+          {
+            "nota": "Eduardo relata que está se sentindo bem e percebe que as coisas estão caminhando de forma positiva em sua rotina. Demonstra satisfação com o que faz e boa adaptação ao trabalho, buscando constantemente novos desafios para ampliar seu desenvolvimento, especialmente no aprofundamento dos módulos, com destaque para o **Emissor**.No momento, não apresenta dificuldades relevantes e já atua com atendimento em todos os módulos, o que reforça sua maturidade técnica e evolução dentro da operação.Como iniciativa de desenvolvimento e contribuição ao time, por atuar no **Íris**, está construindo um documento de apoio técnico com o objetivo de ajudar os demais analistas em dúvidas e rotinas do dia a dia. Esse movimento evidencia protagonismo, senso de colaboração e preparo para responsabilidades maiores.Hoje, Eduardo já atua como **focal do time**, apoiando a liderança, e demonstra interesse em seguir uma trajetória de crescimento com foco em uma futura posição de liderança.Como ponto positivo, apresentou um bom resultado no mês de março de 2026, demonstrando potencial, dedicação e disposição constante para apoiar o time. ",
+            "status": "Ativo",
+            "id_nota": 693182
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382713,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278345,
+    "nome_usuario_remetente": "Jose Edmilson Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278345,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 442916,
+    "nome_usuario_convidado": "Edson De Oliveira Campitelli Junior",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento Mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 314017,
+        "talking_point": "Alinhamento",
+        "notas": [
+          {
+            "nota": "Edson relata que está bem, se identifica com os processos atuais e gosta bastante do que faz. Hoje atua no GT e demonstra boa adaptação à rotina de trabalho.Em relação ao seu desenvolvimento, apresenta boa postura e familiaridade com a operação, mas ainda precisa buscar mais desafios para ampliar seu crescimento profissional e evoluir tecnicamente dentro da área.Como dificuldade, ainda encontra algumas barreiras em análises mais detalhadas relacionadas ao aplicativo da SIEG, o que indica uma oportunidade de aprofundamento técnico.Como ponto positivo, apresentou um bom resultado no mês de março de 2026, reforçando seu potencial, dedicação e capacidade de entrega. No momento, não há outros pontos de atenção relevantes além do foco em desenvolvimento técnico.Edson demonstra como projeção profissional o interesse em chegar ao N2, o que direciona seu próximo ciclo de desenvolvimento para ganho de repertório técnico, segurança analítica e aprofundamento na atuação.",
+            "status": "Ativo",
+            "id_nota": 693222
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382743,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278345,
+    "nome_usuario_remetente": "Jose Edmilson Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278345,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "29/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 351611,
+    "nome_usuario_convidado": "Isabel Cristina Berto De Souza Faustino",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento Mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 314049,
+        "talking_point": "Alinhamento Mensal",
+        "notas": [
+          {
+            "nota": "Isabel relata que está bem, se identifica com os processos atuais e gosta bastante do que faz. Hoje atua no GT, além de já ter passado por experiências em CS Retenção, Onboarding e Ongoing, o que amplia sua visão sobre a operação.Em relação ao trabalho, demonstra boa adaptação à rotina, tem atuado de forma positiva e se destaca pelo apoio aos jovens dentro do processo, contribuindo com o time de forma colaborativa.Como oportunidade de desenvolvimento, precisa se aprofundar mais nas questões técnicas, para que possa trazer resoluções mais completas nos casos encaminhados ao N2. Esse avanço técnico será importante para ampliar sua segurança analítica e fortalecer sua evolução profissional.Como ponto positivo, apresentou um bom resultado no mês de março de 2026, o que reforça seu potencial, dedicação e consistência na atuação.Como desafio atual, precisa compreender melhor todos os processos relacionados aos e-mails que fazem parte da rotina do GT (Gestão de Tickets), ampliando sua visão operacional e capacidade de atuação nas demandas da área.Isabel demonstra como pretensão profissional o objetivo de chegar ao N2, e seu desenvolvimento deve estar direcionado ao fortalecimento técnico e à ampliação do domínio dos fluxos da operação.",
+            "status": "Ativo",
+            "id_nota": 693271
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 372108,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278353,
+    "nome_usuario_remetente": "Leandro dos Santos Machado",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278353,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "02/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 606589,
+    "nome_usuario_convidado": "Sandokan Alves De Oliveira",
+    "status_convidado": "Inativo",
+    "motivo": "alinhmento de postura e resultado",
+    "situacao": "Rascunho",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382336,
+    "template": "Advertência Verbal",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278353,
+    "nome_usuario_remetente": "Leandro dos Santos Machado",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278353,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "14/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 590127,
+    "nome_usuario_convidado": "Vinicius Lima Ribeiro",
+    "status_convidado": "Ativo",
+    "motivo": "Atrasos recorrentes desde que chegou na empresa, conversamos sobre o tema e o colabodor ainda segue descuprindo as normas da empresa, foi avisado que na proxima ocorrencia iriamos dar adivertencia por escrito",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 63777,
+        "talking_point": "Advertência Verbal",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376035,
+    "template": "Planejamento da Semana",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278367,
+    "nome_usuario_remetente": "Marcos Flavio De Paiva Reis",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278367,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 519049,
+    "nome_usuario_convidado": "Willian Ventura Hoffmonn",
+    "status_convidado": "Ativo",
+    "motivo": "Planejamento Semanal/Mensal",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 41285,
+        "talking_point": "Prioridades da Semana",
+        "notas": [
+          {
+            "nota": "APENAS 4 NEGÓCIOS CRIADOS NO MÊS&nbsp;REFORCEI A IMPORTÂNCIA DA PROSPECÇÃO PRÓPRIA&nbsp;MAPEAMOS MAILING, FORMAS DE PROSPECÇÃO, CIDADES PARA LIGAR, DIRECIONAMENTOS PARA ATUAR EM NOVOS, INDICAÇÕES, CANCELADOS, PERDIDOS E UPSELL ",
+            "status": "Ativo",
+            "id_nota": 682192
+          }
+        ]
+      },
+      {
+        "id_talking_point": 41286,
+        "talking_point": "Alinhamentos",
+        "notas": [
+          {
+            "nota": "MAPEAMOS TODAS AS OPORTUNIDADES NO FUNIL DO PIPE, REFORCEI O QUE SIGNIFICA CADA ETAPA NO FUNILCONSULTOR SABE QUE PRECISA FAZER MAIS DO QUE VEM FAZENDO E PRINCIPALMENTE REGISTRAR O QUE VEM FAZENDO NO PIPEDRIVE. FIZEMOS O ACORDO PARA QUE O CONSULTOR INFORME DIARIAMENTE SUA ROTA, CLIENTES VISITADOS, REGISTROS NO CRM E DIRECIONAMENTOS PARA EVOLUIR E ENTREGAR O PROPOSTA NO MÊS (ESTÁ ZERADO ATÉ AQUI). PRÉ VENDA GEROU POUCAS OPORTUNIDADES TAMBÉM E CRIAREMOS UM GRUPO NO CHAT PARA MELHOR ACOMPANHAMENTO DOS DIRECIONAMENTOS DIÁRIOS, VIAGENS, QUEBRAS DE OBJEÇÃO, ESCUTA DE GRAVAÇÕES PARA EVOLUÇÃO DO TIME DE PRÉ VENDAS. ",
+            "status": "Ativo",
+            "id_nota": 682198
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376038,
+    "template": "Planejamento da Semana",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278367,
+    "nome_usuario_remetente": "Marcos Flavio De Paiva Reis",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278367,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 621065,
+    "nome_usuario_convidado": "Carlos Alberto Goncalves Lima Junior",
+    "status_convidado": "Ativo",
+    "motivo": "PLANEJAMENTO SEMANAL",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 41285,
+        "talking_point": "Prioridades da Semana",
+        "notas": [
+          {
+            "nota": "VAI REALIZAR UMA VIAGEM ESTRATÉGICA PARA A CIDADE DE VIÇOSA/MGORIENTADO SOBRE A FORMA DE DIRECIONAR A SUA PRÉ VENDA SABE QUE FICOU ABAIXO DO RESULTADO ATÉ AQUI NOS 10 PRIMEIROS DIAS DE ABRIL SINALIZOU COMO FOI A SEMANA PASSADA, DESAFIOS QUE ENFRENTOU E DIFICULDADES NO CONTATO COM OS CONTADORES APENAS UM NEGÓCIOS CRIADO PARA PRÉ VENDEDORA MAYARA (RESPONSÁVEL PELO SEU AGENDAMENTO) ATÉ AQUI",
+            "status": "Ativo",
+            "id_nota": 682203
+          }
+        ]
+      },
+      {
+        "id_talking_point": 41286,
+        "talking_point": "Alinhamentos",
+        "notas": [
+          {
+            "nota": "PRÉ VENDA GEROU POUCAS OPORTUNIDADES TAMBÉM E CRIAREMOS UM GRUPO NO CHAT PARA MELHOR ACOMPANHAMENTO DOS DIRECIONAMENTOS DIÁRIOS, VIAGENS, QUEBRAS DE OBJEÇÃO, ESCUTA DE GRAVAÇÕES PARA EVOLUÇÃO DO TIME DE PRÉ VENDAS.MELHOR DIRECIONAMENTO DO PRÉ VENDAMAIS PROXIMIDADESER MAIS ESTRATÉGICO NOS DIRECIONAMENTOS E PROSPECÇÕESREFORCEI TODOS OS MEIOS DE PROSPECÇÃO E POSSIBILIDADES DISPONÍVEIS: MAILING DE NOVOS (ATUALIZADOS), ATIVOS E CANCELADOS, INDICAÇÕES, PERDIDOS NO PIPE, CLIENTES DOMÍNIO DA CARTEIRA QUE O CONSULTOR FORMOU QUANDO TRABALHAVA NA THOMSONSE COMPROMETEU A AVANÇAR NO RESULTADO E ESTAR EM LINHA ATÉ O FINAL DA PRÓXIMA SEMANA",
+            "status": "Ativo",
+            "id_nota": 682205
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376041,
+    "template": "Planejamento da Semana",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278367,
+    "nome_usuario_remetente": "Marcos Flavio De Paiva Reis",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278367,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278335,
+    "nome_usuario_convidado": "Jefferson De Almeida Souza",
+    "status_convidado": "Ativo",
+    "motivo": "PLANEJAMENTO DA SEMANA/MENSAL",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 41285,
+        "talking_point": "Prioridades da Semana",
+        "notas": [
+          {
+            "nota": "VAI TRABALHAR 3 CIDADES: ITABIRITO, ITABIRA E CARMÓPOLIS DE MINASDIRECIONAR O ESFORÇO DA PRÉ VENDA EM OUTRAS CIDADESMELHORAR O ALINHAMENTO COM A PRÉ VENDA MELHORAR OS REGISTROS NO PIPE (APENAS 2 NEGÓCIOS CRIAÇÃO PRÓPRIA)",
+            "status": "Ativo",
+            "id_nota": 682207
+          }
+        ]
+      },
+      {
+        "id_talking_point": 41286,
+        "talking_point": "Alinhamentos",
+        "notas": [
+          {
+            "nota": "SABE QUE PODE MUITO MAISSE COMPROMTEU A ENTREGAR MAIS SER MAIS ESTRATÉGICO NOS DIRECIONAMENTOS E PROSPECÇÕESREFORCEI TODOS OS MEIOS DE PROSPECÇÃO E POSSIBILIDADES DISPONÍVEIS: MAILING DE NOVOS (ATUALIZADOS), ATIVOS E CANCELADOS, INDICAÇÕES, PERDIDOS NO PIPE, CLIENTES DOMÍNIO DA CARTEIRA QUE O CONSULTOR FORMOU QUANDO TRABALHAVA NA THOMSONSE COMPROMETEU A AVANÇAR NO RESULTADO E ESTAR EM LINHA ATÉ O FINAL DA PRÓXIMA SEMANA",
+            "status": "Ativo",
+            "id_nota": 682208
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376044,
+    "template": "Planejamento da Semana",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278367,
+    "nome_usuario_remetente": "Marcos Flavio De Paiva Reis",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278367,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278317,
+    "nome_usuario_convidado": "Gabriel Labanca Santos",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 41285,
+        "talking_point": "Prioridades da Semana",
+        "notas": [
+          {
+            "nota": "MELHORAR GERAÇÃO DE OPORTUNIDADES PRÓPRIASMELHORAR O DIRECIONAMENTO DA PRÉ VENDAGERAR MAIS VOLUME DE LIGAÇÕES E VISITASRESULTADO ABAIXO DO ESPERADO ATÉ AQUI EM MRR E NOVOSTRABALHANDO A CIDADE DE MUZAMBINHO/MG (CIENTE QUE SÃO POUCOS CLIENTES E OUTRAS CIDADES PRECISARÃO SER DIRECIONADAS) ",
+            "status": "Ativo",
+            "id_nota": 682211
+          }
+        ]
+      },
+      {
+        "id_talking_point": 41286,
+        "talking_point": "Alinhamentos",
+        "notas": [
+          {
+            "nota": "SER MAIS ESTRATÉGICO NOS DIRECIONAMENTOS E PROSPECÇÕESREFORCEI TODOS OS MEIOS DE PROSPECÇÃO E POSSIBILIDADES DISPONÍVEIS: MAILING DE NOVOS (ATUALIZADOS), ATIVOS E CANCELADOS, INDICAÇÕES, PERDIDOS NO PIPE, VIAGEM ESTRATÉGICASE COMPROMETEU A AVANÇAR NO RESULTADO E ESTAR EM LINHA ATÉ O FINAL DA PRÓXIMA SEMANA",
+            "status": "Ativo",
+            "id_nota": 682214
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376049,
+    "template": "Planejamento da Semana",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278367,
+    "nome_usuario_remetente": "Marcos Flavio De Paiva Reis",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278367,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 614084,
+    "nome_usuario_convidado": "Vinicius Soares Freitas",
+    "status_convidado": "Ativo",
+    "motivo": "PLANEJAMENTO SEMANAL/MENSAL",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 41285,
+        "talking_point": "Prioridades da Semana",
+        "notas": [
+          {
+            "nota": "VAI TRABALHAR A CIDADE DE BOM DESPACHOESTÁ EM LINHA COM O RESULTADO DE MRR MAS PRECISA EVOLUIR EM NOVOS CLIENTESFIZEMOS UMA ANÁLISE DO PIPE E TODAS AS POSSIBILIDADES EM FORECASTRELATOU PROXIMIDADE DIÁRIA COM A SUA PRÉ VENDA (MAYARA), MAS CITEI QUE IREMOS CRIAR UM GRUPO NO CHAT PARA MELHORAR O ALINHAMENTO",
+            "status": "Ativo",
+            "id_nota": 682222
+          }
+        ]
+      },
+      {
+        "id_talking_point": 41286,
+        "talking_point": "Alinhamentos",
+        "notas": [
+          {
+            "nota": "REFORCEI TODOS OS MEIOS DE PROSPECÇÃO E POSSIBILIDADES DISPONÍVEIS: MAILING DE NOVOS (ATUALIZADOS), ATIVOS E CANCELADOS, INDICAÇÕES, PERDIDOS NO PIPE, CIDADES MENORES (MENOS DE 50 MIL HABITANTES PARA MELHORA ACESSO DEVIDO AO PERÍODO DE IR)SE COMPROMETEU A AVANÇAR NO RESULTADO E ESTAR EM LINHA ATÉ O FINAL DA PRÓXIMA SEMANASER MAIS ESTRATÉGICO NOS DIRECIONAMENTOS E PROSPECÇÕES JUNTO À PRÉ VENDA",
+            "status": "Ativo",
+            "id_nota": 682224
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376050,
+    "template": "Planejamento da Semana",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278367,
+    "nome_usuario_remetente": "Marcos Flavio De Paiva Reis",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278367,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278361,
+    "nome_usuario_convidado": "Luiz Augusto Silveira Cordeiro",
+    "status_convidado": "Ativo",
+    "motivo": "PLANEJAMENTO SEMANAL / MENSAL",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 41285,
+        "talking_point": "Prioridades da Semana",
+        "notas": [
+          {
+            "nota": "MANTER O RITMO APRESENTADO ATÉ AQUI (70% DA META DE NOVOS E MRR ENTREGUE)VAI CONTINUAR ALINHANDO DIARIAMENTE AS ESTRATÉGIAS E CIDADES A SEREM TRABALHADAS COM O SEU PRÉ VENDA (ARTHUR MAGNO) ",
+            "status": "Ativo",
+            "id_nota": 682226
+          }
+        ]
+      },
+      {
+        "id_talking_point": 41286,
+        "talking_point": "Alinhamentos",
+        "notas": [
+          {
+            "nota": "COMPARTILHAR BOAS PRÁTICAS COM O TIME E ASSESSORAR TECNICAMENTE SEMPRE QUE NECESSÁRIOSER ESPELHO AOS DEMAIS EM POSTURA E RESULTADO",
+            "status": "Ativo",
+            "id_nota": 682228
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 383565,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278367,
+    "nome_usuario_remetente": "Marcos Flavio De Paiva Reis",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278367,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "14/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278385,
+    "nome_usuario_convidado": "Rafael Bonsolio De Azevedo",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 314478,
+        "talking_point": "1-1 MENSAL",
+        "notas": [
+          {
+            "nota": "MANTER O RITMO APRESENTADO ATÉ AQUI (70% DA META DE NOVOS E MRR ENTREGUE)VAI CONTINUAR ALINHANDO DIARIAMENTE AS ESTRATÉGIAS E CIDADES A SEREM TRABALHADAS COM O SEU PRÉ VENDA (ARTHUR MAGNO)]BUSCAR SER REFERÊNCIA NA EQUIPE EM POSTURA E RESULTADO MANTER RESULTADO ACIMA DOS 120%MANTER A GESTÃO INFORMADA SOBRE INCONSISTÊNCIAS E PROBLEMAS TÉCNICOS CRÔNICOS EM GO E DF E RECLAMAÇÕES DE CLIENTES. Tivemos uma ótima conversa, produtiva e alinhada com os objetivos para entrega do resultado também em Abril. ",
+            "status": "Ativo",
+            "id_nota": 694661
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 373097,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278375,
+    "nome_usuario_remetente": "Nathalia Vasconcelos Trajano Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 351629,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "06/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 503689,
+    "nome_usuario_convidado": "Erik Carlos Menezes e Silva",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 307524,
+        "talking_point": "One a One - inicial - suporte",
+        "notas": [
+          {
+            "nota": "Erik iniciou o primeiro contato com o suporte realizando a cobertura de férias na revenda da SIEG, tendo como principal destaque inicial o aprendizado prático do sistema e a adaptação à rotina do suporte. Observou que cada analista possui seu próprio estilo de atendimento, e entende a importância de desenvolver sua própria forma de atuação ao longo do tempo.Na comparação entre CS e Suporte, identificou como principal diferença a necessidade de maior objetividade nos atendimentos. Durante o acompanhamento, foi orientado a buscar equilíbrio entre clareza e objetividade. Também destacou como ponto de atenção a alta volumetria e a necessidade de lidar com múltiplos atendimentos simultâneos, fator que considerou mais desafiador do que imaginava.Em relação ao aprendizado, Erik reconhece que sua base teórica adquirida no CS contribui positivamente, e entende que este é o momento de aplicar esse conhecimento na prática. Sinalizou que pode precisar de apoio específico em atendimentos mais complexos (IR, por exemplo), caso venha a atuar nesses cenários.Não relatou dificuldades significativas ou momentos de bloqueio neste início, conseguindo conduzir bem as atividades propostas.Sobre expectativas, demonstra uma postura bastante positiva, com abertura para aprendizado, interesse em evolução dentro do suporte e objetivo claro de crescimento na área, visando alcançar o nível de Analista Pleno. Está cursando ADS, o que também contribui para seu desenvolvimento técnico.Em relação ao estilo de trabalho, prefere ter autonomia, mas valoriza o acompanhamento próximo no início, especialmente através de validações pontuais durante atendimentos.",
+            "status": "Ativo",
+            "id_nota": 677912
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378406,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278375,
+    "nome_usuario_remetente": "Nathalia Vasconcelos Trajano Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278375,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "20/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 540270,
+    "nome_usuario_convidado": "Rafael Albuquerque Magalhaes",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 310937,
+        "talking_point": "1:1 - Abril",
+        "notas": [
+          {
+            "nota": "Rafael relata que se sente bem no time, grato pela oportunidade e adaptado à rotina, que considera equilibrada. Demonstra segurança nos módulos Hub, AutoDocs e Aplicativo, e identifica pontos de desenvolvimento em IRIS, IR, Emissor e Folha. Compartilhou um atendimento recente positivo, no qual recebeu elogio de cliente ao conseguir retroagir notas, destacando sua proatividade e entrega além do esperado. Avalia seu desempenho como positivo e em evolução, com aumento de conhecimento ao longo do tempo.Como principal dificuldade, aponta atendimentos com casos novos que exigem análises mais profundas. Sugere como melhoria maior disponibilidade de informações no console e acesso a certificados de clientes.Tem como objetivo se aprofundar nos módulos, iniciando pelo Emissor, visando crescimento para Analista Pleno, com interesse em seguir na área de suporte, especialmente em times de qualidade. Prefere receber feedbacks de forma direta e no momento, e se motiva por desafios, dinâmica e alcance de metas.Como ponto de desenvolvimento, reconhece a necessidade de maior atenção aos detalhes e reforço na fixação do conhecimento. Como compromissos, se propôs a anotar dúvidas recorrentes e compartilhar cases de sucesso com a equipe. No âmbito pessoal, relata estar bem, sem pontos de atenção.",
+            "status": "Ativo",
+            "id_nota": 686024
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378408,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278375,
+    "nome_usuario_remetente": "Nathalia Vasconcelos Trajano Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278375,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "20/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278384,
+    "nome_usuario_convidado": "Phelipe Lira Simoes",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 310938,
+        "talking_point": "1:1 - abril",
+        "notas": [
+          {
+            "nota": "Phelipe relata que se sente bem no time, destacando o bom relacionamento e colaboração entre os colegas, embora tenha sentido a mudança para o Porto Digital por já estar adaptado a Boa Viagem. Considera a rotina e o deslocamento tranquilos. Demonstra segurança nos módulos Hub, AutoDocs, Aplicativo e IRIS, e identifica como pontos de desenvolvimento os módulos Emissor e IR, principalmente por menor recorrência prática.Compartilhou um atendimento positivo em que auxiliou uma cliente após manutenção no computador, entregando além do esperado, o que gerou satisfação. Ressalta que se sente realizado ao perceber o impacto do seu trabalho no cliente. Avalia seu desempenho como em constante crescimento, mantendo consistência e buscando sempre evoluir.Como principal dificuldade, aponta a comunicação em algumas situações do suporte, especialmente por ocorrências de mudanças no sistema que chegam via cliente, mas reconhece evolução nesse aspecto.Tem como objetivo profissional evoluir para o Suporte N2, mantendo interesse na área de suporte, e entende que precisa se aprofundar tecnicamente nos módulos Emissor e IR para alcançar esse próximo nível.Em relação à liderança, valoriza a manutenção da coesão do time e comunicação alinhada, reconhecendo positivamente a atuação atual. Prefere feedbacks em um formato equilibrado, nem excessivamente detalhado nem superficial.Seu estilo de aprendizado é baseado na prática e leitura. De forma geral, demonstra comprometimento com sua evolução contínua e adaptação aos desafios.",
+            "status": "Ativo",
+            "id_nota": 686816
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378885,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278375,
+    "nome_usuario_remetente": "Nathalia Vasconcelos Trajano Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278375,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "20/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 531714,
+    "nome_usuario_convidado": "Herven Felipe Cavalcanti Lira",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 311191,
+        "talking_point": "1:1 abril ",
+        "notas": [
+          {
+            "nota": "Herven relata que se sente bem no time, destacando a união e colaboração entre os colegas. Avalia a rotina como tranquila e ressalta melhora na qualidade de vida após a ida para o Porto Digital, além dos benefícios do modelo híbrido.Demonstra segurança nos módulos Hub, AutoDocs e Aplicativo, e identifica como pontos de desenvolvimento os módulos IRIS, IR, Emissor e Folha, especialmente na localização de informações no IRIS e dúvidas relacionadas a e-CAC, Serpro, Emissor e IR. Compartilhou um atendimento positivo em que realizou uma análise detalhada de diversos CNPJs, sendo reconhecida pelo cliente como a primeira atendente que conseguiu ajudá-lo de forma efetiva.Como principais dificuldades, aponta o atendimento simultâneo de 5 clientes, indicando maior conforto com 4 atendimentos simultâneos. Também reforça como ponto de melhoria a necessidade de um analista focal mais presente e disponível.Tem como objetivo evoluir para Analista Pleno e, futuramente, atuar no N2, reconhecendo que precisa se aprofundar nos módulos e se tornar uma referência técnica. Demonstra interesse em aprender o módulo Emissor e, no âmbito pessoal, considera iniciar uma graduação em ADS ou uma pós-graduação.Em relação à liderança, valoriza a empatia e escuta ativa, reconhecendo positivamente esses pontos na atuação atual. Prefere receber feedbacks posteriormente e se mostra aberta, inclusive a feedbacks negativos, sendo orientada sobre a importância da inteligência emocional.Seu estilo de aprendizado é predominantemente prático e se compromete a não apresentar resistência ao atendimento de outros módulos, visando sua evolução. No âmbito pessoal, relata estar bem, sem pontos de atenção.",
+            "status": "Ativo",
+            "id_nota": 686823
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378947,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278375,
+    "nome_usuario_remetente": "Nathalia Vasconcelos Trajano Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278375,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "22/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 590139,
+    "nome_usuario_convidado": "Thais Da Fonseca Ribeiro",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 311217,
+        "talking_point": "1:1 abril",
+        "notas": [
+          {
+            "nota": "Thaís relata que se sente bem acolhida no time, tanto em Boa Viagem quanto no Porto Digital, e considera o ambiente tranquilo. Destaca que o ramo fiscal foi uma novidade em sua trajetória, já que anteriormente atuava no iFood, mas sente que sua experiência com clientes contribui para lidar bem com as demandas, mantendo uma postura calma no dia a dia.Demonstra segurança nos módulos Hub, AutoDocs e Aplicativo, e identifica como pontos de desenvolvimento IRIS, IR e Folha, onde ainda não possui domínio, além do Emissor, no qual já teve alguns contatos iniciais. Compartilhou um atendimento desafiador envolvendo instabilidade no aplicativo, onde precisou abrir chamado e, mesmo tentando contornar a situação, não obteve sucesso imediato, evidenciando a importância de escalonamento adequado. Avalia seu desempenho com foco no aprendizado e amadurecimento, destacando evolução significativa no entendimento fiscal e adaptação ao trabalho em equipe presencial.Como principais dificuldades, aponta a necessidade de maior atenção na abertura de chamados em tempo real e na coleta completa de informações, além de instabilidades no Salesforce que impactam o fluxo de atendimento.Tem como objetivo se aprofundar no módulo Emissor e em API, visando maior autonomia técnica. Embora se sinta realizada no suporte, demonstra interesse futuro na área de QA, alinhado à sua formação em ADS, reconhecendo a necessidade de desenvolver análise técnica, domínio de módulos e conhecimentos em back-end.Em relação à liderança, destaca positivamente a comunicação assertiva, proximidade e ambiente de confiança, esperando a continuidade desse modelo. Prefere feedbacks diretos, objetivos e no momento. Seu estilo de aprendizado é voltado à prática e se compromete a se desafiar mais no módulo Emissor nas próximas semanas. No âmbito pessoal, mencionou acompanhamento de saúde periódico, sem impactos atuais no trabalho.",
+            "status": "Ativo",
+            "id_nota": 686927
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 381676,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278375,
+    "nome_usuario_remetente": "Nathalia Vasconcelos Trajano Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278375,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 503705,
+    "nome_usuario_convidado": "Augusto Bezerra Moraes",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 313146,
+        "talking_point": "One a One - Abril",
+        "notas": [
+          {
+            "nota": "Augusto possui 6 anos de experiência em suporte (helpdesk e infraestrutura) e, apesar de não ter contato prévio com a área contábil, destacou que conseguiu se desenvolver na prática e hoje se sente satisfeito, grato e alinhado com sua trajetória na empresa. Avalia sua evolução ao longo de 1 ano e meio como consistente, com aprendizado contínuo no dia a dia, e já demonstra domínio nos módulos Hub, App, AutoDocs e Emissor.Como principais pontos de aprendizado, trouxe a necessidade de desenvolver maior objetividade nos atendimentos, lidar melhor com a simultaneidade de demandas e aprofundar o conhecimento técnico em IRIS e IR. Apresenta interesse em crescimento interno, especialmente na área de Qualidade, tendo já buscado referências e entendendo que pode agregar valor com sua experiência. Em relação à liderança, fez uma avaliação positiva, destacando o perfil executor e domínio técnico, sem apontar pontos de melhoria no momento.De forma geral, demonstra maturidade, boa adaptação ao contexto da empresa e clareza sobre seus próximos passos de desenvolvimento, com foco em aprimoramento técnico, ganho de eficiência no atendimento e direcionamento de carreira.",
+            "status": "Ativo",
+            "id_nota": 691384
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382540,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278375,
+    "nome_usuario_remetente": "Nathalia Vasconcelos Trajano Da Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278375,
+    "nome_gestor_remetente": "Publio Maswell Matos Cavalcanti",
+    "data": "29/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278339,
+    "nome_usuario_convidado": "Joao Victor Barbosa De Souza",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 313931,
+        "talking_point": "One a One - Abril ",
+        "notas": [
+          {
+            "nota": "João Victor relatou estar bem adaptado ao time e à rotina, destacando que, em alguns momentos pontuais, o ambiente com muito ruído pode impactar sua concentração. Demonstra domínio nos módulos Hub, AutoDocs, Aplicativo, Emissor e Folha, mas ainda apresenta insegurança em IRIS (principalmente nomenclaturas), IR e temas relacionados à API, por menor recorrência.Compartilhou um atendimento marcante no módulo IRIS, evidenciando resiliência e evolução no aprendizado, além de boa condução com o cliente mesmo diante de cenários desafiadores. Avalia sua trajetória com foco em amadurecimento pessoal, profissional e comportamental, buscando equilíbrio entre vida pessoal e trabalho.Como principais dificuldades, destacou a limitação de tempo para atuar de forma mais estratégica no dia a dia, além de pontos de melhoria em processos como tagueamento. Também trouxe a percepção de que o papel atual, conciliando atendimento e apoio ao time, gera sobrecarga e impacta sua capacidade de atuação como focal.Durante a conversa, foi alinhado que, no momento, não há percepção de aderência completa ao papel de focal, principalmente no que se refere ao apoio ativo ao time, direcionamento e atuação mais estratégica. Nesse sentido, foi sinalizada a necessidade de ajuste nesse papel, visando melhor equilíbrio das demandas e eficiência do time.Em relação ao crescimento, João Victor demonstrou interesse em alcançar a senioridade e, futuramente, uma posição de liderança. No entanto, também considera a possibilidade de migração para outras áreas, como P&amp;P, onde acredita poder contribuir com sua experiência prática e visão de melhorias, especialmente voltadas à experiência do cliente.Sobre liderança, espera alinhamento, clareza nos combinados, imparcialidade e manutenção de um ambiente engajador. Prefere receber feedbacks de forma detalhada e no momento em que ocorrem. Como desenvolvimento, destaca que aprende melhor combinando teoria e prática e demonstra abertura para evolução contínua.De forma geral, apresenta boa maturidade, conhecimento alto do negócio e clareza sobre seus objetivos, com oportunidades de desenvolvimento voltadas à ampliação de atuação estratégica, aprofundamento técnico e fortalecimento do papel de apoio ao time.",
+            "status": "Ativo",
+            "id_nota": 692826
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 377023,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 278407,
+    "nome_usuario_remetente": "Walquiria Santos Correia",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 460957,
+    "nome_gestor_remetente": "Anderson Luis Lima da Silva",
+    "data": "15/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 640935,
+    "nome_usuario_convidado": "Luciana Miranda Cavalcanti",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Rascunho",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 309913,
+        "talking_point": "Oi",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 383819,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 299802,
+    "nome_usuario_remetente": "Elza Maria Eluana Da Silva Dias",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 299802,
+    "nome_gestor_remetente": "Renata Oliveira De Moura Duarte",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 519042,
+    "nome_usuario_convidado": "Amanda Maria de Melo Dornelas",
+    "status_convidado": "Ativo",
+    "motivo": "1:1",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Reforcei o apoio necessário para as entregas do setor.",
+            "status": "Ativo",
+            "id_nota": 694943
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": [
+          {
+            "nota": "Manter a atenção da tarefa realizadas, para diminuir o retrabalho.",
+            "status": "Ativo",
+            "id_nota": 694945
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 383820,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 299802,
+    "nome_usuario_remetente": "Elza Maria Eluana Da Silva Dias",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 299802,
+    "nome_gestor_remetente": "Renata Oliveira De Moura Duarte",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 544687,
+    "nome_usuario_convidado": "Elizabeth Luiza do Vale",
+    "status_convidado": "Ativo",
+    "motivo": "1:1",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Reforçamos os pontos do fechamento de Março e direcionamento do time. ",
+            "status": "Ativo",
+            "id_nota": 694953
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 383821,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 299802,
+    "nome_usuario_remetente": "Elza Maria Eluana Da Silva Dias",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 299802,
+    "nome_gestor_remetente": "Renata Oliveira De Moura Duarte",
+    "data": "30/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 614192,
+    "nome_usuario_convidado": "Evelyn Eugenia Da Silva Lemos",
+    "status_convidado": "Ativo",
+    "motivo": "1:1",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Revisamos o fechamento de Março e os combinados do ultimo 1:1, momento de acompanhamento e validações.",
+            "status": "Ativo",
+            "id_nota": 694936
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 383832,
+    "template": "Planejamento da Semana",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 299802,
+    "nome_usuario_remetente": "Elza Maria Eluana Da Silva Dias",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 299802,
+    "nome_gestor_remetente": "Renata Oliveira De Moura Duarte",
+    "data": "27/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 532116,
+    "nome_usuario_convidado": "Tatiane Ednauria Batista da Silva Brandao",
+    "status_convidado": "Ativo",
+    "motivo": "Planejamento das férias",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 41285,
+        "talking_point": "Prioridades da Semana",
+        "notas": [
+          {
+            "nota": "Pré FériasDistribuição e revisão das atividades necessárias para o fechamento do mês de Abril e organização das férias.",
+            "status": "Ativo",
+            "id_nota": 694965
+          }
+        ]
+      },
+      {
+        "id_talking_point": 41286,
+        "talking_point": "Alinhamentos",
+        "notas": [
+          {
+            "nota": "Periódicos marcados  - Plano de saúde lançado - Treinamento SST  - Check-in realizado - Onhappy.Distribuição:ASO - Atestado - SALU - Ifood - Evelyn e Beth Benefícios - Carlinha",
+            "status": "Ativo",
+            "id_nota": 694969
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 372298,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 351629,
+    "nome_usuario_remetente": "Luana Dos Santos Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 351629,
+    "nome_gestor_remetente": "Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    "data": "01/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 519045,
+    "nome_usuario_convidado": "Aline Alves de Oliveira",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 306930,
+        "talking_point": "1:1 Alinhamento",
+        "notas": [
+          {
+            "nota": "Em nosso alinhamento, trouxe alguns pontos importantes para a Aline.Conversamos sobre as movimentações e a estratégia do mês, alinhando expectativas para o período.Aline entrará em férias em breve e, por isso, reforcei a importância de, no seu retorno, retomar um posicionamento mais ativo frente às demandas. Entendo que, neste momento de transição, parte das atividades esteja sendo direcionada ao analista focal, porém não é sustentável manter um analista à frente das principais decisões e responsabilidades da área.É essencial que a Aline assuma esse papel com protagonismo.Retomamos também pontos já trabalhados anteriormente, como a condução de conversas difíceis — onde ela já apresenta evolução. Ainda assim, o próximo passo é fortalecer sua atuação como líder, assumindo de forma mais consistente a frente das decisões e direcionamentos do time.Alinhamos que, em seu retorno, ela ficará dedicada exclusivamente ao time de onboarding. Um dos desafios trazidos por ela era justamente a quantidade de pessoas sob sua liderança, e esse ajuste visa garantir uma atuação mais focada e dentro do esperado.Por fim, combinamos que, após o retorno de férias, teremos um novo momento de alinhamento e planejamento, com foco na estruturação do seu trabalho e fortalecimento da sua atuação como liderança.",
+            "status": "Ativo",
+            "id_nota": 676615
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 375186,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 351629,
+    "nome_usuario_remetente": "Luana Dos Santos Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 351629,
+    "nome_gestor_remetente": "Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 574140,
+    "nome_usuario_convidado": "Simao Pedro De Souza",
+    "status_convidado": "Ativo",
+    "motivo": "Ãlinhamento",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 309027,
+        "talking_point": "1:1 Alinhamento",
+        "notas": [
+          {
+            "nota": "Simão vem realizando um ótimo trabalho. Em nossa última conversa, abordamos sua evolução (rampagem) nos temas de CS.É importante que continue evoluindo em todos os produtos e mantenha entregas consistentes, para que possa avançar gradualmente para carteiras maiores e mais estratégicas.Seu foco principal deve estar no fortalecimento do relacionamento com os clientes, na expansão da carteira e no domínio completo da sua base.Destaca-se pela proatividade e pela consistência nas entregas, sempre dentro do esperado.Possui potencial para atingir seus objetivos de crescimento, mas é essencial seguir amadurecendo seu posicionamento para dar o próximo passo na carreira.",
+            "status": "Ativo",
+            "id_nota": 681037
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 375994,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 351629,
+    "nome_usuario_remetente": "Luana Dos Santos Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 351629,
+    "nome_gestor_remetente": "Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 443686,
+    "nome_usuario_convidado": "Pollyanne Da Silva Ramos",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 309371,
+        "talking_point": "1:1 Alinhamento",
+        "notas": [
+          {
+            "nota": "Alinhado com Polly os detalhes para que ela siga com MVP de CS triagem - vamos amadurecer para Ongoing Retenção.Polly tem feito um excelente trabalho, coleta de dados, resiliencia e amadurecimento no nivel de atendimento com cliente, garantindo a execução e evolução da area.Seu comportamento sempre dentro do que esperamos, sempre disponivel para apoiar todas as mudanças.",
+            "status": "Ativo",
+            "id_nota": 682096
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 379845,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 351629,
+    "nome_usuario_remetente": "Luana Dos Santos Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 351629,
+    "nome_gestor_remetente": "Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    "data": "23/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278401,
+    "nome_usuario_convidado": "Thais Ramos da Silva Xavier",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento e PDI",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 311854,
+        "talking_point": "1:1 Alinhamento",
+        "notas": [
+          {
+            "nota": "1:1 – Pontos de Desenvolvimento e Evolução | ThaisEvolução desde a última conversa Na última 1:1, definimos micro metas focadas em posicionamento, exposição e postura.Thais demonstrou evolução consistente em todos os pontos. Como evidências práticas:Ajustou sua posição física no ambiente, tornando-se mais acessível e disponível para o time;Evoluiu na forma de se vestir e se portar, refletindo uma postura mais alinhada ao papel de liderança.Ponto de atenção identificado O principal ponto de desenvolvimento está na movimentação e relacionamento com outros setores, especialmente com o time de suporte, que está no mesmo andar. Existe uma oportunidade clara de aumentar a proximidade, fortalecer conexões e ampliar sua influência fora do time direto.Temas abordados na conversa atualPosicionamento como líderGestão de conflitosGestão de pessoasAtualizações operacionais e projetosSalesforce: andamento atualizado; pendências deverão ser esclarecidas após alinhamento com Pablo;Zion: acompanhamento em andamento, com identificação de baixa qualidade nas mensagens — será trabalhado um plano de melhoria;Blip: discutido o encerramento da atuação;Planilhas: houve redução de controles paralelos, com organização junto ao Danilo e adoção de checklist operacional;Andre: alinhado que Thais realizará uma 1:1 com o colaborador, considerando a necessidade de maior acompanhamento no desenvolvimento.Desafios e reflexões estratégicas Thais trouxe pontos relevantes, que foram aprofundados durante a conversa:Valorização do time de Ongoing Refletimos sobre a importância de fortalecer o propósito do time, reforçando sua atuação estratégica dentro da jornada do cliente.Direcionamentos e próximos passosDesenvolver uma apresentação destacando os pontos positivos do time de Ongoing, reforçando entregas, impactos e valor gerado;Manter foco intencional no que está funcionando — equilibrando a visão crítica com o reconhecimento de resultados;Evoluir continuamente em posicionamento como líder, com foco em postura, comportamento e presença ativa;Exercitar um olhar mais estratégico diante dos incômodos, transformando desafios em oportunidades de evolução;Avançar na organização das demandas, utilizando dados e contexto para priorização e tomada de decisão — inclusive para dizer “não” quando necessário;Compreender que limitações operacionais existirão e fazem parte do processo — o importante é usar esses momentos para reavaliar e ajustar a rota.Mensagem-chave da evolução Nosso principal objetivo é fortalecer a integração entre gestão de pessoas e análise de dados, elevando o nível de atuação para uma liderança cada vez mais estratégica.O próximo passo é consolidar essa transição: sair do operacional reativo e assumir, de forma consistente, o papel de gestora estratégica.",
+            "status": "Ativo",
+            "id_nota": 688357
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 379889,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 351629,
+    "nome_usuario_remetente": "Luana Dos Santos Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 351629,
+    "nome_gestor_remetente": "Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    "data": "15/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 531734,
+    "nome_usuario_convidado": "Pablo Moacir Gomes da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 311894,
+        "talking_point": "1:1 Alinhamento",
+        "notas": [
+          {
+            "nota": "Realizamos uma conversa focada na jornada do Pablo dentro da SIEG e nas possibilidades de desenvolvimento futuro.Compartilhei com ele que recebemos feedbacks muito positivos sobre sua experiência anterior em Supervisão, o que fortalece a visão de potencial para evolução interna. Reforcei que existe espaço e oportunidade para seu crescimento como futuro líder na SIEG, destacando que esse caminho será guiado, principalmente, pela sua própria evolução e consistência no dia a dia.Pablo recebeu o direcionamento com bastante entusiasmo e demonstrou claramente que seu principal objetivo é construir sua carreira dentro da empresa.Durante a conversa, exploramos suas experiências anteriores e habilidades, abrindo espaço para fortalecer sua atuação com foco em liderança.Como próximos passos, alinhamos:Estruturar a sucessão das atividades relacionadas aos treinamentos coletivos, promovendo maior organização e autonomia do timeDesenvolver um ambiente de confiança com o time, visando o reconhecimento natural de sua liderançaFortalecer sua presença junto ao time, com maior proximidade, visibilidade e consistência na atuaçãoSeguiremos apoiando seu desenvolvimento de forma estruturada, criando oportunidades práticas para que ele consolide seu espaço e evolua na construção de sua liderança.",
+            "status": "Ativo",
+            "id_nota": 688442
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 381513,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 351629,
+    "nome_usuario_remetente": "Luana Dos Santos Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 351629,
+    "nome_gestor_remetente": "Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    "data": "27/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 531734,
+    "nome_usuario_convidado": "Pablo Moacir Gomes da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 312997,
+        "talking_point": "Acompanhamento de desenvolvimento",
+        "notas": [
+          {
+            "nota": "Em nossa ultima conversa falamos sobre alguns pontos, e mantenho o acompanhamentoJá estrututou sua sucessão das atividades relacionadas aos treinamentos coletivos;Tem feito um bom trabalho para desenvolver um ambiente de confiança com o time, visando o reconhecimento natural de sua liderançaJá se movimentou para fortalecer sua presença junto ao time.Pablo, te recebido alguns micros desafios para atuar junto ao time - inicialmente ficará a frente do time de kickoff e academia.Iniciaremos um PDI focado em seu desenvolvimento para liderança, RH realizou uma analise de seu perfil e temos o seguinte resultado:Nota: 8,2 / 10Leitura estratégicaPablo já demonstra:pensamento de melhoria contínuaatuação com impacto coletivorepertório real de liderançaPonto a ser trabalhado - Validação de liderança no contexto atual da Sieg",
+            "status": "Ativo",
+            "id_nota": 691079
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 381562,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 351629,
+    "nome_usuario_remetente": "Luana Dos Santos Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 351629,
+    "nome_gestor_remetente": "Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    "data": "27/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 510331,
+    "nome_usuario_convidado": "Gilza Gabriela Bezerra da Silva Farias",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 313073,
+        "talking_point": "1:1 Alinhamento inicial",
+        "notas": [
+          {
+            "nota": "Em conversa com a Gilza, exploramos suas expectativas e ambições de carreira dentro da SIEG, com foco em evolução para uma posição de liderança.Iniciei trazendo uma leitura sobre sua trajetória recente, destacando sua atuação desde o Ongoing IRIS até o momento atual no Kickoff. Reforçamos seus resultados consistentes, especialmente na experiência do cliente, além da sua base prévia de vivência com liderança, que se mostra um ativo relevante para sua evolução.Apresentei que existe, hoje, um espaço real para desenvolvimento mais intencional dentro da companhia — desde que sustentado por protagonismo e construção contínua de competências.Gilza demonstrou alto nível de interesse e engajamento, reforçando o valor que enxerga na SIEG, principalmente pela estrutura, rede de apoio e ambiente de crescimento. Se posicionou aberta e disposta a se desenvolver para assumir, no futuro, um papel de liderança.Alinhamos como primeiro passo o aprofundamento em todos os produtos SIEG, entendendo que sua movimentação para o squad de Academia será estratégica para acelerar esse processo de domínio técnico e visão sistêmica.Também provoquei uma reflexão importante: o desenvolvimento para liderança começa antes do cargo. É fundamental que ela passe a se posicionar desde já como a profissional que deseja se tornar, considerando que liderança é construída por meio de reconhecimento, confiança e influência no time — e não apenas por designação formal.Avaliação atual de perfil:Gilza apresenta forte consistência operacional, com foco claro na experiência do cliente e resultados sólidos em indicadores de satisfação. Demonstra boa aderência a processos, evolução contínua e abertura consistente a feedbacks.Teve participação relevante em iniciativas da área, com destaque para análises no projeto de Ongoing, o que reforça seu potencial analítico em desenvolvimento.Seu perfil evidencia disciplina, organização e comprometimento, com sinais positivos de crescimento. No entanto, ainda se encontra em fase de consolidação técnica e comportamental para avançar para um próximo nível, especialmente no que se refere à atuação estratégica e vivência prática em liderança de pessoas.Próximos passos:Iniciaremos a construção de um PDI direcionado, com foco em:Aprofundamento de conhecimento em produtoDesenvolvimento do olhar analítico e estratégicoPreparação comportamental para atuação em liderançaO objetivo é estruturar sua evolução de forma consistente, para que esteja pronta quando surgir a oportunidade.",
+            "status": "Ativo",
+            "id_nota": 691163
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 381580,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 351629,
+    "nome_usuario_remetente": "Luana Dos Santos Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 351629,
+    "nome_gestor_remetente": "Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 519045,
+    "nome_usuario_convidado": "Aline Alves de Oliveira",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento para os proximos meses",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 313076,
+        "talking_point": "1:1 Alinhamento",
+        "notas": [
+          {
+            "nota": "Realizamos uma conversa focada em perspectivas futuras e fortalecimento do papel da Aline dentro da operação.Aline vem desempenhando um bom trabalho junto ao time de CS. No entanto, conforme já observado anteriormente, seu principal desafio segue sendo a gestão da volumetria de pessoas, o que impacta diretamente sua capacidade de atuação mais estratégica.Após seu retorno de férias, alinhamos sobre as movimentações recentes da área, especialmente a rampagem de Pablo e Thais para posições de liderança. Nesse contexto, reforcei que seu papel passa a evoluir: mais do que gestão direta, ela será peça-chave no desenvolvimento dos seus pares, apoiando a formação de novas lideranças e promovendo autonomia nos times.Trouxe alguns pontos de atenção que hoje podem fragilizar sua liderança, caso não sejam trabalhados de forma intencional:Ritmo da operaçãoPosicionamento como líderConstrução de referência para o timeReforcei que, hoje, Aline ocupa uma posição de liderança focal dentro da estrutura, e é essencial que ela assuma esse espaço com clareza, trazendo sua identidade e fortalecendo sua presença junto ao time.Aline trouxe, com transparência, que ainda existem fatores que a deixam travada, sendo o principal deles a quantidade de pessoas sob sua responsabilidade. Ao mesmo tempo, destacou avanços importantes, como o movimento de construção de um time mais autogerenciável e outros ganhos operacionais relevantes.A conversa foi conduzida de forma aberta, abordando riscos e oportunidades de evolução. Houve boa compreensão por parte da Aline sobre o momento e as expectativas.Direcionamentos e próximos passos:Vamos trabalhar de forma estruturada nos seguintes pilares:Construção de referência como liderançaAumento de ritmo e cadência operacionalFortalecimento de posicionamento e identidade como líderConsolidação de um time cada vez mais autônomo, sem perda de performanceReforcei também a importância de dar visibilidade e consistência aos resultados. Como exemplo, mencionamos o RNR de 15% já alcançado — um indicativo claro de sua capacidade. O foco agora é transformar esse nível de entrega em padrão, com recorrência e percepção clara para o time e para a operação.",
+            "status": "Ativo",
+            "id_nota": 691279
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 381638,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 351629,
+    "nome_usuario_remetente": "Luana Dos Santos Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 351629,
+    "nome_gestor_remetente": "Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    "data": "14/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 442915,
+    "nome_usuario_convidado": "Francielly Silva De Oliveira",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento de expectativa",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 313110,
+        "talking_point": "1:1 Alinhamento",
+        "notas": [
+          {
+            "nota": "Francielly vem apresentando um desempenho consistente e de alto nível. Além de atuar como ponto focal, tem evoluído de forma relevante em habilidades analíticas, gestão de conflitos e condução de pessoas, ampliando seu impacto no time.A conversa foi direcionada para alinhamento de expectativas e construção de próximos passos. Destacamos como diferencial sua habilidade natural de ensinar, aliada a uma entrega de qualidade superior, com paciência, responsabilidade e forte compromisso com a experiência do cliente.Hoje, seu principal direcionamento é consolidar-se como referência em Customer Success, com foco em excelência no atendimento e na jornada do cliente. Sua performance atual já se posiciona no nível de analista pleno, e seguiremos trabalhando para sustentar e expandir esse patamar.Ao falar sobre futuro, Francielly trouxe inicialmente o interesse pelo caminho de liderança. No entanto, conduzimos a reflexão para um ponto estratégico: o fortalecimento como especialista, tornando-se uma referência técnica e comportamental dentro daquilo que já executa com excelência. Esse movimento não exclui a liderança, mas constrói uma base sólida de autoridade e reconhecimento.Direcionamento e próximos passos:A missão da Francielly passa a ser:Aprofundar o domínio dos processos e da operaçãoConsolidar-se como referência técnica e de qualidade para o timeAtuar de forma mais ativa na disseminação de conhecimentoPropor e liderar iniciativas de melhoria contínuaDar continuidade e evolução aos projetos já em andamentoIniciaremos a estruturação do seu PDI com foco nesses pilares, visando fortalecer sua atuação como especialista e ampliar ainda mais sua influência e impacto dentro da área.",
+            "status": "Ativo",
+            "id_nota": 691305
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 384085,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 351629,
+    "nome_usuario_remetente": "Luana Dos Santos Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 351629,
+    "nome_gestor_remetente": "Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    "data": "30/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278401,
+    "nome_usuario_convidado": "Thais Ramos da Silva Xavier",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento e feedback sobre sua evolução",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 314890,
+        "talking_point": "1:1 Alinhamento",
+        "notas": [
+          {
+            "nota": "Tivemos um bate-papo oportuno, sem agendamento prévio, aproveitando um espaço na agenda.Iniciei trazendo um feedback bastante positivo sobre sua postura e comportamento. Retomei pontos das nossas últimas conversas, especialmente sobre posicionamento e imagem, e destaquei o quanto Thais vem evoluindo nesse aspecto — inclusive sendo reconhecida por pessoas fora do seu time direto, o que reforça a consistência dessa evolução.Avançamos na discussão sobre a estrutura de 1:1. Thais iniciará os registros e a condução desses encontros a partir de maio. Como direcionamento inicial, sugeri:Um primeiro momento com foco em conexão com o time;E, em um intervalo de 15 dias, um segundo momento mais voltado para trabalho, abordando expectativas, planos e resultados.Reforcei que esse é um direcionamento base, mas que ela tem autonomia para adaptar o formato ao seu estilo de liderança.Também enfatizei a importância de um acompanhamento próximo, comunicação transparente e alinhamento contínuo de expectativas — pilares fundamentais para a construção de confiança com o time.Como ação complementar, sugeri a realização de uma reunião de apresentação pessoal, com o objetivo de aproximar o time, permitindo que conheçam não apenas a líder, mas também a Thais como pessoa. Esse movimento tende a fortalecer vínculo e engajamento.Alinhamos que teremos um novo momento de acompanhamento na primeira semana de maio, com foco em garantir suporte e estrutura nesse início de ciclo.Pendências / próximos passos:Evolução do PDI em andamento;Escolha de um curso de liderança para desenvolvimento, considerando que já há orçamento aprovado para esse investimento.",
+            "status": "Ativo",
+            "id_nota": 695428
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 384086,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 351629,
+    "nome_usuario_remetente": "Luana Dos Santos Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 351629,
+    "nome_gestor_remetente": "Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    "data": "30/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 531734,
+    "nome_usuario_convidado": "Pablo Moacir Gomes da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamento e feedback de sua evolução",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 314891,
+        "talking_point": "1:1 Alinhamento",
+        "notas": [
+          {
+            "nota": "Tivemos um bate-papo oportuno, sem agendamento prévio, com foco na sua evolução e na percepção de mudanças recentes, especialmente relacionadas à vestimenta e postura.Iniciei destacando que Pablo já vem sendo percebido de forma diferente, refletindo diretamente os pontos trabalhados em nossa última conversa sobre imagem e posicionamento. É nítida a evolução nesse aspecto, o que fortalece sua presença e credibilidade no contexto de liderança.Avançamos também sobre a importância do acompanhamento próximo do time. Realizamos uma simulação de avaliação de desenvolvimento, na qual compartilhei o material que utilizamos como base atualmente. Durante a simulação, Pablo já demonstrou clareza, senso crítico e maturidade na análise — um ótimo indicativo para a condução dessa responsabilidade.Falamos ainda sobre protagonismo em ideias e ações. Reforcei que ele possui total autonomia e apoio para propor melhorias e implementar iniciativas com seu time, estimulando um ambiente de construção contínua.Desafios e próximos passos:Pablo iniciará o mês de maio à frente dos times de Kickoff e Academia;Apontar um curso de liderança que deseja fazer (temos orçamento aprovado para tal)Estruturação e início das agendas de 1:1 com o time;Implementação de acompanhamento e monitoramento com registros;Realizaremos um momento de alinhamento já na primeira semana de maio, com foco em acompanhar sua evolução e garantir o suporte necessário nesse início de ciclo.&nbsp;",
+            "status": "Ativo",
+            "id_nota": 695430
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 372746,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 503703,
+    "nome_usuario_remetente": "Thiago Souza Silva",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 503703,
+    "nome_gestor_remetente": "Rafael Nascimento Ribeiro",
+    "data": "06/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 606590,
+    "nome_usuario_convidado": "Gabriel Ponciano Filizola Guimaraes",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 > Março/2026 Planejamento > Abril/2026",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Plano de ação semanal - produtividade [Compromisso em fazer isso e me enviar].",
+            "status": "Ativo",
+            "id_nota": 677385
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Prospecção ativa Criação de relacionamentos mais intencionais[Sensação de atuação sozinho nas missões diárias, sem ajuda do time de pré-vendas]",
+            "status": "Ativo",
+            "id_nota": 677384
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": [
+          {
+            "nota": "BrincadeirasComunicação sobre upsell - melhorar discursoprocrastinação",
+            "status": "Ativo",
+            "id_nota": 677388
+          }
+        ]
+      },
+      {
+        "id_talking_point": 307232,
+        "talking_point": "AVALIAÇÃO DE DESEMPENHO - MARÇO/2026",
+        "notas": [
+          {
+            "nota": "RESULTADO - ACIMA DO ESPERADOPROCESSOS - DENTRO DO ESPERADOEVOLUÇÃO COM FEEDBACK E RELACIONAMENTO COM OUTROS DEPTs. - ACIMA DO ESPERADOImpacto em outros depts.:Impacto produtivo no time de marketing: Promoção do Papo Contábil - Melhor ROI do Papo Contábil.Relação com a implantação do SalesForce (time do Anderson Frederick)Ajuste urgente das brincadeiras, atuar de forma executiva e atrelando esse posicionamento as relações na empresa.Estamos acompanhando isso de perto e precisamos evoluir nesse quesito.Ajuste sobre resultado semanal que precisa ser constante, trazendo mais previsibilidade.",
+            "status": "Ativo",
+            "id_nota": 677387
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 300215,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 509252,
+    "nome_usuario_remetente": "Ayme Mayara de Moura",
+    "status_remetente": "Inativo",
+    "id_gestor_remetente": 519045,
+    "nome_gestor_remetente": "Rodrigo Jose Anderson do Nascimento Goncalves da Silva",
+    "data": "15/09/2025",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278349,
+    "nome_usuario_convidado": "Joshua Otavio Silva Rufino",
+    "status_convidado": "Ativo",
+    "motivo": "Alinhamentos",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 365289,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 510336,
+    "nome_usuario_remetente": "Jefte de Assumpcao Macedo",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 510336,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "19/03/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 589552,
+    "nome_usuario_convidado": "Matheus Cavalcanti Leite Canziani",
+    "status_convidado": "Ativo",
+    "motivo": "O colaborador solicitou um 1:1 para entender que caminhos poderia ter para frente.",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 302094,
+        "talking_point": "Expectativas da liderança",
+        "notas": [
+          {
+            "nota": "Ele não tem clareza do seu desempenho e na empresa anterior tinha muito feedbackEle está inserido na nossa cultura, de forma que parece que trabalha aqui a anosBusca ativamente entender as demandas e vai atrás das pessoas que precisa para se aprofundarEu trouxe para ele a possibilidade de transitar para ser pessoa de produto de fatoTem uma resistência ainda para se tornar de produto, mas tem quebrado essa visão ao lidar com outras pessoas de produtoEle entende que não há muita escalabilidade para o que a vertical faz atualmente, e é necessário evoluir o escopo de suas atividades",
+            "status": "Ativo",
+            "id_nota": 666022
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 376868,
+    "template": "Planejamento da Semana",
+    "status_one_one": "Inativo",
+    "id_usuario_remetente": 510336,
+    "nome_usuario_remetente": "Jefte de Assumpcao Macedo",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 510336,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "15/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 611315,
+    "nome_usuario_convidado": "Renato Marques De Oliveira",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Rascunho",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 41285,
+        "talking_point": "Prioridades da Semana",
+        "notas": null
+      },
+      {
+        "id_talking_point": 41286,
+        "talking_point": "Alinhamentos",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378920,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 510336,
+    "nome_usuario_remetente": "Jefte de Assumpcao Macedo",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 510336,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "17/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 590130,
+    "nome_usuario_convidado": "Gustavo Antonio Ferreira do Nascimento",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 periódico",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Trazer mais visibilidade para o time nas weeklys. Compartilhar os avanços ajuda todo mundo a colaborar com mais contexto.Ao receber uma demanda, dividir ela em etapas e deixar já planejada a estimativa de cada entrega.",
+            "status": "Ativo",
+            "id_nota": 686859
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Continuar sendo uma pessoa aberta ao novoSe manter buscando constantemente melhorar os processosA forma como você recebe feedbacks fazem muita diferença no dia a dia do timeContinuar com essa troca boa com todas as áreas, fazendo com que time de design se comunique cada vez melhor com todos os stakeholders",
+            "status": "Ativo",
+            "id_nota": 686860
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378921,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 510336,
+    "nome_usuario_remetente": "Jefte de Assumpcao Macedo",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 510336,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "15/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 596208,
+    "nome_usuario_convidado": "Mario Gomes Barbosa",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 periódico",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [
+      {
+        "id_iniciativa": 82438,
+        "iniciativa": "Cadastrar uma palestra no P&P Day"
+      }
+    ],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Explorar mais a sua comunicação. Aproveitar momentos como o P&amp;P Day e a Weekly de design para compartilhar conhecimentos e boas práticas. Colocar mais as suas ideias em jogo, gerando trocas ricas com o time. Se expor mais",
+            "status": "Ativo",
+            "id_nota": 686865
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Continuar com a vontade que demonstra em novos desafiosContinuar tendo transparência na hora de identificar bloqueios, mas sempre identificando quem deve ser escalado e quandoContinuar com o cuidado e zelo que tem demonstrado ao documentar seus processos",
+            "status": "Ativo",
+            "id_nota": 686866
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378924,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 510336,
+    "nome_usuario_remetente": "Jefte de Assumpcao Macedo",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 510336,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "15/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 375074,
+    "nome_usuario_convidado": "Mariana De Morais Pinto Santos",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Se abrir mais às mudanças e fomentar a troca com outras áreas. Como designer sênior do time é esperado que seu trabalho impacte para além das atividades do dia a diaTrazer mais visibilidade para o time nas weeklys compartilhando mais os avanços das iniciativas que está tocandoTer uma visão mais sistêmica quando está focada na sua própria iniciativa. Também é esperado que ela, que possui mais tempo de casa e contexto de negócio, tenha mais visibilidade e traga essa visibilidade para o time",
+            "status": "Ativo",
+            "id_nota": 686868
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Continuar com ações que fortalecem o time, como o trabalho no dashboard de designTrazendo conteúdos para o time e resumos ou bullets points que facilitam o consumo e fazem o conhecimento chegar a todos",
+            "status": "Ativo",
+            "id_nota": 686869
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": [
+          {
+            "nota": "Soltar um pouco a autocrítica que freia ao invés de impulsionar",
+            "status": "Ativo",
+            "id_nota": 686870
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378927,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 510336,
+    "nome_usuario_remetente": "Jefte de Assumpcao Macedo",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 510336,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "15/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 544689,
+    "nome_usuario_convidado": "Mariana Queiroz de Castro Lins",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 periódico",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "A se policiar melhor nas burocracias da empresa, como pesquisas, cursos obrigatórios e registro de ponto. Como futura líder, é necessário dar o exemplo nessas coisas pq é quem vai cobrar que o time faça o mesmoPor sempre estar orientada a melhorias no processo, é importante começar a refletir sobre a quantidade de processos e artefatos, no sentido de ponderar sempre se estamos enchendo demais o time de complexidade operacional",
+            "status": "Ativo",
+            "id_nota": 686872
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Pensamento sistêmico em relação ao processo de trabalho, sempre considerando outros timesCada vez mais segura do que faz e do caminho que vem trilhando. Eu a via sempre muito insegura, mas hoje em dia isso não chama mais tanto a minha atenção",
+            "status": "Ativo",
+            "id_nota": 686873
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378929,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 510336,
+    "nome_usuario_remetente": "Jefte de Assumpcao Macedo",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 510336,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 572831,
+    "nome_usuario_convidado": "Thiago Jose Da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 periódico",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Levantar indicadores do timeDar mais insumos sobre o andamento do time com base em dados",
+            "status": "Ativo",
+            "id_nota": 686876
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Impulsionando o time a realizar o trabalho dentro das boas práticas que estão sendo construídas",
+            "status": "Ativo",
+            "id_nota": 686877
+          }
+        ]
+      },
+      {
+        "id_talking_point": 311198,
+        "talking_point": "Observações",
+        "notas": [
+          {
+            "nota": "Falei com Thiago para que tenha mais autonomia e autoridade para barrar qualquer coisa que não tenha passado pelo processo correto e/ou não esteja estávelTambém que TODAS as ações sejam registradas nos canais oficiais e sem medo ou receio de acharem ruins",
+            "status": "Ativo",
+            "id_nota": 686880
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378957,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 510336,
+    "nome_usuario_remetente": "Jefte de Assumpcao Macedo",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 510336,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "15/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 574138,
+    "nome_usuario_convidado": "Jessica Caroline Goncalves De Oliveira",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 periódico",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Dar reports semanais sobre o andamento da automação dos testes em geralDar reports semanais sobre a evolução de Thiago e Alessandro em relação à rampagem em testes automatizados, mas com dados",
+            "status": "Ativo",
+            "id_nota": 686919
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Se empenhando nos estudos de desenvolvimento sem gerar impacto nas demandas atuais",
+            "status": "Ativo",
+            "id_nota": 686922
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": [
+          {
+            "nota": "Buscar aos poucos melhorar a linguagem devido à ética e conduta que vem sendo cobrada na SIEG, sobretudo porque irá migrar para um outro time. Não é deixar de brincar e ser ela mesma, mas começar a avaliar melhor com quem tem espaço para brincar e o momento.",
+            "status": "Ativo",
+            "id_nota": 686923
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378960,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 510336,
+    "nome_usuario_remetente": "Jefte de Assumpcao Macedo",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 510336,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "13/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 614184,
+    "nome_usuario_convidado": "Alessandro Rodrigues De Oliveira Lima",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 311223,
+        "talking_point": "Como está em relação à automação de testes? E a condução de Jéssica?",
+        "notas": [
+          {
+            "nota": "Ele tem gostado de automatizar. Já programava antes, mas com IA tem sido muito interessanteVai começar a estudar em casa para certificações de QA, mas também para automação de testesAinda tem mais prazer de fazer testes manuais. mas tem gostado bastante de automatizar, e vê como algo importante para a carreiraA condução de Jéssica tem sido muito boa. Antes mesmo de começar a ser rampado, ela já trocava ideia com ele sobre automação de testes",
+            "status": "Ativo",
+            "id_nota": 686929
+          }
+        ]
+      },
+      {
+        "id_talking_point": 311224,
+        "talking_point": "Integração ao time e atividades",
+        "notas": [
+          {
+            "nota": "Vejo que está totalmente integrado ao timeTodos do time elogiam o quanto é atento e dedicado",
+            "status": "Ativo",
+            "id_nota": 686931
+          }
+        ]
+      },
+      {
+        "id_talking_point": 311225,
+        "talking_point": "Quais os seus principais desafios atualmente?",
+        "notas": [
+          {
+            "nota": "Acompanhar as mudanças no GIT da SIEG e subir os códigos com confiança. Mesmo com a IA, ele tem sido direcionado por Thiago para não confiar totalmente nelaTem se cuidado quanto à organização das pastas",
+            "status": "Ativo",
+            "id_nota": 686932
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378961,
+    "template": "Alinhamento",
+    "status_one_one": "Inativo",
+    "id_usuario_remetente": 510336,
+    "nome_usuario_remetente": "Jefte de Assumpcao Macedo",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 510336,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "22/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 589552,
+    "nome_usuario_convidado": "Matheus Cavalcanti Leite Canziani",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 periódico",
+    "situacao": "Rascunho",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378963,
+    "template": "Acordos",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 510336,
+    "nome_usuario_remetente": "Jefte de Assumpcao Macedo",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 510336,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "16/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 589552,
+    "nome_usuario_convidado": "Matheus Cavalcanti Leite Canziani",
+    "status_convidado": "Ativo",
+    "motivo": "1:1 periódico",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 311226,
+        "talking_point": "Direcionamentos",
+        "notas": [
+          {
+            "nota": "Estudar mais sobre a atuação como PODefinir se tem interesse ou não em migrar para PO",
+            "status": "Ativo",
+            "id_nota": 686936
+          }
+        ]
+      },
+      {
+        "id_talking_point": 311227,
+        "talking_point": "Acordos",
+        "notas": [
+          {
+            "nota": "Estudar mais sobre a atuação de PO e até o fim de abril conversarmos novamente para que me apresente o que entendeu do papel",
+            "status": "Ativo",
+            "id_nota": 686937
+          }
+        ]
+      },
+      {
+        "id_talking_point": 311228,
+        "talking_point": "Observações",
+        "notas": [
+          {
+            "nota": "Deu prioridade para entender como os PO do time funcionam e como são os processos delesPercebeu em conversas com as pessoas do time, que já faz parte do que um PO faz, como o entendimento e parte da definição de produtoFicou um pouco frustrado, por perceber que deve atuar fazendo muita documentação",
+            "status": "Ativo",
+            "id_nota": 686938
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 378965,
+    "template": "Acordos",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 510336,
+    "nome_usuario_remetente": "Jefte de Assumpcao Macedo",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 510336,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "16/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 611315,
+    "nome_usuario_convidado": "Renato Marques De Oliveira",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 311229,
+        "talking_point": "Direcionamentos",
+        "notas": [
+          {
+            "nota": "Sintetizar o aprendizado sobre a atuação de PO",
+            "status": "Ativo",
+            "id_nota": 686942
+          }
+        ]
+      },
+      {
+        "id_talking_point": 311230,
+        "talking_point": "Acordos",
+        "notas": [
+          {
+            "nota": "Me entregar até o fim do mês o que entendeu dos conteúdos que estudou",
+            "status": "Ativo",
+            "id_nota": 686943
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 368458,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 539932,
+    "nome_usuario_remetente": "Danilo Jorge da Silva Novais",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 539932,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "27/03/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 590144,
+    "nome_usuario_convidado": "Thiago Martins Bezerra",
+    "status_convidado": "Ativo",
+    "motivo": "Acompanhamento 1:1 mensal com o objetivo de manter proximidade, alinhar expectativas, acompanhar evolução e desenvolvimento, além de abrir um espaço recorrente para troca de feedbacks, direcionamentos e suporte nas demandas do dia a dia.",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [
+      {
+        "id_iniciativa": 80190,
+        "iniciativa": "Criar o plano de 90D - ASSISTENTE DE GROWTH"
+      }
+    ],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382094,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 539932,
+    "nome_usuario_remetente": "Danilo Jorge da Silva Novais",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278329,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "29/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 625267,
+    "nome_usuario_convidado": "Isabella Covre",
+    "status_convidado": "Ativo",
+    "motivo": "Acompanhamento 1:1 mensal com o objetivo de manter proximidade, alinhar expectativas, acompanhar evolução e desenvolvimento, além de abrir um espaço recorrente para troca de feedbacks, direcionamentos e suporte nas demandas do dia a dia.",
+    "situacao": "Agendada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382095,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 539932,
+    "nome_usuario_remetente": "Danilo Jorge da Silva Novais",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 539932,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "27/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 606597,
+    "nome_usuario_convidado": "Vanessa Rodrigues Felicio",
+    "status_convidado": "Ativo",
+    "motivo": "Acompanhamento 1:1 mensal com o objetivo de manter proximidade, alinhar expectativas, acompanhar evolução e desenvolvimento, além de abrir um espaço recorrente para troca de feedbacks, direcionamentos e suporte nas demandas do dia a dia.",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [
+      {
+        "id_iniciativa": 82871,
+        "iniciativa": "Estudar Claude aplicado em gestão de mídia"
+      }
+    ],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382096,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 539932,
+    "nome_usuario_remetente": "Danilo Jorge da Silva Novais",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 539932,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "29/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 620573,
+    "nome_usuario_convidado": "Mickaele Oliveira Dos Santos",
+    "status_convidado": "Ativo",
+    "motivo": "Acompanhamento 1:1 mensal com o objetivo de manter proximidade, alinhar expectativas, acompanhar evolução e desenvolvimento, além de abrir um espaço recorrente para troca de feedbacks, direcionamentos e suporte nas demandas do dia a dia.",
+    "situacao": "Agendada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382097,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 539932,
+    "nome_usuario_remetente": "Danilo Jorge da Silva Novais",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 539932,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "29/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 611052,
+    "nome_usuario_convidado": "Joao Victor Vasconcelos do Espirito Santo",
+    "status_convidado": "Ativo",
+    "motivo": "Acompanhamento 1:1 mensal com o objetivo de manter proximidade, alinhar expectativas, acompanhar evolução e desenvolvimento, além de abrir um espaço recorrente para troca de feedbacks, direcionamentos e suporte nas demandas do dia a dia.",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382098,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 539932,
+    "nome_usuario_remetente": "Danilo Jorge da Silva Novais",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 539932,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "30/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 590144,
+    "nome_usuario_convidado": "Thiago Martins Bezerra",
+    "status_convidado": "Ativo",
+    "motivo": "Acompanhamento 1:1 mensal com o objetivo de manter proximidade, alinhar expectativas, acompanhar evolução e desenvolvimento, além de abrir um espaço recorrente para troca de feedbacks, direcionamentos e suporte nas demandas do dia a dia.",
+    "situacao": "Agendada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382099,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 539932,
+    "nome_usuario_remetente": "Danilo Jorge da Silva Novais",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 539932,
+    "nome_gestor_remetente": "Henrique Carmellino Filho",
+    "data": "30/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 503698,
+    "nome_usuario_convidado": "Jackson Jose da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "Acompanhamento 1:1 mensal com o objetivo de manter proximidade, alinhar expectativas, acompanhar evolução e desenvolvimento, além de abrir um espaço recorrente para troca de feedbacks, direcionamentos e suporte nas demandas do dia a dia.",
+    "situacao": "Agendada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 367276,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 606596,
+    "nome_usuario_remetente": "Felipe Ayres Lins",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 606596,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 596209,
+    "nome_usuario_convidado": "Fabio Francisco Da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "1:1",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 367278,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 606596,
+    "nome_usuario_remetente": "Felipe Ayres Lins",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 606596,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278365,
+    "nome_usuario_convidado": "Marcelo Luiz Da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "1:1",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 373982,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 606596,
+    "nome_usuario_remetente": "Felipe Ayres Lins",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 606596,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 629937,
+    "nome_usuario_convidado": "Vinicius Barbosa dos Santos",
+    "status_convidado": "Ativo",
+    "motivo": "primeira 1:1",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 373983,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 606596,
+    "nome_usuario_remetente": "Felipe Ayres Lins",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 606596,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 532112,
+    "nome_usuario_convidado": "Eduardo Faria Gobatti",
+    "status_convidado": "Ativo",
+    "motivo": "Primeira 1:1",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382131,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 606596,
+    "nome_usuario_remetente": "Felipe Ayres Lins",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 606596,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "26/05/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 278365,
+    "nome_usuario_convidado": "Marcelo Luiz Da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Agendada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382132,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 606596,
+    "nome_usuario_remetente": "Felipe Ayres Lins",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 606596,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "26/05/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 629937,
+    "nome_usuario_convidado": "Vinicius Barbosa dos Santos",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Agendada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 382134,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 606596,
+    "nome_usuario_remetente": "Felipe Ayres Lins",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 606596,
+    "nome_gestor_remetente": "Gustavo Carmellino",
+    "data": "26/05/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 532112,
+    "nome_usuario_convidado": "Eduardo Faria Gobatti",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Agendada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": null
+      },
+      {
+        "id_talking_point": 37677,
+        "talking_point": "Parar",
+        "notas": null
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  },
+  {
+    "id_empresa": 663,
+    "nome_empresa": "Sieg",
+    "id_one_one": 381474,
+    "template": "Alinhamento",
+    "status_one_one": "Ativo",
+    "id_usuario_remetente": 621070,
+    "nome_usuario_remetente": "Whemilliann da Cunha Pereira",
+    "status_remetente": "Ativo",
+    "id_gestor_remetente": 278379,
+    "nome_gestor_remetente": "Paula Mikaelly Pimentel Silva Vieira",
+    "data": "28/04/2026",
+    "horario": null,
+    "duracao": null,
+    "id_usuario_convidado": 609448,
+    "nome_usuario_convidado": "Kamile Vitoria Santiago Maciel Da Silva",
+    "status_convidado": "Ativo",
+    "motivo": "",
+    "situacao": "Realizada",
+    "id_ciclo_avaliacao": null,
+    "nome_ciclo_avaliacao": null,
+    "iniciativas": [],
+    "talking_points": [
+      {
+        "id_talking_point": 37675,
+        "talking_point": "Começar",
+        "notas": [
+          {
+            "nota": "Aproximação com algumas liderançasRealizar os check-ins das vagas (como forma de se aproximar mais dos líderes)Comercial - termos mais aproximação. Fazer um bate papo específico com eles. ",
+            "status": "Ativo",
+            "id_nota": 691010
+          }
+        ]
+      },
+      {
+        "id_talking_point": 37676,
+        "talking_point": "Continuar",
+        "notas": [
+          {
+            "nota": "Apresentação da SIEG no Processo (1° etapa)Trazer todos os pontos é importante ",
+            "status": "Ativo",
+            "id_nota": 691035
+          }
+        ]
+      },
+      {
+        "id_talking_point": 312921,
+        "talking_point": "Primeiro 1:1 CLT",
+        "notas": [
+          {
+            "nota": "Espera muito e se dedicava pra isso. Não esperou que fosse agora, mas ficou muito feliz. ResponsabilidadesOlhar para novos desafios (cargos x vagas)Desafios de inclusão de PCD ",
+            "status": "Ativo",
+            "id_nota": 691003
+          }
+        ]
+      },
+      {
+        "id_talking_point": 312972,
+        "talking_point": "Desenvolvimento ",
+        "notas": [
+          {
+            "nota": "Ver tendências de mercado em R&amp;S (ATS, indicadores, processos etc.) Participar de Curso de Recrutamento para se desenvolver mais. ",
+            "status": "Ativo",
+            "id_nota": 691048
+          }
+        ]
+      }
+    ],
+    "tags": [],
+    "compartilhado": []
+  }
+]

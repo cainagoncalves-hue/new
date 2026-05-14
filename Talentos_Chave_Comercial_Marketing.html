@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Relatório de Talentos Chave — Comercial & Marketing</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      padding: 32px 24px;
+      min-height: 100vh;
+    }
+
+    /* ─── HEADER ──────────────────────────────────── */
+    .page-header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 32px 36px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .page-header h1 { font-size: 1.7rem; font-weight: 700; letter-spacing: -0.3px; }
+    .page-header .subtitle { font-size: 0.9rem; color: #a0aec0; margin-top: 4px; }
+    .page-header .meta { text-align: right; font-size: 0.82rem; color: #90cdf4; }
+    .page-header .meta span { display: block; }
+
+    /* ─── SUMMARY CARDS ───────────────────────────── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px 18px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07);
+      border-top: 4px solid transparent;
+    }
+    .card.total   { border-color: #4f46e5; }
+    .card.ok      { border-color: #10b981; }
+    .card.alert   { border-color: #f59e0b; }
+    .card.danger  { border-color: #ef4444; }
+    .card-value { font-size: 2rem; font-weight: 700; line-height: 1; }
+    .card.total .card-value   { color: #4f46e5; }
+    .card.ok    .card-value   { color: #10b981; }
+    .card.alert .card-value   { color: #f59e0b; }
+    .card.danger .card-value  { color: #ef4444; }
+    .card-label { font-size: 0.78rem; color: #6b7280; margin-top: 5px; font-weight: 500; text-transform: uppercase; letter-spacing: .4px; }
+
+    /* ─── SECTION TITLE ───────────────────────────── */
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #6b7280;
+      margin-bottom: 10px;
+      margin-top: 28px;
+      padding-left: 4px;
+    }
+    .section-title .area-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-com-ext  { background: #dbeafe; color: #1d4ed8; }
+    .badge-com-int  { background: #ede9fe; color: #6d28d9; }
+    .badge-pre      { background: #d1fae5; color: #065f46; }
+    .badge-mkt      { background: #fce7f3; color: #be185d; }
+
+    /* ─── TABLE ───────────────────────────────────── */
+    .table-wrap {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07);
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    thead tr { background: #f8fafc; }
+    th {
+      padding: 11px 14px;
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: #6b7280;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    .name-cell strong { display: block; font-weight: 600; color: #111827; }
+    .name-cell span   { font-size: 0.77rem; color: #6b7280; }
+
+    /* ─── POTENCIAL / CLASSIF BADGES ─────────────── */
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .pot-alto    { background: #d1fae5; color: #065f46; }
+    .pot-bom     { background: #dbeafe; color: #1d4ed8; }
+    .pot-dev     { background: #fef3c7; color: #92400e; }
+
+    .cls-suc     { background: #ede9fe; color: #5b21b6; }
+    .cls-prot    { background: #fce7f3; color: #9d174d; }
+    .cls-exc     { background: #d1fae5; color: #065f46; }
+
+    .risco-sim   { background: #fee2e2; color: #991b1b; font-weight: 700; }
+    .risco-nao   { background: #f0fdf4; color: #166534; }
+
+    /* ─── PDI STATUS ──────────────────────────────── */
+    .pdi-status {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .pdi-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .pdi-none     { background: #fee2e2; color: #991b1b; }
+    .pdi-zero     { background: #fef3c7; color: #92400e; }
+    .pdi-partial  { background: #dbeafe; color: #1e40af; }
+    .pdi-done     { background: #d1fae5; color: #065f46; }
+    .pdi-mixed    { background: #ede9fe; color: #5b21b6; }
+
+    .progress-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 3px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 5px;
+      background: #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+      min-width: 60px;
+    }
+    .progress-fill { height: 100%; border-radius: 10px; transition: width .3s; }
+    .fill-zero    { background: #f59e0b; }
+    .fill-low     { background: #3b82f6; }
+    .fill-mid     { background: #6366f1; }
+    .fill-done    { background: #10b981; }
+    .progress-pct { font-size: 0.72rem; color: #6b7280; min-width: 28px; }
+
+    .pdi-detail-title {
+      font-size: 0.7rem;
+      color: #9ca3af;
+      font-style: italic;
+      margin-top: 3px;
+    }
+
+    /* ─── PIPELINE ────────────────────────────────── */
+    .pipeline-arrow {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.77rem;
+    }
+    .pipeline-arrow span { color: #9ca3af; }
+
+    /* ─── FOOTER ──────────────────────────────────── */
+    .footer {
+      margin-top: 36px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    /* ─── ALERTA ──────────────────────────────────── */
+    .alert-box {
+      background: #fff7ed;
+      border: 1.5px solid #fb923c;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 22px;
+      font-size: 0.83rem;
+      color: #9a3412;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .alert-box .icon { font-size: 1.2rem; flex-shrink: 0; }
+    .alert-box strong { font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div>
+    <h1>Talentos Chave — Comercial &amp; Marketing</h1>
+    <div class="subtitle">Mapeamento de talentos + status PDI · Ciclo 2026</div>
+  </div>
+  <div class="meta">
+    <span>Atualizado em: Maio 2026</span>
+    <span>Fonte: Mapeamento de Talentos SIEG 2026 + PDI.json</span>
+  </div>
+</div>
+
+<!-- SUMMARY CARDS -->
+<div class="summary-grid">
+  <div class="card total">
+    <div class="card-value">15</div>
+    <div class="card-label">Talentos Chave</div>
+  </div>
+  <div class="card danger">
+    <div class="card-value">7</div>
+    <div class="card-label">Sem PDI Cadastrado</div>
+  </div>
+  <div class="card alert">
+    <div class="card-value">7</div>
+    <div class="card-label">PDI Ativo com 0%</div>
+  </div>
+  <div class="card ok">
+    <div class="card-value">1</div>
+    <div class="card-label">PDI Concluído (100%)</div>
+  </div>
+  <div class="card danger">
+    <div class="card-value">9</div>
+    <div class="card-label">Risco de Perda</div>
+  </div>
+</div>
+
+<!-- ALERTA -->
+<div class="alert-box">
+  <div class="icon">⚠️</div>
+  <div>
+    <strong>Ponto de atenção:</strong> 7 dos 15 talentos chave (47%) não possuem PDI cadastrado no sistema — André Cesar Lopes, Danilo Novais, Giovanna Novaes Cruz, Igor Guarana, Jorge Nascimento Junior, Marcos Flavio Reis e Tomas Signorelli. É necessário acionar os líderes para abertura imediata dos PDIs.
+  </div>
+</div>
+
+<!-- ═══ COMERCIAL EXTERNO ═══ -->
+<div class="section-title">
+  Comercial Externo
+  <span class="area-badge badge-com-ext">6 talentos</span>
+</div>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Talento</th>
+        <th>Potencial</th>
+        <th>Classificação</th>
+        <th>Pipeline</th>
+        <th>Risco Perda</th>
+        <th>Status PDI</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td class="name-cell">
+          <strong>André Cesar Lopes</strong>
+          <span>Executivo de Contas I · Adm. 01/07/2022</span>
+        </td>
+        <td><span class="badge pot-bom">Bom Potencial</span></td>
+        <td><span class="badge cls-suc">Sucessor Natural</span></td>
+        <td><div class="pipeline-arrow">→ <span>Coordenação</span></div></td>
+        <td><span class="badge risco-sim">SIM</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-none">✕ Sem PDI cadastrado</span>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Jorge Do Nascimento Junior</strong>
+          <span>Gerente de Vendas SR · Adm. 24/03/2022</span>
+        </td>
+        <td><span class="badge pot-alto">Alto Potencial</span></td>
+        <td><span class="badge cls-suc">Sucessor Natural</span></td>
+        <td><div class="pipeline-arrow">→ <span>Gerente Geral</span></div></td>
+        <td><span class="badge risco-sim">SIM</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-none">✕ Sem PDI cadastrado</span>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Luiz Augusto Silveira Cordeiro</strong>
+          <span>Executivo de Contas I · Adm. 01/09/2022</span>
+        </td>
+        <td><span class="badge pot-bom">Bom Potencial</span></td>
+        <td><span class="badge cls-suc">Sucessor Natural</span></td>
+        <td><div class="pipeline-arrow">→ <span>Coordenação</span></div></td>
+        <td><span class="badge risco-sim">SIM</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-zero">⚠ 4 PDIs ativos — 0% progresso</span>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar"><div class="progress-fill fill-zero" style="width:0%"></div></div>
+              <span class="progress-pct">0%</span>
+            </div>
+            <div class="pdi-detail-title">Geração de Oportunidades · Autonomia · Mentalidade Estratégica · Programa Decolar · Prazo: dez/2026</div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Marcos Flavio De Paiva Reis</strong>
+          <span>Gerente de Vendas SR · Adm. 20/04/2022</span>
+        </td>
+        <td><span class="badge pot-alto">Alto Potencial</span></td>
+        <td><span class="badge cls-suc">Sucessor Natural</span></td>
+        <td><div class="pipeline-arrow">→ <span>Gerente Geral</span></div></td>
+        <td><span class="badge risco-sim">SIM</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-none">✕ Sem PDI cadastrado</span>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Rafael Bonsolio De Azevedo</strong>
+          <span>Executivo de Contas I · Adm. 01/08/2022</span>
+        </td>
+        <td><span class="badge pot-dev">—</span></td>
+        <td><span class="badge cls-prot">Protagonista Estratégico</span></td>
+        <td><div class="pipeline-arrow">→ <span>Coordenação</span></div></td>
+        <td><span class="badge risco-sim">SIM</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-zero">⚠ 4 PDIs ativos — 0% progresso</span>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar"><div class="progress-fill fill-zero" style="width:0%"></div></div>
+              <span class="progress-pct">0%</span>
+            </div>
+            <div class="pdi-detail-title">Postura Executiva · Networking · Excelência Operacional · Influência · Prazo: jun–dez/2026</div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Roberval Bruno Dos Santos</strong>
+          <span>Executivo de Contas I · Adm. 09/11/2018</span>
+        </td>
+        <td><span class="badge pot-alto">Alto Potencial</span></td>
+        <td><span class="badge cls-suc">Sucessor Natural</span></td>
+        <td><div class="pipeline-arrow">→ <span>Coordenação</span></div></td>
+        <td><span class="badge risco-sim">SIM</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-zero">⚠ 1 PDI ativo — 0% progresso</span>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar"><div class="progress-fill fill-zero" style="width:0%"></div></div>
+              <span class="progress-pct">0%</span>
+            </div>
+            <div class="pdi-detail-title">Roberval Bruno dos Santos · Prazo: dez/2026</div>
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ═══ COMERCIAL INTERNO ═══ -->
+<div class="section-title">
+  Comercial Interno
+  <span class="area-badge badge-com-int">2 talentos</span>
+</div>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Talento</th>
+        <th>Potencial</th>
+        <th>Classificação</th>
+        <th>Pipeline</th>
+        <th>Risco Perda</th>
+        <th>Status PDI</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Alexandre Maciel de Paiva</strong>
+          <span>Consultor de Vendas Internas I · Adm. 12/03/2025</span>
+        </td>
+        <td><span class="badge pot-dev">Em Desenvolvimento</span></td>
+        <td><span class="badge cls-suc">Sucessor Natural</span></td>
+        <td><div class="pipeline-arrow">→ <span>Supervisão</span></div></td>
+        <td><span class="badge risco-nao">Não</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-mixed">★ 3 PDIs — resultado misto</span>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar"><div class="progress-fill fill-mid" style="width:33%"></div></div>
+              <span class="progress-pct">~33%</span>
+            </div>
+            <div class="pdi-detail-title">✅ Desenvolvimento de Liderança (100%) · ⏳ Comunicação (0%) · ⏳ Técnicas de Venda (0%)</div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Tomas Signorelli Navarro Lima</strong>
+          <span>Líder · Adm. 24/03/2025</span>
+        </td>
+        <td><span class="badge pot-alto">Alto Potencial</span></td>
+        <td><span class="badge cls-suc">Sucessor Natural</span></td>
+        <td><div class="pipeline-arrow">→ <span>Supervisão</span></div></td>
+        <td><span class="badge risco-sim">SIM</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-none">✕ Sem PDI cadastrado</span>
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ═══ PRÉ-VENDAS ═══ -->
+<div class="section-title">
+  Pré-Vendas
+  <span class="area-badge badge-pre">2 talentos</span>
+</div>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Talento</th>
+        <th>Potencial</th>
+        <th>Classificação</th>
+        <th>Pipeline</th>
+        <th>Risco Perda</th>
+        <th>Status PDI</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Gabriela Melo Rocha</strong>
+          <span>Analista Comercial I · Adm. 14/05/2025</span>
+        </td>
+        <td><span class="badge pot-dev">Em Desenvolvimento</span></td>
+        <td><span class="badge cls-suc">Sucessor Natural</span></td>
+        <td><div class="pipeline-arrow">→ <span>Supervisão</span></div></td>
+        <td><span class="badge risco-nao">Não</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-done">✓ 1 PDI — 100% concluído</span>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar"><div class="progress-fill fill-done" style="width:100%"></div></div>
+              <span class="progress-pct">100%</span>
+            </div>
+            <div class="pdi-detail-title">Avaliação de desempenho 2026 — todas as iniciativas concluídas ✅</div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Leticia Pimentel Martinelli</strong>
+          <span>Analista Comercial I · Adm. 10/04/2025</span>
+        </td>
+        <td><span class="badge pot-dev">Em Desenvolvimento</span></td>
+        <td><span class="badge cls-exc">Excelência Técnica</span></td>
+        <td><div class="pipeline-arrow">→ <span>Analista PL</span></div></td>
+        <td><span class="badge risco-nao">Não</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-low">⚠ 1 PDI — 20% progresso</span>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar"><div class="progress-fill fill-low" style="width:20%"></div></div>
+              <span class="progress-pct">20%</span>
+            </div>
+            <div class="pdi-detail-title">Desenvolvimento PDI — 1/5 iniciativas concluída (influencers contábeis) · Prazo: jul/2026</div>
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ═══ MARKETING ═══ -->
+<div class="section-title">
+  Marketing
+  <span class="area-badge badge-mkt">5 talentos</span>
+</div>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Talento</th>
+        <th>Potencial</th>
+        <th>Classificação</th>
+        <th>Pipeline</th>
+        <th>Risco Perda</th>
+        <th>Status PDI</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Danilo Jorge da Silva Novais</strong>
+          <span>Líder · Adm. 10/04/2025</span>
+        </td>
+        <td><span class="badge pot-bom">Bom Potencial</span></td>
+        <td><span class="badge cls-suc">Sucessor Natural</span></td>
+        <td><div class="pipeline-arrow">→ <span>Head de Growth</span></div></td>
+        <td><span class="badge risco-sim">SIM</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-none">✕ Sem PDI cadastrado</span>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Giovanna Novaes Cruz</strong>
+          <span>Analista de Inteligência de Mercado SR · Adm. 10/04/2025</span>
+        </td>
+        <td><span class="badge pot-dev">Em Desenvolvimento</span></td>
+        <td><span class="badge cls-suc">Sucessor Natural</span></td>
+        <td><div class="pipeline-arrow">→ <span>Supervisor Rev. Ops</span></div></td>
+        <td><span class="badge risco-sim">SIM</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-none">✕ Sem PDI cadastrado</span>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Igor Matheus Guarana Pereira</strong>
+          <span>Redator Publicitário SR · Adm. 18/12/2024</span>
+        </td>
+        <td><span class="badge pot-dev">Em Desenvolvimento</span></td>
+        <td><span class="badge cls-exc">Excelência Técnica</span></td>
+        <td><div class="pipeline-arrow">→ <span>Analista SR</span></div></td>
+        <td><span class="badge risco-nao">Não</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-none">✕ Sem PDI cadastrado</span>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Jessica Cristina da Silva Araujo</strong>
+          <span>Analista PL · Adm. 09/01/2023</span>
+        </td>
+        <td><span class="badge pot-alto">Alto Potencial</span></td>
+        <td><span class="badge cls-suc">Sucessor Natural</span></td>
+        <td><div class="pipeline-arrow">→ <span>Supervisor de Eventos</span></div></td>
+        <td><span class="badge risco-nao">Não</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-zero">⚠ 12 PDIs ativos — 0% progresso</span>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar"><div class="progress-fill fill-zero" style="width:0%"></div></div>
+              <span class="progress-pct">0%</span>
+            </div>
+            <div class="pdi-detail-title">PDIs recém-criados (abr/2026): Backup liderança · Playbook Eventos · Projeto cross-functional · Sucessão · Dashboard ROI · e mais 7 · Prazos: jun–dez/2026</div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="name-cell">
+          <strong>Thamyres Eliza Santana de Andrade</strong>
+          <span>Analista JR · Adm. 20/11/2023 · Migrou CS → MKT</span>
+        </td>
+        <td><span class="badge pot-dev">Em Desenvolvimento</span></td>
+        <td><span class="badge cls-prot">Protagonista Estratégico</span></td>
+        <td><div class="pipeline-arrow">→ <span>Analista PL</span></div></td>
+        <td><span class="badge risco-nao">Não</span></td>
+        <td>
+          <div class="pdi-status">
+            <span class="pdi-badge pdi-zero">⚠ 1 PDI ativo — 0% progresso</span>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar"><div class="progress-fill fill-zero" style="width:0%"></div></div>
+              <span class="progress-pct">0%</span>
+            </div>
+            <div class="pdi-detail-title">Onboarding Estratégico — 12 iniciativas · Início abr/2026 · Prazo: jun/2026</div>
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>Gerado automaticamente por Claude · SIEG Soluções Fiscais · Gente &amp; Cultura · Checkin BP Maio 2026</p>
+</div>
+
+</body>
+</html>
