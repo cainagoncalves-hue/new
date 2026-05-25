@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import FilterBar from "@/components/FilterBar";
+import AppShell from "@/components/AppShell";
 import { Suspense } from "react";
 
 async function Topbar() {
@@ -110,44 +111,46 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Topbar />
-      <Suspense fallback={
-        <div style={{
+      <AppShell>
+        <Suspense fallback={
+          <div style={{
+            background: "var(--surface)",
+            borderBottom: "1px solid var(--border)",
+            height: 56,
+          }} />
+        }>
+          <FilterBar />
+        </Suspense>
+        {children}
+        <footer style={{
           background: "var(--surface)",
-          borderBottom: "1px solid var(--border)",
-          height: 56,
-        }} />
-      }>
-        <FilterBar />
-      </Suspense>
-      {children}
-      <footer style={{
-        background: "var(--surface)",
-        borderTop: "1px solid var(--border)",
-        padding: "22px 48px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginTop: 60,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{
-            background: "var(--brand)",
-            color: "#fff",
-            fontFamily: "'Syne', sans-serif",
-            fontWeight: 800,
-            fontSize: 11,
-            letterSpacing: "0.1em",
-            padding: "3px 8px",
-            borderRadius: 4,
-          }}>SIEG</span>
+          borderTop: "1px solid var(--border)",
+          padding: "22px 48px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginTop: 60,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{
+              background: "var(--brand)",
+              color: "#fff",
+              fontFamily: "'Syne', sans-serif",
+              fontWeight: 800,
+              fontSize: 11,
+              letterSpacing: "0.1em",
+              padding: "3px 8px",
+              borderRadius: 4,
+            }}>SIEG</span>
+            <span style={{ fontSize: 12, color: "var(--text-300)" }}>
+              Gente &amp; Cultura · Sistema BP · Dados via Elofy
+            </span>
+          </div>
           <span style={{ fontSize: 12, color: "var(--text-300)" }}>
-            Gente &amp; Cultura · Sistema BP · Dados via Elofy
+            Atualizado: Maio 2026
           </span>
-        </div>
-        <span style={{ fontSize: 12, color: "var(--text-300)" }}>
-          Atualizado: Maio 2026
-        </span>
-      </footer>
+        </footer>
+      </AppShell>
     </div>
   );
 }
