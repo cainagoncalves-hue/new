@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect, useLayoutEffect } from "react";
+import { useRef, useState, useEffect, useLayoutEffect, createContext, useContext } from "react";
 
 export interface OrgNode {
   id: string;
@@ -7,6 +7,12 @@ export interface OrgNode {
   role: string;
   children: OrgNode[];
 }
+
+// ── Global expand / collapse signal ──────────────────────────────────────────
+// `tick` changes each time a broadcast is fired so useEffect re-runs even if
+// the direction didn't change (e.g. expand→expand).
+interface Signal { expand: boolean; tick: number }
+const TreeCtx = createContext<Signal | null>(null);
 
 const TREE_CSS = `
 .org-ul {
@@ -73,6 +79,14 @@ function OrgNodeEl({ node, depth, isRoot }: { node: OrgNode; depth: number; isRo
   const [open, setOpen] = useState(depth < 2);
   const has = node.children.length > 0;
   const d = D[Math.min(depth, D.length - 1)];
+  const signal = useContext(TreeCtx);
+
+  // Respond to expand/collapse-all broadcasts
+  useEffect(() => {
+    if (!signal || !has) return;
+    setOpen(signal.expand);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signal?.tick]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -130,20 +144,38 @@ function OrgNodeEl({ node, depth, isRoot }: { node: OrgNode; depth: number; isRo
   );
 }
 
-function ZoomBtn({ label, title, onClick }: { label: string; title: string; onClick: () => void }) {
+function CtrlBtn({
+  label,
+  title,
+  onClick,
+  wide,
+}: {
+  label: string;
+  title: string;
+  onClick: () => void;
+  wide?: boolean;
+}) {
   return (
     <button
       onClick={onClick}
       title={title}
       style={{
-        width: 34, height: 34, borderRadius: 8,
+        height: 34,
+        width: wide ? "auto" : 34,
+        padding: wide ? "0 12px" : 0,
+        borderRadius: 8,
         border: "1px solid var(--border-2)",
         background: "var(--surface)",
         color: "var(--text-900)",
-        fontSize: 18, fontWeight: 700,
+        fontSize: wide ? 12 : 18,
+        fontWeight: 700,
+        fontFamily: "'DM Sans', sans-serif",
         cursor: "pointer",
-        display: "flex", alignItems: "center", justifyContent: "center",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         boxShadow: "0 1px 4px rgba(0,0,0,0.10)",
+        whiteSpace: "nowrap",
         transition: "background 0.12s",
       }}
     >
@@ -160,6 +192,10 @@ export default function OrgTreeClient({ roots }: { roots: OrgNode[] }) {
   const [tf, setTf]  = useState<Transform>({ x: 0, y: 60, scale: 0.8 });
   const [drag, setDrag] = useState(false);
   const start = useRef({ mx: 0, my: 0, tx: 0, ty: 0 });
+
+  // Expand / collapse all signal
+  const [signal, setSignal] = useState<Signal | null>(null);
+  const broadcast = (expand: boolean) => setSignal({ expand, tick: Date.now() });
 
   // Center tree on first render
   useLayoutEffect(() => {
@@ -232,17 +268,28 @@ export default function OrgTreeClient({ roots }: { roots: OrgNode[] }) {
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
       <style>{TREE_CSS}</style>
 
-      {/* Zoom controls */}
-      <div style={{ position: "absolute", bottom: 20, right: 20, zIndex: 20, display: "flex", flexDirection: "column", gap: 6 }}>
-        <ZoomBtn label="+" title="Zoom in"  onClick={() => setTf(t => ({ ...t, scale: Math.min(3, t.scale * 1.2) }))} />
-        <ZoomBtn label="−" title="Zoom out" onClick={() => setTf(t => ({ ...t, scale: Math.max(0.1, t.scale / 1.2) }))} />
-        <ZoomBtn label="⌂" title="Resetar"  onClick={() => {
-          const c = containerRef.current;
-          const ct = contentRef.current;
-          const scale = 0.8;
-          const x = c && ct ? Math.max(20, (c.clientWidth - ct.scrollWidth * scale) / 2) : 60;
-          setTf({ x, y: 60, scale });
-        }} />
+      {/* Controls (bottom-right) */}
+      <div style={{
+        position: "absolute", bottom: 20, right: 20, zIndex: 20,
+        display: "flex", flexDirection: "column", gap: 6,
+      }}>
+        {/* Expand / Collapse row */}
+        <div style={{ display: "flex", gap: 6 }}>
+          <CtrlBtn label="Expandir" title="Expandir tudo"   onClick={() => broadcast(true)}  wide />
+          <CtrlBtn label="Recolher" title="Recolher tudo"   onClick={() => broadcast(false)} wide />
+        </div>
+        {/* Zoom row */}
+        <div style={{ display: "flex", gap: 6 }}>
+          <CtrlBtn label="+" title="Zoom in"  onClick={() => setTf(t => ({ ...t, scale: Math.min(3, t.scale * 1.2) }))} />
+          <CtrlBtn label="−" title="Zoom out" onClick={() => setTf(t => ({ ...t, scale: Math.max(0.1, t.scale / 1.2) }))} />
+          <CtrlBtn label="⌂" title="Resetar"  onClick={() => {
+            const c = containerRef.current;
+            const ct = contentRef.current;
+            const scale = 0.8;
+            const x = c && ct ? Math.max(20, (c.clientWidth - ct.scrollWidth * scale) / 2) : 60;
+            setTf({ x, y: 60, scale });
+          }} />
+        </div>
       </div>
 
       {/* Canvas */}
@@ -285,16 +332,18 @@ export default function OrgTreeClient({ roots }: { roots: OrgNode[] }) {
             willChange: "transform",
           }}
         >
-          <div
-            ref={contentRef}
-            style={{ display: "flex", gap: 80, alignItems: "flex-start", padding: "20px 80px 80px" }}
-          >
-            {roots.map(root => (
-              <div key={root.id} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <OrgNodeEl node={root} depth={0} isRoot />
-              </div>
-            ))}
-          </div>
+          <TreeCtx.Provider value={signal}>
+            <div
+              ref={contentRef}
+              style={{ display: "flex", gap: 80, alignItems: "flex-start", padding: "20px 80px 80px" }}
+            >
+              {roots.map(root => (
+                <div key={root.id} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <OrgNodeEl node={root} depth={0} isRoot />
+                </div>
+              ))}
+            </div>
+          </TreeCtx.Provider>
         </div>
       </div>
     </div>
