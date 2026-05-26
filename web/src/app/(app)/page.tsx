@@ -466,6 +466,15 @@ export default async function HomePage({
           period="1º TRI 2026"
           delay={0.52}
         />
+        <ModuleCard
+          href="/organograma"
+          icon="🏢"
+          iconBg="#F0F9FF"
+          title="Organograma"
+          desc="Estrutura organizacional por time e Business Partner — gestores, colaboradores e distribuição de equipes por carteira."
+          period="Atualizado"
+          delay={0.57}
+        />
       </div>
     </main>
   );
