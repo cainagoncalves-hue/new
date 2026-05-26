@@ -13,7 +13,8 @@ export default async function OrgPage({
   // ── 1. Fetch all users ────────────────────────────────────────────────────
   let q = supabase
     .from("elofy_users")
-    .select("nome_colaborador, nome_gestor, nome_time");
+    .select("nome, nome_gestor, cargo")
+    .eq("status", "ativo");
 
   if (leader) q = q.eq("nome_gestor", leader);
 
@@ -24,16 +25,16 @@ export default async function OrgPage({
   const childrenOf = new Map<string, string[]>();
   // parentOf[person] = their manager
   const parentOf   = new Map<string, string>();
-  // teamOf[person]   = their team name
-  const teamOf     = new Map<string, string>();
+  // cargoOf[person]  = their role
+  const cargoOf    = new Map<string, string>();
 
   for (const u of users ?? []) {
-    const name = (u.nome_colaborador ?? "").trim();
-    const mgr  = (u.nome_gestor     ?? "").trim();
-    const team = (u.nome_time       ?? "").trim();
+    const name  = (u.nome        ?? "").trim();
+    const mgr   = (u.nome_gestor ?? "").trim();
+    const cargo = (u.cargo       ?? "").trim();
 
     if (!name) continue;
-    teamOf.set(name, team);
+    cargoOf.set(name, cargo);
 
     if (mgr && mgr !== name) {
       parentOf.set(name, mgr);
@@ -54,7 +55,7 @@ export default async function OrgPage({
     const children = (childrenOf.get(name) ?? [])
       .map(c => build(c, v))
       .sort((a, b) => b.children.length - a.children.length);
-    return { id: name, name, role: teamOf.get(name) ?? "", children };
+    return { id: name, name, role: cargoOf.get(name) ?? "", children };
   }
 
   const tree = roots.map(r => build(r));
@@ -88,7 +89,7 @@ export default async function OrgPage({
         raízes encontradas: <strong>{roots.length}</strong> &nbsp;|&nbsp;
         nós na árvore: <strong>{totalPeople}</strong>
         {totalRows > 0 && (
-          <> &nbsp;|&nbsp; exemplo nome_gestor: <strong>&quot;{users?.[0]?.nome_gestor ?? "null"}&quot;</strong></>
+          <> &nbsp;|&nbsp; ex: nome=&quot;{users?.[0]?.nome ?? "null"}&quot; gestor=&quot;{users?.[0]?.nome_gestor ?? "null"}&quot; cargo=&quot;{users?.[0]?.cargo ?? "null"}&quot;</>
         )}
       </div>
       {/* ─────────────────────────────────────────────────────────────── */}
