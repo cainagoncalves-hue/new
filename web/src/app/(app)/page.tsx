@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { excludeAdmins } from "@/lib/adminAccounts";
 
 // BP area mappings (mirrors index.html)
 const BP_AREAS: Record<string, string[]> = {
@@ -264,10 +265,10 @@ export default async function HomePage({
   }
 
   // Headcount
-  let hcQuery = supabase
-    .from("elofy_users")
-    .select("elofy_id", { count: "exact", head: true })
-    .eq("status", "Ativo");
+  let hcQuery = excludeAdmins(
+    supabase.from("elofy_users").select("elofy_id", { count: "exact", head: true }).eq("status", "Ativo"),
+    "nome"
+  );
   if (areaFilter) hcQuery = hcQuery.in("nome_time", areaFilter);
   const { count: hc } = await hcQuery;
 

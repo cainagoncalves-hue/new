@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { excludeAdmins } from "@/lib/adminAccounts";
+import { ADMIN_ACCOUNTS, excludeAdmins } from "@/lib/adminAccounts";
 import OrgTreeClient, { OrgNode } from "./OrgTreeClient";
 
 export default async function OrgPage({
@@ -36,7 +36,7 @@ export default async function OrgPage({
     if (!name) continue;
     cargoOf.set(name, cargo);
 
-    if (mgr && mgr !== name) {
+    if (mgr && mgr !== name && !ADMIN_ACCOUNTS.includes(mgr)) {
       parentOf.set(name, mgr);
       if (!childrenOf.has(mgr)) childrenOf.set(mgr, []);
       childrenOf.get(mgr)!.push(name);
