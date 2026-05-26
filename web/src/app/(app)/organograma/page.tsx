@@ -15,7 +15,7 @@ const BP_LABELS: Record<string, string> = {
 };
 
 function buildTree(
-  rows: { nome_colaborador: string | null; nome_gestor: string | null; nome_cargo: string | null }[]
+  rows: { nome_colaborador: string | null; nome_gestor: string | null; nome_time: string | null }[]
 ): OrgNode[] {
   const people = new Map<string, { role: string }>();
   const parentOf = new Map<string, string>(); // child → manager
@@ -23,7 +23,7 @@ function buildTree(
   for (const row of rows) {
     const name = (row.nome_colaborador ?? "").trim();
     const mgr  = (row.nome_gestor ?? "").trim();
-    const role = (row.nome_cargo ?? "").trim();
+    const role = (row.nome_time ?? "").trim();
     if (!name || name === mgr) continue;
 
     if (!people.has(name)) people.set(name, { role });
@@ -75,8 +75,9 @@ export default async function OrgPage({
   const areaFilter = bp !== "geral" && BP_AREAS[bp] ? BP_AREAS[bp] : null;
 
   let q = supabase
-    .from("elofy_sucessao")
-    .select("nome_colaborador, nome_gestor, nome_cargo");
+    .from("elofy_users")
+    .select("nome_colaborador, nome_gestor, nome_time")
+    .eq("status", "Ativo");
   if (areaFilter) q = q.in("nome_time", areaFilter);
   if (leader)     q = q.eq("nome_gestor", leader);
 
