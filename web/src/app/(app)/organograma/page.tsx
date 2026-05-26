@@ -14,54 +14,144 @@ const BP_LABELS: Record<string, string> = {
   renata_paula: "Renata/Paula · Tecnologia & RH",
 };
 
-function buildTree(
-  rows: { nome_colaborador: string | null; nome_gestor: string | null; nome_time: string | null }[]
-): OrgNode[] {
-  const people = new Map<string, { role: string }>();
-  const parentOf = new Map<string, string>(); // child → manager
+// Same leader→areas mapping used throughout the app
+const LEADER_AREAS: Record<string, string[]> = {
+  "Henrique Carmellino Filho": ["DIRETORIA  GERAL","DIRETORIA COMERCIAL","DIRETORIA FINANCEIRA","DIRETORIA MARKETING","DIRETORIA OPERAÇÕES","MARKETING -  DIGITAL"],
+  "Walquiria Santos Correia": ["ADMINISTRATIVO/FINANCEIRO REC","ADMINISTRATIVO/FINANCEIRO SP","SERVIÇOS GERAIS REC","SERVIÇOS GERAIS SP"],
+  "Gustavo Carmellino": ["DEV - Time Leandro","DIRETORIA TECNOLOGIA","NIX","PESQUISA & PRODUTO"],
+  "Jorge Do Nascimento Junior": ["REGIONAL ES","REGIONAL RJ","REGIONAL SP"],
+  "Leonardo De Oliveira Gama": ["VENDAS INTERNAS"],
+  "Leandro dos Santos Machado": ["DEV - Time Leandro"],
+  "Gabriela Maria Araujo Peres": ["SUPORTE - Time Gabriela"],
+  "Danilo Jorge da Silva Novais": ["MARKETING -  DIGITAL","PRÉ-VENDAS"],
+  "Jose Edmilson Da Silva": ["SUPORTE - Time Edmilson"],
+  "Enock De Oliveira E Silva Neto": ["SUPORTE - Time Enock"],
+  "Jonialysson Bezerra De Oliveira": ["DEV - Time Jony"],
+  "Jefte de Assumpcao Macedo": ["PESQUISA & PRODUTO"],
+  "Nathalia Vasconcelos Trajano Da Silva": ["SUPORTE - Time Nathalia"],
+  "Joao Henrique Da Silva": ["TI - INFRAESTRUTURA"],
+  "Thiago Souza Silva": ["REGIONAL BA","REGIONAL NE"],
+  "Gabriel Fidelis Gonzaga Dos Santos": ["CX - Time Gabriel"],
+  "Rafael Nascimento Ribeiro": ["DIRETORIA COMERCIAL","REGIONAL RJ","REGIONAL SP","VENDAS INTERNAS"],
+  "Rodrigo Jose Anderson do Nascimento Goncalves da Silva": ["CS","CX"],
+  "Marcos Flavio De Paiva Reis": ["REGIONAL GO","REGIONAL MG","REGIONAL MS","REGIONAL MT"],
+  "Publio Maswell Matos Cavalcanti": ["SUPORTE","SUPORTE - Time Gabriela"],
+  "Anderson Frederick Bernardes De Oliveira": ["NIX"],
+  "Camila Alves Da Silva": ["PESQUISA & PRODUTO"],
+  "Anderson Luis Lima da Silva": ["ADMINISTRATIVO/FINANCEIRO REC","ADMINISTRATIVO/FINANCEIRO SP","DIRETORIA FINANCEIRA","OSM"],
+  "Gabrielle Vitoria Fernandes Tavares": ["MARKETING -  EVENTOS"],
+  "Tomas Signorelli Navarro Lima": ["REGIONAL SP","VENDAS INTERNAS"],
+  "Aline Alves de Oliveira": ["CS - Time Aline"],
+  "Felipe Ayres Lins": ["DEV - Time Felipe"],
+  "Arthur Alexandre Fracalossi Carvalho": ["PRÉ-VENDAS"],
+  "Renata Oliveira De Moura Duarte": ["DIRETORIA GENTE & CULTURA","Desenvolvimento Humano Organizacional"],
+  "Luana Dos Santos Silva": ["CS","CS - Time Aline","CS - Time Luana"],
+  "Flavio Simao De Lima": ["REGIONAL PR","REGIONAL RS/SC"],
+  "Walisson Deyvson Barbosa Pernambuco": ["CX - Reversão"],
+  "Victor Fernando Soares de Barros": ["ADMINISTRATIVO/FINANCEIRO SP"],
+  "Gilmar Oliveira E Silva Junior": ["DEV - Time Gilmar"],
+  "Paula Mikaelly Pimentel Silva Vieira": ["Recrutamento e Seleção"],
+  "Deoclecio Tadeu Jorge de Campos Filho": ["MARKETING -  DIGITAL"],
+  "Elza Maria Eluana Da Silva Dias": ["Departamento Pessoal"],
+  "Douglas Dos Santos Soares": ["REGIONAL PR"],
+};
 
-  for (const row of rows) {
-    const name = (row.nome_colaborador ?? "").trim();
-    const mgr  = (row.nome_gestor ?? "").trim();
-    const role = (row.nome_time ?? "").trim();
-    if (!name || name === mgr) continue;
+type UserRow = {
+  nome_colaborador: string | null;
+  nome_gestor: string | null;
+  nome_time: string | null;
+};
 
-    if (!people.has(name)) people.set(name, { role });
+function buildTree(rows: UserRow[], areaFilter: string[] | null, leaderFilter: string): OrgNode[] {
+  // ── Approach 1: build from nome_gestor (same pattern as IMG page) ──────────
+  // mgrMap[gestor] = list of their direct reports
+  const mgrMap = new Map<string, string[]>();
+  const teamOf  = new Map<string, string>(); // person → time
 
-    if (mgr) {
-      parentOf.set(name, mgr);
-      if (!people.has(mgr)) people.set(mgr, { role: "" });
+  for (const u of rows) {
+    const person = (u.nome_colaborador ?? "").trim();
+    const mgr    = (u.nome_gestor    ?? "").trim();
+    const team   = (u.nome_time      ?? "").trim();
+    if (!person) continue;
+    teamOf.set(person, team);
+    if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
+    if (!mgrMap.has(mgr)) mgrMap.set(mgr, []);
+    mgrMap.get(mgr)!.push(person);
+  }
+
+  // Roots = appear as manager key but NOT as anyone's direct report
+  const allReports = new Set<string>();
+  for (const reports of mgrMap.values()) reports.forEach(r => allReports.add(r));
+
+  const roots = [...mgrMap.keys()].filter(m => !allReports.has(m));
+
+  if (roots.length > 0) {
+    const visited = new Set<string>();
+    function buildNode(name: string): OrgNode {
+      if (visited.has(name)) return { id: name, name, role: teamOf.get(name) ?? "", children: [] };
+      visited.add(name);
+      const children = (mgrMap.get(name) ?? [])
+        .map(r => buildNode(r))
+        .sort((a, b) => b.children.length - a.children.length);
+      return { id: name, name, role: teamOf.get(name) ?? "", children };
     }
+    return roots
+      .sort((a, b) => (mgrMap.get(b)?.length ?? 0) - (mgrMap.get(a)?.length ?? 0))
+      .map(r => buildNode(r));
   }
 
-  // childrenOf: manager → [direct reports]
-  const childrenOf = new Map<string, string[]>();
-  for (const [child, mgr] of parentOf) {
-    if (!childrenOf.has(mgr)) childrenOf.set(mgr, []);
-    childrenOf.get(mgr)!.push(child);
+  // ── Approach 2 (fallback): use LEADER_AREAS + nome_time ───────────────────
+  // Build: leader → [OrgNode of each employee in their areas]
+  const teamToLeader: Record<string, string> = {};
+  for (const [leader, areas] of Object.entries(LEADER_AREAS)) {
+    for (const area of areas) teamToLeader[area] = leader;
   }
 
-  // Roots: appear as manager but have no manager themselves
-  const roots: string[] = [];
-  for (const [mgr] of childrenOf) {
-    if (!parentOf.has(mgr)) roots.push(mgr);
+  // Determine which leaders to show
+  let leadersToShow: string[];
+  if (leaderFilter) {
+    leadersToShow = [leaderFilter];
+  } else if (areaFilter) {
+    const leaderSet = new Set<string>();
+    for (const area of areaFilter) {
+      const l = teamToLeader[area];
+      if (l) leaderSet.add(l);
+    }
+    leadersToShow = [...leaderSet];
+  } else {
+    leadersToShow = Object.keys(LEADER_AREAS);
   }
 
-  // Build recursive tree nodes with cycle prevention
-  function build(name: string, visited: Set<string>): OrgNode {
-    if (visited.has(name)) return { id: name, name, role: "", children: [] };
-    const next = new Set(visited);
-    next.add(name);
-    const children = (childrenOf.get(name) ?? [])
-      .map((c) => build(c, next))
-      // Larger subtrees first so the tree feels balanced
-      .sort((a, b) => b.children.length - a.children.length);
-    return { id: name, name, role: people.get(name)?.role ?? "", children };
+  // Group employees by their leader (via team)
+  const leaderReports = new Map<string, OrgNode[]>();
+  for (const u of rows) {
+    const person = (u.nome_colaborador ?? "").trim();
+    const team   = (u.nome_time      ?? "").trim();
+    if (!person || !team) continue;
+    const leader = teamToLeader[team];
+    if (!leader || !leadersToShow.includes(leader)) continue;
+    if (!leaderReports.has(leader)) leaderReports.set(leader, []);
+    leaderReports.get(leader)!.push({
+      id: `${leader}:${person}`,
+      name: person,
+      role: team,
+      children: [],
+    });
   }
 
-  return roots
-    .sort((a, b) => (childrenOf.get(b)?.length ?? 0) - (childrenOf.get(a)?.length ?? 0))
-    .map((r) => build(r, new Set()));
+  return leadersToShow
+    .filter(l => leaderReports.has(l))
+    .map(l => ({
+      id: l,
+      name: l,
+      role: "",
+      children: leaderReports.get(l)!
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    }));
+}
+
+function countNodes(n: OrgNode): number {
+  return 1 + n.children.reduce((s, c) => s + countNodes(c), 0);
 }
 
 export default async function OrgPage({
@@ -82,14 +172,8 @@ export default async function OrgPage({
   if (leader)     q = q.eq("nome_gestor", leader);
 
   const { data: rows } = await q;
-  const roots = buildTree(rows ?? []);
-
-  const totalPeople = (() => {
-    function count(n: OrgNode): number {
-      return 1 + n.children.reduce((s, c) => s + count(c), 0);
-    }
-    return roots.reduce((s, r) => s + count(r), 0);
-  })();
+  const roots = buildTree(rows ?? [], areaFilter, leader);
+  const totalPeople = roots.reduce((s, r) => s + countNodes(r), 0);
 
   return (
     <main style={{ maxWidth: 1400, margin: "0 auto", padding: "32px 48px" }}>
@@ -102,14 +186,7 @@ export default async function OrgPage({
           <span style={{ color: "var(--border-2)" }}>·</span>
           <span style={{ fontSize: 13, color: "var(--text-500)" }}>Organograma</span>
         </div>
-        <h1
-          style={{
-            fontFamily: "'Syne', sans-serif",
-            fontSize: 28,
-            fontWeight: 800,
-            color: "var(--text-900)",
-          }}
-        >
+        <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 800, color: "var(--text-900)" }}>
           Organograma
         </h1>
         {(bp !== "geral" || leader) && (
@@ -125,77 +202,23 @@ export default async function OrgPage({
           { label: "Gestores / raízes", value: roots.length },
           { label: "Colaboradores mapeados", value: totalPeople },
         ].map(({ label, value }) => (
-          <div
-            key={label}
-            style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              padding: "14px 22px",
-              boxShadow: "var(--sh)",
-            }}
-          >
-            <div
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: 26,
-                fontWeight: 800,
-                color: "var(--brand)",
-                lineHeight: 1,
-              }}
-            >
+          <div key={label} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 22px", boxShadow: "var(--sh)" }}>
+            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 26, fontWeight: 800, color: "var(--brand)", lineHeight: 1 }}>
               {value}
             </div>
             <div style={{ fontSize: 12, color: "var(--text-300)", marginTop: 4 }}>{label}</div>
           </div>
         ))}
 
-        {/* Legend */}
-        <div
-          style={{
-            marginLeft: "auto",
-            display: "flex",
-            alignItems: "center",
-            gap: 16,
-            fontSize: 11,
-            color: "var(--text-300)",
-            background: "var(--surface-2)",
-            border: "1px solid var(--border)",
-            borderRadius: 12,
-            padding: "10px 16px",
-          }}
-        >
-          <span>Clique no nó para expandir/recolher</span>
-          <span
-            style={{
-              width: 16,
-              height: 16,
-              borderRadius: "50%",
-              background: "var(--brand)",
-              color: "#fff",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 10,
-              fontWeight: 800,
-            }}
-          >
-            3
-          </span>
-          <span>= nº de subordinados</span>
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10, fontSize: 11, color: "var(--text-300)", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 12, padding: "10px 16px" }}>
+          <span>Clique no nó para expandir / recolher</span>
+          <span style={{ width: 16, height: 16, borderRadius: "50%", background: "var(--brand)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800 }}>3</span>
+          <span>= nº subordinados</span>
         </div>
       </div>
 
       {/* Tree */}
-      <div
-        style={{
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: 16,
-          boxShadow: "var(--sh)",
-          overflow: "hidden",
-        }}
-      >
+      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 16, boxShadow: "var(--sh)", overflow: "hidden" }}>
         <OrgTreeClient roots={roots} />
       </div>
     </main>
