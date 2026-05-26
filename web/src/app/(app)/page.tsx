@@ -272,31 +272,56 @@ export default async function HomePage({
   if (areaFilter) hcQuery = hcQuery.in("nome_time", areaFilter);
   const { count: hc } = await hcQuery;
 
-  // eNPS and LNPS from survey_pulse (score_resposta field)
-  // We fetch all pulse responses for non-Encerrada surveys and compute NPS
+  // eNPS from survey_standard: busca a pesquisa "ENPS" mais recente e calcula a média das respostas
+  // Passo 1: descobre o id_pesquisa mais recente com nome_pesquisa = "ENPS" (case-insensitive)
+  const { data: latestEnpsMeta } = await supabase
+    .from("elofy_survey_standard")
+    .select("id_pesquisa, data_envio_pesquisa")
+    .ilike("nome_pesquisa", "enps")
+    .order("data_envio_pesquisa", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  let enps: number | null = null;
+  let enpsRespondentes = 0;
+  if (latestEnpsMeta?.id_pesquisa) {
+    // Passo 2: busca as respostas da pesquisa mais recente, aplicando filtro de escopo
+    let enpsRespostasQuery = supabase
+      .from("elofy_survey_standard")
+      .select("resposta")
+      .eq("id_pesquisa", latestEnpsMeta.id_pesquisa);
+    if (areaFilter) enpsRespostasQuery = enpsRespostasQuery.in("time", areaFilter);
+    const { data: enpsRespostas } = await enpsRespostasQuery;
+
+    if (enpsRespostas && enpsRespostas.length > 0) {
+      const scores = enpsRespostas
+        .map((r) => parseFloat(r.resposta ?? ""))
+        .filter((n) => !isNaN(n));
+      if (scores.length > 0) {
+        enps = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+        enpsRespondentes = scores.length;
+      }
+    }
+  }
+
+  // LNPS from survey_pulse (mantém lógica existente)
   let pulseQuery = supabase
     .from("elofy_survey_pulse")
-    .select("score_resposta, id_gestor, id_time, pergunta");
+    .select("score_resposta, pergunta");
   if (areaFilter) pulseQuery = pulseQuery.in("time", areaFilter);
   const { data: pulseRows } = await pulseQuery;
 
-  // eNPS = pulse responses where pergunta contains "empresa" or similar eNPS question
-  // LNPS = pulse responses where pergunta contains "lider" or similar leadership question
-  const enpsScores: number[] = [];
   const lnpsScores: number[] = [];
   if (pulseRows) {
     for (const row of pulseRows) {
       const score = parseInt(row.score_resposta ?? "", 10);
       if (isNaN(score)) continue;
       const q = (row.pergunta ?? "").toLowerCase();
-      if (q.includes("empresa") || q.includes("recomendar") || q.includes("organiz")) {
-        enpsScores.push(score);
-      } else if (q.includes("l") && (q.includes("ider") || q.includes("gestor") || q.includes("recomend"))) {
+      if (q.includes("l") && (q.includes("ider") || q.includes("gestor") || q.includes("recomend"))) {
         lnpsScores.push(score);
       }
     }
   }
-  const enps = calcNPS(enpsScores);
   const lnps = calcNPS(lnpsScores);
 
   // Feedbacks this month (current year/month)
@@ -405,7 +430,7 @@ export default async function HomePage({
         <KPICard icon="⭐" bg="#FFF7ED" label="LNPS" value={lnps} badge={npsLabel(lnps)} badgeClass={npsClass(lnps)} delay={0.14} />
         <KPICard icon="💬" bg="#EFF6FF" label="Feedbacks" value={fbCount} delay={0.19} />
         <KPICard icon="🤝" bg="#F0FDF4" label="1:1 Realizados" value={ooCount} delay={0.24} />
-        <KPICard icon="🎯" bg="#FEF3C7" label="Taxa de Resposta" value={enpsScores.length > 0 ? Math.round((enpsScores.length / (hc ?? 1)) * 100) : null} suffix="%" delay={0.29} />
+        <KPICard icon="🎯" bg="#FEF3C7" label="Taxa de Resposta" value={enpsRespondentes > 0 ? Math.round((enpsRespondentes / (hc ?? 1)) * 100) : null} suffix="%" delay={0.29} />
       </div>
 
       {/* Divider */}
