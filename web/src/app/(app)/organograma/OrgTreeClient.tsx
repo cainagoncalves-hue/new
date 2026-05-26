@@ -11,7 +11,9 @@ export interface OrgNode {
 // ── Global expand / collapse signal ──────────────────────────────────────────
 // `tick` changes each time a broadcast is fired so useEffect re-runs even if
 // the direction didn't change (e.g. expand→expand).
-interface Signal { expand: boolean; tick: number }
+// `maxDepth` — when collapsing, nodes at depth < maxDepth stay open;
+//   others close. Undefined means collapse all.
+interface Signal { expand: boolean; tick: number; maxDepth?: number }
 const TreeCtx = createContext<Signal | null>(null);
 
 const TREE_CSS = `
@@ -84,7 +86,12 @@ function OrgNodeEl({ node, depth, isRoot }: { node: OrgNode; depth: number; isRo
   // Respond to expand/collapse-all broadcasts
   useEffect(() => {
     if (!signal || !has) return;
-    setOpen(signal.expand);
+    if (signal.expand) {
+      setOpen(true);
+    } else {
+      // If maxDepth is set, keep nodes shallower than maxDepth open
+      setOpen(signal.maxDepth !== undefined ? depth < signal.maxDepth : false);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signal?.tick]);
 
@@ -193,9 +200,10 @@ export default function OrgTreeClient({ roots }: { roots: OrgNode[] }) {
   const [drag, setDrag] = useState(false);
   const start = useRef({ mx: 0, my: 0, tx: 0, ty: 0 });
 
-  // Expand / collapse all signal
+  // Expand / collapse signal
   const [signal, setSignal] = useState<Signal | null>(null);
-  const broadcast = (expand: boolean) => setSignal({ expand, tick: Date.now() });
+  const broadcast = (expand: boolean, maxDepth?: number) =>
+    setSignal({ expand, tick: Date.now(), maxDepth });
 
   // Center tree on first render
   useLayoutEffect(() => {
@@ -275,8 +283,8 @@ export default function OrgTreeClient({ roots }: { roots: OrgNode[] }) {
       }}>
         {/* Expand / Collapse row */}
         <div style={{ display: "flex", gap: 6 }}>
-          <CtrlBtn label="Expandir" title="Expandir tudo"   onClick={() => broadcast(true)}  wide />
-          <CtrlBtn label="Recolher" title="Recolher tudo"   onClick={() => broadcast(false)} wide />
+          <CtrlBtn label="Expandir" title="Expandir tudo"                      onClick={() => broadcast(true)}        wide />
+          <CtrlBtn label="Recolher" title="Recolher até 1 nível abaixo da raiz" onClick={() => broadcast(false, 1)} wide />
         </div>
         {/* Zoom row */}
         <div style={{ display: "flex", gap: 6 }}>
