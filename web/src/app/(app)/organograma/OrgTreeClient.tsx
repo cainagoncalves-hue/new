@@ -78,7 +78,7 @@ function shortName(n: string) {
 }
 
 function OrgNodeEl({ node, depth, isRoot }: { node: OrgNode; depth: number; isRoot?: boolean }) {
-  const [open, setOpen] = useState(depth < 2);
+  const [open, setOpen] = useState(depth < 1);
   const has = node.children.length > 0;
   const d = D[Math.min(depth, D.length - 1)];
   const signal = useContext(TreeCtx);
