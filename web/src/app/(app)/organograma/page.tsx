@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import Link from "next/link";
 import OrgTreeClient, { OrgNode } from "./OrgTreeClient";
 
 export default async function OrgPage({
@@ -61,46 +60,9 @@ export default async function OrgPage({
 
   const tree = roots.map(r => build(r));
 
-  const totalPeople = tree.reduce(function count(s, n): number {
-    return s + 1 + n.children.reduce(count, 0);
-  }, 0);
-
   return (
-    <main style={{ maxWidth: 1400, margin: "0 auto", padding: "32px 48px" }}>
-      {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-          <Link href="/" style={{ fontSize: 13, color: "var(--text-300)", textDecoration: "none" }}>← Hub</Link>
-          <span style={{ color: "var(--border-2)" }}>·</span>
-          <span style={{ fontSize: 13, color: "var(--text-500)" }}>Organograma</span>
-        </div>
-        <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 800, color: "var(--text-900)" }}>
-          Organograma
-        </h1>
-        {leader && (
-          <p style={{ fontSize: 13, color: "var(--text-500)", marginTop: 6 }}>Líder: {leader}</p>
-        )}
-      </div>
-
-      {/* Summary */}
-      <div style={{ display: "flex", gap: 16, marginBottom: 32, flexWrap: "wrap" }}>
-        {[
-          { label: "Gestores / raízes", value: roots.length },
-          { label: "Colaboradores", value: totalPeople },
-        ].map(({ label, value }) => (
-          <div key={label} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 22px", boxShadow: "var(--sh)" }}>
-            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 26, fontWeight: 800, color: "var(--brand)", lineHeight: 1 }}>
-              {value}
-            </div>
-            <div style={{ fontSize: 12, color: "var(--text-300)", marginTop: 4 }}>{label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Tree */}
-      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 16, boxShadow: "var(--sh)", overflow: "hidden" }}>
-        <OrgTreeClient roots={tree} />
-      </div>
-    </main>
+    <div style={{ height: "calc(100vh - 120px)", background: "var(--surface)", borderTop: "1px solid var(--border)" }}>
+      <OrgTreeClient roots={tree} />
+    </div>
   );
 }
