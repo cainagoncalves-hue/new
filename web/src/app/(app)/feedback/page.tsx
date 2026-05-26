@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { excludeAdmins } from "@/lib/adminAccounts";
 
 const BP_AREAS: Record<string, string[]> = {
   caina: ["DIRETORIA COMERCIAL","DIRETORIA MARKETING","MARKETING -  DIGITAL","MARKETING -  EVENTOS","PRÉ-VENDAS","VENDAS INTERNAS","REGIONAL BA","REGIONAL ES","REGIONAL GO","REGIONAL MG","REGIONAL MS","REGIONAL MT","REGIONAL NE","REGIONAL PR","REGIONAL RJ","REGIONAL RS/SC","REGIONAL SP"],
@@ -50,10 +51,10 @@ export default async function FeedbackPage({
   if (bp !== "geral" && BP_AREAS[bp]) areaFilter = BP_AREAS[bp];
 
   // Get all active users with their manager
-  let usersQ = supabase
-    .from("elofy_users")
-    .select("nome_colaborador, id_gestor, nome_gestor, nome_time")
-    .eq("status", "Ativo");
+  let usersQ = excludeAdmins(
+    supabase.from("elofy_users").select("nome_colaborador, id_gestor, nome_gestor, nome_time").eq("status", "Ativo"),
+    "nome_colaborador"
+  );
   if (areaFilter) usersQ = usersQ.in("nome_time", areaFilter);
   if (leader) usersQ = usersQ.eq("nome_gestor", leader);
   const { data: users } = await usersQ;
@@ -63,10 +64,13 @@ export default async function FeedbackPage({
   cutoff.setDate(cutoff.getDate() - 90);
   const cutoffStr = cutoff.toISOString().split("T")[0];
 
-  let fbQ = supabase
-    .from("elofy_feedbacks")
-    .select("usuario_destinatario, time_usuario_destinatario, usuario_remetente")
-    .gte("data_feedback", cutoffStr);
+  let fbQ = excludeAdmins(
+    excludeAdmins(
+      supabase.from("elofy_feedbacks").select("usuario_destinatario, time_usuario_destinatario, usuario_remetente").gte("data_feedback", cutoffStr),
+      "usuario_destinatario"
+    ),
+    "usuario_remetente"
+  );
   if (areaFilter) fbQ = fbQ.in("time_usuario_destinatario", areaFilter);
   const { data: feedbacks } = await fbQ;
 

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { excludeAdmins } from "@/lib/adminAccounts";
 
 const BP_AREAS: Record<string, string[]> = {
   caina: ["DIRETORIA COMERCIAL","DIRETORIA MARKETING","MARKETING -  DIGITAL","MARKETING -  EVENTOS","PRÉ-VENDAS","VENDAS INTERNAS","REGIONAL BA","REGIONAL ES","REGIONAL GO","REGIONAL MG","REGIONAL MS","REGIONAL MT","REGIONAL NE","REGIONAL PR","REGIONAL RJ","REGIONAL RS/SC","REGIONAL SP"],
@@ -53,10 +54,10 @@ export default async function IMGPage({
   if (bp !== "geral" && BP_AREAS[bp]) areaFilter = BP_AREAS[bp];
 
   // Headcount by manager
-  let usersQ = supabase
-    .from("elofy_users")
-    .select("nome_colaborador, nome_gestor, nome_time, elofy_id")
-    .eq("status", "Ativo");
+  let usersQ = excludeAdmins(
+    supabase.from("elofy_users").select("nome_colaborador, nome_gestor, nome_time, elofy_id").eq("status", "Ativo"),
+    "nome_colaborador"
+  );
   if (areaFilter) usersQ = usersQ.in("nome_time", areaFilter);
   if (leader) usersQ = usersQ.eq("nome_gestor", leader);
   const { data: users } = await usersQ;

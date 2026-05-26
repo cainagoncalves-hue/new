@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { excludeAdmins } from "@/lib/adminAccounts";
 
 const BP_AREAS: Record<string, string[]> = {
   caina: ["DIRETORIA COMERCIAL","DIRETORIA MARKETING","MARKETING -  DIGITAL","MARKETING -  EVENTOS","PRÉ-VENDAS","VENDAS INTERNAS","REGIONAL BA","REGIONAL ES","REGIONAL GO","REGIONAL MG","REGIONAL MS","REGIONAL MT","REGIONAL NE","REGIONAL PR","REGIONAL RJ","REGIONAL RS/SC","REGIONAL SP"],
@@ -62,9 +63,10 @@ export default async function TalentosPage({
   if (bp !== "geral" && BP_AREAS[bp]) areaFilter = BP_AREAS[bp];
 
   // Fetch 9-box data from succession planning (elofy_sucessao)
-  let nineQ = supabase
-    .from("elofy_sucessao")
-    .select("nome_colaborador, nome_time, nome_cargo, resultado_desempenho, resultado_potencial, tipo_mapeamento");
+  let nineQ = excludeAdmins(
+    supabase.from("elofy_sucessao").select("nome_colaborador, nome_time, nome_cargo, resultado_desempenho, resultado_potencial, tipo_mapeamento"),
+    "nome_colaborador"
+  );
   if (areaFilter) nineQ = nineQ.in("nome_time", areaFilter);
   if (leader) nineQ = nineQ.eq("nome_gestor", leader);
   const { data: nineRows } = await nineQ;

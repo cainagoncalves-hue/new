@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { excludeAdmins } from "@/lib/adminAccounts";
 import OrgTreeClient, { OrgNode } from "./OrgTreeClient";
 
 export default async function OrgPage({
@@ -10,11 +11,10 @@ export default async function OrgPage({
   const supabase = await createClient();
 
   // ── 1. Fetch all users ────────────────────────────────────────────────────
-  let q = supabase
-    .from("elofy_users")
-    .select("nome, nome_gestor, cargo")
-    .eq("status", "Ativo")
-    .not("nome", "ilike", "%elofy%");
+  let q = excludeAdmins(
+    supabase.from("elofy_users").select("nome, nome_gestor, cargo").eq("status", "Ativo"),
+    "nome"
+  );
 
   if (leader) q = q.eq("nome_gestor", leader);
 
