@@ -13,11 +13,13 @@ export default async function OrgPage({
   // ── 1. Fetch all users ────────────────────────────────────────────────────
   let q = supabase
     .from("elofy_users")
-    .select("nome, nome_gestor, cargo, status");
+    .select("nome, nome_gestor, cargo")
+    .eq("status", "Ativo")
+    .not("nome", "ilike", "%elofy%");
 
   if (leader) q = q.eq("nome_gestor", leader);
 
-  const { data: users, error } = await q;
+  const { data: users } = await q;
 
   // ── 2. Build adjacency from nome_gestor ───────────────────────────────────
   // childrenOf[manager] = list of direct reports
@@ -59,7 +61,6 @@ export default async function OrgPage({
 
   const tree = roots.map(r => build(r));
 
-  const totalRows   = users?.length ?? 0;
   const totalPeople = tree.reduce(function count(s, n): number {
     return s + 1 + n.children.reduce(count, 0);
   }, 0);
@@ -80,18 +81,6 @@ export default async function OrgPage({
           <p style={{ fontSize: 13, color: "var(--text-500)", marginTop: 6 }}>Líder: {leader}</p>
         )}
       </div>
-
-      {/* Debug strip — remove once data is confirmed ─────────────────── */}
-      <div style={{ marginBottom: 24, padding: "10px 16px", background: "#fef9c3", border: "1px solid #fde047", borderRadius: 10, fontSize: 12, fontFamily: "monospace", color: "#713f12" }}>
-        elofy_users → <strong>{totalRows}</strong> linhas recebidas &nbsp;|&nbsp;
-        error: <strong>{error ? error.message : "none"}</strong> &nbsp;|&nbsp;
-        raízes encontradas: <strong>{roots.length}</strong> &nbsp;|&nbsp;
-        nós na árvore: <strong>{totalPeople}</strong>
-        {totalRows > 0 && (
-          <> &nbsp;|&nbsp; ex: nome=&quot;{users?.[0]?.nome ?? "null"}&quot; gestor=&quot;{users?.[0]?.nome_gestor ?? "null"}&quot; status=&quot;{(users?.[0] as any)?.status ?? "null"}&quot;</>
-        )}
-      </div>
-      {/* ─────────────────────────────────────────────────────────────── */}
 
       {/* Summary */}
       <div style={{ display: "flex", gap: 16, marginBottom: 32, flexWrap: "wrap" }}>
