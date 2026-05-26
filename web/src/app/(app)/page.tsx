@@ -277,7 +277,7 @@ export default async function HomePage({
   const { data: latestEnpsMeta } = await supabase
     .from("elofy_survey_standard")
     .select("id_pesquisa, data_envio_pesquisa")
-    .ilike("nome_pesquisa", "enps")
+    .ilike("nome_pesquisa", "%enps%")
     .order("data_envio_pesquisa", { ascending: false })
     .limit(1)
     .maybeSingle();
