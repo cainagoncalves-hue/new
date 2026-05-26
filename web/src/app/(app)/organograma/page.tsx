@@ -13,8 +13,7 @@ export default async function OrgPage({
   // ── 1. Fetch all users ────────────────────────────────────────────────────
   let q = supabase
     .from("elofy_users")
-    .select("nome, nome_gestor, cargo")
-    .eq("status", "ativo");
+    .select("nome, nome_gestor, cargo, status");
 
   if (leader) q = q.eq("nome_gestor", leader);
 
@@ -89,7 +88,7 @@ export default async function OrgPage({
         raízes encontradas: <strong>{roots.length}</strong> &nbsp;|&nbsp;
         nós na árvore: <strong>{totalPeople}</strong>
         {totalRows > 0 && (
-          <> &nbsp;|&nbsp; ex: nome=&quot;{users?.[0]?.nome ?? "null"}&quot; gestor=&quot;{users?.[0]?.nome_gestor ?? "null"}&quot; cargo=&quot;{users?.[0]?.cargo ?? "null"}&quot;</>
+          <> &nbsp;|&nbsp; ex: nome=&quot;{users?.[0]?.nome ?? "null"}&quot; gestor=&quot;{users?.[0]?.nome_gestor ?? "null"}&quot; status=&quot;{(users?.[0] as any)?.status ?? "null"}&quot;</>
         )}
       </div>
       {/* ─────────────────────────────────────────────────────────────── */}
