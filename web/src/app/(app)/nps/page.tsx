@@ -178,31 +178,88 @@ export default async function NPSPage({
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && BP_AREAS[bp]) areaFilter = BP_AREAS[bp];
 
-  // Fetch all pulse survey responses
-  let query = supabase
-    .from("elofy_survey_pulse")
-    .select("gestor, id_gestor, time, score_resposta, pergunta");
-  if (areaFilter) query = query.in("time", areaFilter);
-  if (leader) query = query.eq("gestor", leader);
-  const { data: rows } = await query;
-
-  // Group by leader
-  const leaderMap: Record<string, { lnpsScores: number[]; enpsScores: number[]; area: string }> = {};
-  for (const row of rows ?? []) {
-    const name = row.gestor ?? "";
-    if (!name) continue;
-    if (!leaderMap[name]) leaderMap[name] = { lnpsScores: [], enpsScores: [], area: row.time ?? "" };
-    const score = parseInt(row.score_resposta ?? "", 10);
-    if (isNaN(score)) continue;
-    const q = (row.pergunta ?? "").toLowerCase();
-    if (q.includes("lider") || q.includes("gestor") || q.includes("recomendar") && !q.includes("empresa")) {
-      leaderMap[name].lnpsScores.push(score);
-    } else {
-      leaderMap[name].enpsScores.push(score);
-    }
+  // Lookup team IDs for BP-scoped filtering (short IDs — sem risco de URL longa)
+  let scopedTeamIds: string[] | null = null;
+  if (areaFilter) {
+    const { data: teams } = await supabase
+      .from("elofy_teams")
+      .select("elofy_id")
+      .in("nome", areaFilter);
+    scopedTeamIds = (teams ?? []).map((t: { elofy_id: string }) => t.elofy_id).filter(Boolean);
   }
 
-  // BP lookup for leaders
+  // Descobre o id_pesquisa mais recente para LNPS e eNPS
+  const [{ data: latestLnpsMeta }, { data: latestEnpsMeta }] = await Promise.all([
+    supabase
+      .from("elofy_survey_standard")
+      .select("id_pesquisa")
+      .ilike("nome_pesquisa", "%lnps%")
+      .order("data_envio_pesquisa", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from("elofy_survey_standard")
+      .select("id_pesquisa")
+      .ilike("nome_pesquisa", "%enps%")
+      .order("data_envio_pesquisa", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  // Busca respostas das duas pesquisas com escopo:
+  // • líder específico → nome_gestor = leader
+  // • BP             → id_time IN (scopedTeamIds)
+  // • geral          → sem filtro
+  function applyScope<T extends object>(q: T): T {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = q as any;
+    if (leader) {
+      query = query.eq("nome_gestor", leader);
+    } else if (scopedTeamIds && scopedTeamIds.length > 0) {
+      query = query.in("id_time", scopedTeamIds);
+    }
+    return query;
+  }
+
+  const [{ data: lnpsRows }, { data: enpsRows }] = await Promise.all([
+    latestLnpsMeta?.id_pesquisa
+      ? applyScope(
+          supabase
+            .from("elofy_survey_standard")
+            .select("nome_gestor, resposta, time")
+            .eq("id_pesquisa", latestLnpsMeta.id_pesquisa)
+        )
+      : Promise.resolve({ data: [] as { nome_gestor: string; resposta: string; time: string }[] }),
+    latestEnpsMeta?.id_pesquisa
+      ? applyScope(
+          supabase
+            .from("elofy_survey_standard")
+            .select("nome_gestor, resposta, time")
+            .eq("id_pesquisa", latestEnpsMeta.id_pesquisa)
+        )
+      : Promise.resolve({ data: [] as { nome_gestor: string; resposta: string; time: string }[] }),
+  ]);
+
+  // Agrupa por nome_gestor
+  const leaderMap: Record<string, { lnpsScores: number[]; enpsScores: number[]; area: string }> = {};
+
+  for (const row of lnpsRows ?? []) {
+    const name = row.nome_gestor ?? "";
+    if (!name) continue;
+    if (!leaderMap[name]) leaderMap[name] = { lnpsScores: [], enpsScores: [], area: row.time ?? "" };
+    const score = parseFloat(row.resposta ?? "");
+    if (!isNaN(score)) leaderMap[name].lnpsScores.push(score);
+  }
+
+  for (const row of enpsRows ?? []) {
+    const name = row.nome_gestor ?? "";
+    if (!name) continue;
+    if (!leaderMap[name]) leaderMap[name] = { lnpsScores: [], enpsScores: [], area: row.time ?? "" };
+    const score = parseFloat(row.resposta ?? "");
+    if (!isNaN(score)) leaderMap[name].enpsScores.push(score);
+  }
+
+  // BP lookup para colorir os cards
   const LEADER_BP: Record<string, string> = {
     "Aline Alves de Oliveira":"izabela","Anderson Frederick Bernardes De Oliveira":"renata_paula",
     "Anderson Luis Lima da Silva":"izabela","Arthur Alexandre Fracalossi Carvalho":"caina",
@@ -246,15 +303,16 @@ export default async function NPSPage({
     }))
     .sort((a, b) => (b.lnps?.score ?? -200) - (a.lnps?.score ?? -200));
 
-  // Summary stats
-  const allLNPS = leaders.flatMap((l) => Array(l.lnps?.n ?? 0).fill(0).map((_, i) => {
-    const prom = l.lnps?.prom ?? 0;
-    const detr = l.lnps?.detr ?? 0;
-    if (i < prom) return 9;
-    if (i < prom + (l.lnps?.pass ?? 0)) return 7;
-    return 5;
-  }));
-  const globalLNPS = calcNPS(allLNPS);
+  // Stat global: todos os scores LNPS somados
+  const allLnpsScores = leaders.flatMap((l) => {
+    const { prom = 0, pass = 0, detr = 0 } = l.lnps ?? {};
+    return [
+      ...Array(prom).fill(9),
+      ...Array(pass).fill(7),
+      ...Array(detr).fill(5),
+    ];
+  });
+  const globalLNPS = calcNPS(allLnpsScores);
   const { color: lnpsColor, label: lnpsLabel } = npsColor(globalLNPS?.score ?? null);
 
   const bpLabels: Record<string, string> = {
