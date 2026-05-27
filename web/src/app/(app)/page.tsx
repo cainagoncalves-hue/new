@@ -282,26 +282,28 @@ export default async function HomePage({
     .limit(1)
     .maybeSingle();
 
-  // Pré-busca os elofy_ids dos usuários no escopo (para filtrar survey_standard via id_usuario,
-  // já que o campo `time` nessa tabela pode ter valores diferentes de `nome_time` em elofy_users)
-  let scopedUserIds: string[] | null = null;
+  // Pré-busca os id_time dos times no escopo via elofy_teams (IDs curtos, sem risco de URL longa)
+  // elofy_teams.elofy_id = id numérico do time; .nome = nome do time (mesma origem que areaFilter)
+  let scopedTeamIds: string[] | null = null;
   if (areaFilter) {
-    const { data: scopedUsers } = await excludeAdmins(
-      supabase.from("elofy_users").select("elofy_id").eq("status", "Ativo"),
-      "nome"
-    ).in("nome_time", areaFilter);
-    scopedUserIds = (scopedUsers ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean);
+    const { data: teams } = await supabase
+      .from("elofy_teams")
+      .select("elofy_id")
+      .in("nome", areaFilter);
+    scopedTeamIds = (teams ?? []).map((t: { elofy_id: string }) => t.elofy_id).filter(Boolean);
   }
 
   let enps: number | null = null;
   let enpsRespondentes = 0;
   if (latestEnpsMeta?.id_pesquisa) {
-    // Passo 2: busca as respostas da pesquisa mais recente, aplicando filtro de escopo via id_usuario
+    // Passo 2: busca as respostas da pesquisa mais recente, filtrando por id_time quando há escopo
     let enpsRespostasQuery = supabase
       .from("elofy_survey_standard")
       .select("resposta")
       .eq("id_pesquisa", latestEnpsMeta.id_pesquisa);
-    if (scopedUserIds) enpsRespostasQuery = enpsRespostasQuery.in("id_usuario", scopedUserIds);
+    if (scopedTeamIds && scopedTeamIds.length > 0) {
+      enpsRespostasQuery = enpsRespostasQuery.in("id_time", scopedTeamIds);
+    }
     const { data: enpsRespostas } = await enpsRespostasQuery;
 
     if (enpsRespostas && enpsRespostas.length > 0) {
@@ -346,10 +348,12 @@ export default async function HomePage({
   if (areaFilter) fbQuery = fbQuery.in("time_destinatario", areaFilter);
   const { data: fbRows } = await fbQuery;
 
-  const { data: ooRows } = await supabase
+  let ooQuery = supabase
     .from("elofy_one_one")
     .select("id_usuario_convidado")
     .gte("data", `${monthStr}-01`);
+  if (scopedUserIds && scopedUserIds.length > 0) ooQuery = ooQuery.in("id_usuario_convidado", scopedUserIds);
+  const { data: ooRows } = await ooQuery;
 
   const acompanhados = new Set([
     ...(fbRows ?? []).map((r) => r.id_usuario_destinatario),
