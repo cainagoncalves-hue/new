@@ -26,6 +26,23 @@ function npsColor(v: number | null) {
   return { color: "var(--red)", label: "Crítico" };
 }
 
+/** Converte data_envio_pesquisa (texto) para chave "YYYY-MM" */
+function toMonthKey(dateStr: string): string {
+  if (!dateStr) return "";
+  if (/^\d{4}-\d{2}/.test(dateStr)) return dateStr.slice(0, 7);
+  const m = dateStr.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if (m) return `${m[3]}-${m[2]}`;
+  return "";
+}
+
+/** Formata "YYYY-MM" como "1º Tri 2026" */
+function formatPeriodLabel(key: string): string {
+  if (!key) return key;
+  const [year, month] = key.split("-").map(Number);
+  const quarter = Math.ceil(month / 3);
+  return `${quarter}º Tri ${year}`;
+}
+
 interface LeaderNPS {
   name: string;
   short: string;
@@ -82,6 +99,9 @@ function LeaderCard({ leader }: { leader: LeaderNPS }) {
     izabela: "#ECFDF5",
     renata_paula: "#EFF6FF",
   };
+
+  // suppress unused variable warning
+  void color;
 
   return (
     <div style={{
@@ -170,15 +190,15 @@ function LeaderCard({ leader }: { leader: LeaderNPS }) {
 export default async function NPSPage({
   searchParams,
 }: {
-  searchParams: Promise<{ bp?: string; leader?: string }>;
+  searchParams: Promise<{ bp?: string; leader?: string; mes?: string }>;
 }) {
-  const { bp = "geral", leader = "" } = await searchParams;
+  const { bp = "geral", leader = "", mes = "" } = await searchParams;
   const supabase = await createClient();
 
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && BP_AREAS[bp]) areaFilter = BP_AREAS[bp];
 
-  // Lookup team IDs for BP-scoped filtering (short IDs — sem risco de URL longa)
+  // Lookup team IDs for BP-scoped filtering
   let scopedTeamIds: string[] | null = null;
   if (areaFilter) {
     const { data: teams } = await supabase
@@ -188,54 +208,84 @@ export default async function NPSPage({
     scopedTeamIds = (teams ?? []).map((t: { elofy_id: string }) => t.elofy_id).filter(Boolean);
   }
 
-  // Descobre o id_pesquisa mais recente para LNPS e eNPS
-  const [{ data: latestLnpsMeta }, { data: latestEnpsMeta }] = await Promise.all([
+  // Busca todos os surveys LNPS e eNPS disponíveis (para montar o filtro de período)
+  // Limite generoso porque buscamos apenas 3 campos pequenos e precisamos de todos os períodos históricos
+  const [{ data: lnpsSurveyRows }, { data: enpsSurveyRows }] = await Promise.all([
     supabase
       .from("elofy_survey_standard")
-      .select("id_pesquisa")
+      .select("id_pesquisa, nome_pesquisa, data_envio_pesquisa")
       .ilike("nome_pesquisa", "%lnps%")
       .order("data_envio_pesquisa", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
+      .limit(5000),
     supabase
       .from("elofy_survey_standard")
-      .select("id_pesquisa")
+      .select("id_pesquisa, nome_pesquisa, data_envio_pesquisa")
       .ilike("nome_pesquisa", "%enps%")
       .order("data_envio_pesquisa", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
+      .limit(5000),
   ]);
 
-  // Busca respostas das duas pesquisas com escopo:
-  // • líder específico → nome_gestor = leader
-  // • BP             → id_time IN (scopedTeamIds)
-  // • geral          → sem filtro
-  function applyScope<T extends object>(q: T): T {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let query = q as any;
-    if (leader) {
-      query = query.eq("nome_gestor", leader);
-    } else if (scopedTeamIds && scopedTeamIds.length > 0) {
-      query = query.in("id_time", scopedTeamIds);
-    }
-    return query;
+  // Deduplica por id_pesquisa (uma linha por survey)
+  function distinctSurveys(rows: { id_pesquisa: string; nome_pesquisa: string; data_envio_pesquisa: string }[]) {
+    const seen = new Set<string>();
+    return rows.filter((r) => {
+      if (seen.has(r.id_pesquisa)) return false;
+      seen.add(r.id_pesquisa);
+      return true;
+    });
+  }
+
+  const lnpsSurveys = distinctSurveys(lnpsSurveyRows ?? []);
+  const enpsSurveys = distinctSurveys(enpsSurveyRows ?? []);
+
+  // Monta mapa de períodos: "YYYY-MM" → { lnpsId, enpsId, label }
+  const periodMap = new Map<string, { lnpsId?: string; enpsId?: string; label: string }>();
+
+  for (const s of lnpsSurveys) {
+    const key = toMonthKey(s.data_envio_pesquisa);
+    if (!key) continue;
+    if (!periodMap.has(key)) periodMap.set(key, { label: formatPeriodLabel(key) });
+    periodMap.get(key)!.lnpsId = s.id_pesquisa;
+  }
+  for (const s of enpsSurveys) {
+    const key = toMonthKey(s.data_envio_pesquisa);
+    if (!key) continue;
+    if (!periodMap.has(key)) periodMap.set(key, { label: formatPeriodLabel(key) });
+    periodMap.get(key)!.enpsId = s.id_pesquisa;
+  }
+
+  // Lista de períodos ordenada do mais recente ao mais antigo
+  const periods = [...periodMap.entries()]
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([key, val]) => ({ key, ...val }));
+
+  // Período ativo: parâmetro `mes` ou o mais recente
+  const activeMes = mes || (periods[0]?.key ?? "");
+  const activePeriod = periodMap.get(activeMes);
+
+  // Busca respostas com escopo (líder → nome_gestor / BP → id_time / geral → sem filtro)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function applyScope(q: any): any {
+    if (leader) return q.eq("nome_gestor", leader);
+    if (scopedTeamIds && scopedTeamIds.length > 0) return q.in("id_time", scopedTeamIds);
+    return q;
   }
 
   const [{ data: lnpsRows }, { data: enpsRows }] = await Promise.all([
-    latestLnpsMeta?.id_pesquisa
+    activePeriod?.lnpsId
       ? applyScope(
           supabase
             .from("elofy_survey_standard")
             .select("nome_gestor, resposta, time")
-            .eq("id_pesquisa", latestLnpsMeta.id_pesquisa)
+            .eq("id_pesquisa", activePeriod.lnpsId)
         )
       : Promise.resolve({ data: [] as { nome_gestor: string; resposta: string; time: string }[] }),
-    latestEnpsMeta?.id_pesquisa
+    activePeriod?.enpsId
       ? applyScope(
           supabase
             .from("elofy_survey_standard")
             .select("nome_gestor, resposta, time")
-            .eq("id_pesquisa", latestEnpsMeta.id_pesquisa)
+            .eq("id_pesquisa", activePeriod.enpsId)
         )
       : Promise.resolve({ data: [] as { nome_gestor: string; resposta: string; time: string }[] }),
   ]);
@@ -250,7 +300,6 @@ export default async function NPSPage({
     const score = parseFloat(row.resposta ?? "");
     if (!isNaN(score)) leaderMap[name].lnpsScores.push(score);
   }
-
   for (const row of enpsRows ?? []) {
     const name = row.nome_gestor ?? "";
     if (!name) continue;
@@ -303,25 +352,17 @@ export default async function NPSPage({
     }))
     .sort((a, b) => (b.lnps?.score ?? -200) - (a.lnps?.score ?? -200));
 
-  // Stats globais: todos os scores LNPS e eNPS somados
+  // Stats globais
   const allLnpsScores = leaders.flatMap((l) => {
     const { prom = 0, pass = 0, detr = 0 } = l.lnps ?? {};
-    return [
-      ...Array(prom).fill(9),
-      ...Array(pass).fill(7),
-      ...Array(detr).fill(5),
-    ];
+    return [...Array(prom).fill(9), ...Array(pass).fill(7), ...Array(detr).fill(5)];
   });
   const globalLNPS = calcNPS(allLnpsScores);
   const { color: lnpsColor, label: lnpsLabel } = npsColor(globalLNPS?.score ?? null);
 
   const allEnpsScores = leaders.flatMap((l) => {
     const { prom = 0, pass = 0, detr = 0 } = l.enps ?? {};
-    return [
-      ...Array(prom).fill(9),
-      ...Array(pass).fill(7),
-      ...Array(detr).fill(5),
-    ];
+    return [...Array(prom).fill(9), ...Array(pass).fill(7), ...Array(detr).fill(5)];
   });
   const globalENPS = calcNPS(allEnpsScores);
   const { color: enpsColor, label: enpsLabel } = npsColor(globalENPS?.score ?? null);
@@ -332,10 +373,19 @@ export default async function NPSPage({
     renata_paula: "Renata/Paula · Tecnologia & RH",
   };
 
+  // URL base preservando bp e leader ao trocar de período
+  function periodUrl(key: string) {
+    const params = new URLSearchParams();
+    if (bp !== "geral") params.set("bp", bp);
+    if (leader) params.set("leader", leader);
+    params.set("mes", key);
+    return `/nps?${params.toString()}`;
+  }
+
   return (
     <main style={{ maxWidth: 1360, margin: "0 auto", padding: "32px 48px" }}>
       {/* Page header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 32 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24 }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
             <Link href="/" style={{ fontSize: 13, color: "var(--text-300)", textDecoration: "none" }}>
@@ -397,6 +447,36 @@ export default async function NPSPage({
           </div>
         </div>
       </div>
+
+      {/* Filtro de período — só aparece quando há mais de um período disponível */}
+      {periods.length > 1 && (
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
+          {periods.map((p) => {
+            const isActive = p.key === activeMes;
+            return (
+              <a
+                key={p.key}
+                href={periodUrl(p.key)}
+                style={{
+                  padding: "6px 16px",
+                  borderRadius: 20,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  textDecoration: "none",
+                  background: isActive ? "var(--brand)" : "var(--surface)",
+                  color: isActive ? "#fff" : "var(--text-500)",
+                  border: `1px solid ${isActive ? "var(--brand)" : "var(--border)"}`,
+                  transition: "all 0.15s",
+                }}
+              >
+                {p.label}
+                {!p.lnpsId && <span style={{ marginLeft: 4, fontSize: 10, opacity: 0.7 }}>só eNPS</span>}
+                {!p.enpsId && <span style={{ marginLeft: 4, fontSize: 10, opacity: 0.7 }}>só LNPS</span>}
+              </a>
+            );
+          })}
+        </div>
+      )}
 
       {/* Leaders grid */}
       {leaders.length === 0 ? (
