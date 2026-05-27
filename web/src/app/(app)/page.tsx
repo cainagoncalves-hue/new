@@ -296,10 +296,12 @@ export default async function HomePage({
   let enps: number | null = null;
   let enpsRespondentes = 0;
   if (latestEnpsMeta?.id_pesquisa) {
-    // Passo 2: busca as respostas da pesquisa mais recente, filtrando por id_time quando há escopo
+    // Passo 2: busca as respostas da pesquisa mais recente, filtrando por id_time quando há escopo.
+    // Inclui id_usuario para deduplicar: a pesquisa tem 2 linhas por respondente (NPS + justificativa),
+    // mas só a pergunta NPS tem valor numérico em `resposta`. Mantemos 1 score por id_usuario.
     let enpsRespostasQuery = supabase
       .from("elofy_survey_standard")
-      .select("resposta")
+      .select("resposta, id_usuario")
       .eq("id_pesquisa", latestEnpsMeta.id_pesquisa);
     if (scopedTeamIds && scopedTeamIds.length > 0) {
       enpsRespostasQuery = enpsRespostasQuery.in("id_time", scopedTeamIds);
@@ -307,9 +309,18 @@ export default async function HomePage({
     const { data: enpsRespostas } = await enpsRespostasQuery;
 
     if (enpsRespostas && enpsRespostas.length > 0) {
-      const scores = enpsRespostas
-        .map((r) => parseFloat(r.resposta ?? ""))
-        .filter((n) => !isNaN(n));
+      // Deduplicação: para cada respondente, registra apenas o primeiro score numérico válido.
+      // A linha da justificativa produz NaN no parseFloat e é ignorada automaticamente.
+      const seenUsers = new Set<string>();
+      const scores: number[] = [];
+      for (const r of enpsRespostas) {
+        if (seenUsers.has(r.id_usuario)) continue;
+        const score = parseFloat(r.resposta ?? "");
+        if (!isNaN(score)) {
+          seenUsers.add(r.id_usuario);
+          scores.push(score);
+        }
+      }
       if (scores.length > 0) {
         enps = calcNPS(scores);
         enpsRespondentes = scores.length;
@@ -341,18 +352,41 @@ export default async function HomePage({
   const now = new Date();
   const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
+  // Determina os elofy_ids no escopo do filtro ativo (por nome_gestor)
+  let acompanhadosUserIds: string[] | null = null;
+  if (leader) {
+    const { data: liderados } = await excludeAdmins(
+      supabase.from("elofy_users").select("elofy_id").eq("nome_gestor", leader).eq("status", "Ativo"),
+      "nome"
+    );
+    acompanhadosUserIds = (liderados ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean);
+  } else if (bp !== "geral") {
+    const { data: gestores } = await supabase
+      .from("bp_gestor_map")
+      .select("nome_gestor")
+      .eq("bp", bp);
+    const gestorNames = (gestores ?? []).map((g: { nome_gestor: string }) => g.nome_gestor).filter(Boolean);
+    if (gestorNames.length > 0) {
+      const { data: liderados } = await excludeAdmins(
+        supabase.from("elofy_users").select("elofy_id").in("nome_gestor", gestorNames).eq("status", "Ativo"),
+        "nome"
+      );
+      acompanhadosUserIds = (liderados ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean);
+    }
+  }
+
   let fbQuery = supabase
     .from("elofy_feedbacks")
     .select("id_usuario_destinatario")
     .gte("data_feedback", `${monthStr}-01`);
-  if (areaFilter) fbQuery = fbQuery.in("time_destinatario", areaFilter);
+  if (acompanhadosUserIds) fbQuery = fbQuery.in("id_usuario_destinatario", acompanhadosUserIds);
   const { data: fbRows } = await fbQuery;
 
   let ooQuery = supabase
     .from("elofy_one_one")
     .select("id_usuario_convidado")
     .gte("data", `${monthStr}-01`);
-  if (areaFilter) ooQuery = ooQuery.in("time_usuario_convidado", areaFilter);
+  if (acompanhadosUserIds) ooQuery = ooQuery.in("id_usuario_convidado", acompanhadosUserIds);
   const { data: ooRows } = await ooQuery;
 
   const acompanhados = new Set([
