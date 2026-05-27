@@ -282,15 +282,26 @@ export default async function HomePage({
     .limit(1)
     .maybeSingle();
 
+  // Pré-busca os elofy_ids dos usuários no escopo (para filtrar survey_standard via id_usuario,
+  // já que o campo `time` nessa tabela pode ter valores diferentes de `nome_time` em elofy_users)
+  let scopedUserIds: string[] | null = null;
+  if (areaFilter) {
+    const { data: scopedUsers } = await excludeAdmins(
+      supabase.from("elofy_users").select("elofy_id").eq("status", "Ativo"),
+      "nome"
+    ).in("nome_time", areaFilter);
+    scopedUserIds = (scopedUsers ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean);
+  }
+
   let enps: number | null = null;
   let enpsRespondentes = 0;
   if (latestEnpsMeta?.id_pesquisa) {
-    // Passo 2: busca as respostas da pesquisa mais recente, aplicando filtro de escopo
+    // Passo 2: busca as respostas da pesquisa mais recente, aplicando filtro de escopo via id_usuario
     let enpsRespostasQuery = supabase
       .from("elofy_survey_standard")
       .select("resposta")
       .eq("id_pesquisa", latestEnpsMeta.id_pesquisa);
-    if (areaFilter) enpsRespostasQuery = enpsRespostasQuery.in("time", areaFilter);
+    if (scopedUserIds) enpsRespostasQuery = enpsRespostasQuery.in("id_usuario", scopedUserIds);
     const { data: enpsRespostas } = await enpsRespostasQuery;
 
     if (enpsRespostas && enpsRespostas.length > 0) {
@@ -324,24 +335,26 @@ export default async function HomePage({
   }
   const lnps = calcNPS(lnpsScores);
 
-  // Feedbacks this month (current year/month)
+  // Colaboradores acompanhados no mês (feedback OU 1:1)
   const now = new Date();
   const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
   let fbQuery = supabase
     .from("elofy_feedbacks")
-    .select("elofy_id", { count: "exact", head: true })
+    .select("id_usuario_destinatario")
     .gte("data_feedback", `${monthStr}-01`);
-  if (areaFilter) fbQuery = fbQuery.in("time_usuario_destinatario", areaFilter);
-  const { count: fbCount } = await fbQuery;
+  if (areaFilter) fbQuery = fbQuery.in("time_destinatario", areaFilter);
+  const { data: fbRows } = await fbQuery;
 
-  // 1:1s this month
-  let ooQuery = supabase
+  const { data: ooRows } = await supabase
     .from("elofy_one_one")
-    .select("elofy_id", { count: "exact", head: true })
-    .gte("data_reuniao", `${monthStr}-01`)
-    .eq("status_reuniao", "Realizada");
-  if (areaFilter) ooQuery = ooQuery.in("time_usuario_convidado", areaFilter);
-  const { count: ooCount } = await ooQuery;
+    .select("id_usuario_convidado")
+    .gte("data", `${monthStr}-01`);
+
+  const acompanhados = new Set([
+    ...(fbRows ?? []).map((r) => r.id_usuario_destinatario),
+    ...(ooRows ?? []).map((r) => r.id_usuario_convidado),
+  ].filter(Boolean)).size;
 
   // Context banner label
   const bpLabels: Record<string, string> = {
@@ -421,16 +434,15 @@ export default async function HomePage({
 
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(6, 1fr)",
+        gridTemplateColumns: "repeat(5, 1fr)",
         gap: 16,
         marginBottom: 40,
       }}>
         <KPICard icon="👥" bg="#EDE9FE" label="Colaboradores" value={hc} delay={0.04} />
         <KPICard icon="📊" bg="#EDE9FE" label="eNPS" value={enps} badge={npsLabel(enps)} badgeClass={npsClass(enps)} delay={0.09} />
         <KPICard icon="⭐" bg="#FFF7ED" label="LNPS" value={lnps} badge={npsLabel(lnps)} badgeClass={npsClass(lnps)} delay={0.14} />
-        <KPICard icon="💬" bg="#EFF6FF" label="Feedbacks" value={fbCount} delay={0.19} />
-        <KPICard icon="🤝" bg="#F0FDF4" label="1:1 Realizados" value={ooCount} delay={0.24} />
-        <KPICard icon="🎯" bg="#FEF3C7" label="Taxa de Resposta" value={enpsRespondentes > 0 ? Math.round((enpsRespondentes / (hc ?? 1)) * 100) : null} suffix="%" delay={0.29} />
+        <KPICard icon="💬" bg="#EFF6FF" label="Acompanhados" value={acompanhados} delay={0.19} />
+        <KPICard icon="🎯" bg="#FEF3C7" label="Taxa de Resposta" value={enpsRespondentes > 0 ? Math.round((enpsRespondentes / (hc ?? 1)) * 100) : null} suffix="%" delay={0.24} />
       </div>
 
       {/* Divider */}
