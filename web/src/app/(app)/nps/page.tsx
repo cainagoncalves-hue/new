@@ -303,7 +303,7 @@ export default async function NPSPage({
     }))
     .sort((a, b) => (b.lnps?.score ?? -200) - (a.lnps?.score ?? -200));
 
-  // Stat global: todos os scores LNPS somados
+  // Stats globais: todos os scores LNPS e eNPS somados
   const allLnpsScores = leaders.flatMap((l) => {
     const { prom = 0, pass = 0, detr = 0 } = l.lnps ?? {};
     return [
@@ -314,6 +314,17 @@ export default async function NPSPage({
   });
   const globalLNPS = calcNPS(allLnpsScores);
   const { color: lnpsColor, label: lnpsLabel } = npsColor(globalLNPS?.score ?? null);
+
+  const allEnpsScores = leaders.flatMap((l) => {
+    const { prom = 0, pass = 0, detr = 0 } = l.enps ?? {};
+    return [
+      ...Array(prom).fill(9),
+      ...Array(pass).fill(7),
+      ...Array(detr).fill(5),
+    ];
+  });
+  const globalENPS = calcNPS(allEnpsScores);
+  const { color: enpsColor, label: enpsLabel } = npsColor(globalENPS?.score ?? null);
 
   const bpLabels: Record<string, string> = {
     caina: "Cainã · Comercial & Marketing",
@@ -343,24 +354,46 @@ export default async function NPSPage({
           )}
         </div>
 
-        {/* Summary stat */}
-        <div style={{
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "var(--r)",
-          padding: "20px 28px",
-          textAlign: "center",
-          boxShadow: "var(--sh)",
-        }}>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--text-300)", marginBottom: 4 }}>
-            LNPS Geral
+        {/* Summary stats */}
+        <div style={{ display: "flex", gap: 12 }}>
+          <div style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r)",
+            padding: "20px 28px",
+            textAlign: "center",
+            boxShadow: "var(--sh)",
+          }}>
+            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--text-300)", marginBottom: 4 }}>
+              LNPS Geral
+            </div>
+            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 40, fontWeight: 800, color: lnpsColor, lineHeight: 1 }}>
+              {globalLNPS?.score ?? "—"}
+            </div>
+            <div style={{ fontSize: 11, color: lnpsColor, fontWeight: 600, marginTop: 4 }}>{lnpsLabel}</div>
+            <div style={{ fontSize: 11, color: "var(--text-300)", marginTop: 4 }}>
+              {globalLNPS?.n ?? 0} respostas · {leaders.length} líderes
+            </div>
           </div>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 40, fontWeight: 800, color: lnpsColor, lineHeight: 1 }}>
-            {globalLNPS?.score ?? "—"}
-          </div>
-          <div style={{ fontSize: 11, color: lnpsColor, fontWeight: 600, marginTop: 4 }}>{lnpsLabel}</div>
-          <div style={{ fontSize: 11, color: "var(--text-300)", marginTop: 4 }}>
-            {globalLNPS?.n ?? 0} respostas · {leaders.length} líderes
+
+          <div style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r)",
+            padding: "20px 28px",
+            textAlign: "center",
+            boxShadow: "var(--sh)",
+          }}>
+            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--text-300)", marginBottom: 4 }}>
+              eNPS Geral
+            </div>
+            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 40, fontWeight: 800, color: enpsColor, lineHeight: 1 }}>
+              {globalENPS?.score ?? "—"}
+            </div>
+            <div style={{ fontSize: 11, color: enpsColor, fontWeight: 600, marginTop: 4 }}>{enpsLabel}</div>
+            <div style={{ fontSize: 11, color: "var(--text-300)", marginTop: 4 }}>
+              {globalENPS?.n ?? 0} respostas · {leaders.length} líderes
+            </div>
           </div>
         </div>
       </div>
