@@ -325,25 +325,37 @@ export default async function HomePage({
     }
   }
 
-  // LNPS from survey_pulse (mantém lógica existente)
-  let pulseQuery = supabase
-    .from("elofy_survey_pulse")
-    .select("score_resposta, pergunta");
-  if (areaFilter) pulseQuery = pulseQuery.in("time", areaFilter);
-  const { data: pulseRows } = await pulseQuery;
+  // LNPS from survey_standard: mesma lógica do eNPS, pesquisa mais recente com "lnps" no nome
+  const { data: latestLnpsMeta } = await supabase
+    .from("elofy_survey_standard")
+    .select("id_pesquisa")
+    .ilike("nome_pesquisa", "%lnps%")
+    .order("data_envio_pesquisa", { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
-  const lnpsScores: number[] = [];
-  if (pulseRows) {
-    for (const row of pulseRows) {
-      const score = parseInt(row.score_resposta ?? "", 10);
-      if (isNaN(score)) continue;
-      const q = (row.pergunta ?? "").toLowerCase();
-      if (q.includes("l") && (q.includes("ider") || q.includes("gestor") || q.includes("recomend"))) {
-        lnpsScores.push(score);
-      }
+  let lnps: number | null = null;
+  if (latestLnpsMeta?.id_pesquisa) {
+    let lnpsRespostasQuery = supabase
+      .from("elofy_survey_standard")
+      .select("resposta")
+      .eq("id_pesquisa", latestLnpsMeta.id_pesquisa);
+
+    if (leader && LEADER_AREAS[leader]) {
+      lnpsRespostasQuery = lnpsRespostasQuery.eq("nome_gestor", leader);
+    } else if (scopedTeamIds && scopedTeamIds.length > 0) {
+      lnpsRespostasQuery = lnpsRespostasQuery.in("id_time", scopedTeamIds);
+    }
+
+    const { data: lnpsRespostas } = await lnpsRespostasQuery;
+
+    if (lnpsRespostas && lnpsRespostas.length > 0) {
+      const scores = lnpsRespostas
+        .map((r) => parseFloat(r.resposta ?? ""))
+        .filter((n) => !isNaN(n));
+      if (scores.length > 0) lnps = calcNPS(scores);
     }
   }
-  const lnps = calcNPS(lnpsScores);
 
   // Colaboradores acompanhados no mês (feedback OU 1:1)
   const now = new Date();
