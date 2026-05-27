@@ -352,7 +352,7 @@ export default async function HomePage({
     .from("elofy_one_one")
     .select("id_usuario_convidado")
     .gte("data", `${monthStr}-01`);
-  if (scopedUserIds && scopedUserIds.length > 0) ooQuery = ooQuery.in("id_usuario_convidado", scopedUserIds);
+  if (areaFilter) ooQuery = ooQuery.in("time_usuario_convidado", areaFilter);
   const { data: ooRows } = await ooQuery;
 
   const acompanhados = new Set([
