@@ -298,7 +298,7 @@ export default async function HomePage({
         .map((r) => parseFloat(r.resposta ?? ""))
         .filter((n) => !isNaN(n));
       if (scores.length > 0) {
-        enps = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+        enps = calcNPS(scores);
         enpsRespondentes = scores.length;
       }
     }
