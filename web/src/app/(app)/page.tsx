@@ -296,14 +296,22 @@ export default async function HomePage({
   let enps: number | null = null;
   let enpsRespondentes = 0;
   if (latestEnpsMeta?.id_pesquisa) {
-    // Passo 2: busca as respostas da pesquisa mais recente, filtrando por id_time quando há escopo.
+    // Passo 2: busca as respostas da pesquisa mais recente com o escopo correto.
+    // • Líder específico → filtra por nome_gestor (a pesquisa associa cada resposta ao gestor
+    //   no momento do preenchimento, que é a mesma forma que o Elofy calcula o eNPS por líder).
+    // • BP → filtra por id_time (conjunto de times da BP).
+    // • Geral → sem filtro.
     let enpsRespostasQuery = supabase
       .from("elofy_survey_standard")
       .select("resposta")
       .eq("id_pesquisa", latestEnpsMeta.id_pesquisa);
-    if (scopedTeamIds && scopedTeamIds.length > 0) {
+
+    if (leader && LEADER_AREAS[leader]) {
+      enpsRespostasQuery = enpsRespostasQuery.eq("nome_gestor", leader);
+    } else if (scopedTeamIds && scopedTeamIds.length > 0) {
       enpsRespostasQuery = enpsRespostasQuery.in("id_time", scopedTeamIds);
     }
+
     const { data: enpsRespostas } = await enpsRespostasQuery;
 
     if (enpsRespostas && enpsRespostas.length > 0) {
