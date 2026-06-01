@@ -187,7 +187,7 @@ export default async function ISOPage({
   // Inclui o campo "resposta" como fallback quando score_resposta vier vazio.
   let isbeAllQuery = supabase
     .from("elofy_survey_pulse")
-    .select("gestor, categoria_pergunta, pergunta, score_resposta, resposta, data_pulso")
+    .select("id_gestor, gestor, categoria_pergunta, pergunta, score_resposta, resposta, data_pulso")
     .ilike("nome_pesquisa", "%BEM ESTAR%");
 
   if (leader) isbeAllQuery = isbeAllQuery.eq("gestor", leader);
@@ -230,13 +230,29 @@ export default async function ISOPage({
   }
 
   // ISBE: por gestor → scores gerais + por pergunta
+  // Agrupamos por id_gestor (numérico, sempre preenchido pela API) para não
+  // descartar linhas onde o campo texto `gestor` veio vazio.
+  // Em seguida resolvemos o nome a partir de qualquer linha do mesmo id_gestor.
   const isbeByGestor: Record<string, {
     all: number[];
     byQuestion: Record<string, { categoria: string; scores: number[] }>;
   }> = {};
+
+  // 1ª passagem: mapeia id_gestor → nome_gestor (usa a 1ª linha com nome preenchido)
+  const gestorNameById: Record<string, string> = {};
   for (const row of isbeRows) {
-    const g = row.gestor ?? "";
-    if (!g) continue;
+    const id = row.id_gestor ?? "";
+    const name = row.gestor ?? "";
+    if (id && name && !gestorNameById[id]) gestorNameById[id] = name;
+  }
+
+  // 2ª passagem: acumula scores usando id_gestor como chave primária
+  for (const row of isbeRows) {
+    const gId = row.id_gestor ?? "";
+    if (!gId) continue;
+    const g = row.gestor || gestorNameById[gId] || "";
+    if (!g) continue; // id_gestor sem nome em nenhuma linha — descarta
+
     const v = parseIsbeScore(row.score_resposta, row.resposta);
     if (v === null) continue;
     if (!isbeByGestor[g]) isbeByGestor[g] = { all: [], byQuestion: {} };
