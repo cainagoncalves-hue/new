@@ -104,6 +104,16 @@ export default async function ISOPage({
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && BP_AREAS[bp]) areaFilter = BP_AREAS[bp];
 
+  // IDs dos times para filtro de surveys (mesmo padrão do NPS page)
+  let scopedTeamIds: string[] | null = null;
+  if (areaFilter) {
+    const { data: teams } = await supabase
+      .from("elofy_teams")
+      .select("elofy_id")
+      .in("nome", areaFilter);
+    scopedTeamIds = (teams ?? []).map((t: { elofy_id: string }) => t.elofy_id).filter(Boolean);
+  }
+
   // ── 1. Headcount por gestor ──────────────────────────────────
   let users: { nome_gestor: string | null; nome_time: string | null }[] = [];
   try {
@@ -154,8 +164,9 @@ export default async function ISOPage({
       .from("elofy_survey_standard")
       .select("nome_gestor, resposta")
       .eq("id_pesquisa", lnpsSurveyId);
-    if (areaFilter) lnpsQ = lnpsQ.in("time", areaFilter);
+    // usa id_time (igual ao NPS page) quando há filtro de BP
     if (leader) lnpsQ = lnpsQ.eq("nome_gestor", leader);
+    else if (scopedTeamIds && scopedTeamIds.length > 0) lnpsQ = lnpsQ.in("id_time", scopedTeamIds);
     const { data } = await lnpsQ;
     lnpsRows = data ?? [];
   }
@@ -195,8 +206,10 @@ export default async function ISOPage({
       .ilike("nome_pesquisa", "%BEM ESTAR%")
       .gte("data_pulso", `${isbeLatestDate}-01`)
       .lte("data_pulso", `${isbeLatestDate}-31`);
-    if (areaFilter) isbeQ = isbeQ.in("time", areaFilter);
+    // usa id_time quando disponível; fallback para nome do time
     if (leader) isbeQ = isbeQ.eq("gestor", leader);
+    else if (scopedTeamIds && scopedTeamIds.length > 0) isbeQ = isbeQ.in("id_time", scopedTeamIds);
+    else if (areaFilter) isbeQ = isbeQ.in("time", areaFilter);
     const { data } = await isbeQ;
     isbeRows = data ?? [];
   }

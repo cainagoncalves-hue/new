@@ -124,14 +124,24 @@ export default function ISOLeaderList({ leaders }: Props) {
     );
   }
 
-  const ISO_CRITERIA = [
+  // getDisplayValue: número exibido no card (pode ser diferente do score usado na barra/cálculo)
+  // getScore:        valor 0-100 para a barra de progresso e colorização
+  const ISO_CRITERIA: {
+    key: string;
+    label: string;
+    weight: string;
+    meta: string;
+    getScore: (l: ISOLeaderData) => number | null;
+    getDisplayValue?: (l: ISOLeaderData) => number | null;
+    getDetail: (l: ISOLeaderData) => string;
+  }[] = [
     {
       key: "turnover",
       label: "Turnover Voluntário",
       weight: "10%",
       meta: "Meta ≤ 0,8%",
-      getScore: (l: ISOLeaderData) => l.turnoverScore,
-      getDetail: (l: ISOLeaderData) =>
+      getScore: (l) => l.turnoverScore,
+      getDetail: (l) =>
         l.turnoverRate !== null ? `Taxa: ${fmtPct(l.turnoverRate)} · ${l.turnoverN} deslig. voluntários` : "Sem registros",
     },
     {
@@ -139,8 +149,8 @@ export default function ISOLeaderList({ leaders }: Props) {
       label: "Absenteísmo CID F",
       weight: "10%",
       meta: "Meta ≤ 0,15%",
-      getScore: (l: ISOLeaderData) => l.cidfScore,
-      getDetail: (l: ISOLeaderData) =>
+      getScore: (l) => l.cidfScore,
+      getDetail: (l) =>
         l.cidfRate !== null ? `Taxa: ${fmtPct(l.cidfRate)} · ${l.cidfN} colaboradores` : "Sem registros",
     },
     {
@@ -148,18 +158,26 @@ export default function ISOLeaderList({ leaders }: Props) {
       label: "LNPS",
       weight: "40%",
       meta: "Pesquisa mais recente",
-      getScore: (l: ISOLeaderData) => l.lnpsScore,
-      getDetail: (l: ISOLeaderData) =>
-        l.lnpsRaw !== null ? `LNPS bruto: ${Math.round(l.lnpsRaw)} · n=${l.lnpsN}` : "Sem dados",
+      // score 0-100 para barra/cálculo ISO; displayValue é o NPS bruto (-100 a 100)
+      // para bater com o NPS Dashboard que exibe na mesma escala
+      getScore: (l) => l.lnpsScore,
+      getDisplayValue: (l) => l.lnpsRaw,
+      getDetail: (l) =>
+        l.lnpsRaw !== null
+          ? `Contribuição ISO: ${Math.round(l.lnpsScore ?? 0)}/100 · n=${l.lnpsN}`
+          : "Sem dados",
     },
     {
       key: "isbe",
       label: "ISBE",
       weight: "40%",
       meta: "Pesquisa mais recente",
-      getScore: (l: ISOLeaderData) => l.isbeScore,
-      getDetail: (l: ISOLeaderData) =>
-        l.isbeRaw !== null ? `Média bruta: ${l.isbeRaw.toFixed(2)}/4 · n=${l.isbeN}` : "Sem dados",
+      getScore: (l) => l.isbeScore,
+      getDisplayValue: (l) => l.isbeRaw !== null ? parseFloat(l.isbeRaw.toFixed(2)) : null,
+      getDetail: (l) =>
+        l.isbeRaw !== null
+          ? `Contribuição ISO: ${Math.round(l.isbeScore ?? 0)}/100 · n=${l.isbeN}`
+          : "Sem dados",
     },
   ];
 
@@ -304,8 +322,11 @@ export default function ISOLeaderList({ leaders }: Props) {
                     gap: 12,
                     padding: 20,
                   }}>
-                    {ISO_CRITERIA.map(({ key, label, weight, meta, getScore, getDetail }) => {
-                      const score = getScore(l);
+                    {ISO_CRITERIA.map(({ key, label, weight, meta, getScore, getDisplayValue, getDetail }) => {
+                      const score = getScore(l);           // 0-100 para barra e cor
+                      const displayVal = getDisplayValue   // número exibido ao usuário
+                        ? getDisplayValue(l)
+                        : score;
                       const c = scoreColor(score);
                       return (
                         <div key={key} style={{
@@ -322,7 +343,11 @@ export default function ISOLeaderList({ leaders }: Props) {
                             </span>
                           </div>
                           <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 800, color: c, lineHeight: 1, marginBottom: 6 }}>
-                            {score !== null ? Math.round(score) : "—"}
+                            {displayVal !== null ? (
+                              key === "isbe"
+                                ? (displayVal as number).toFixed(2)
+                                : Math.round(displayVal as number)
+                            ) : "—"}
                           </div>
                           <ProgressBar value={score ?? 0} color={c} />
                           <div style={{ fontSize: 10, color: "var(--text-300)", marginTop: 8 }}>
