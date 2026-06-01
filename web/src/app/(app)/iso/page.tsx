@@ -52,6 +52,15 @@ const KNOWN_LEADERS: Record<string, string> = {
   "Douglas Dos Santos Soares": "caina",
 };
 
+/** Converte data_envio_pesquisa (texto) para chave "YYYY-MM" — igual ao NPS page */
+function toMonthKey(dateStr: string): string {
+  if (!dateStr) return "";
+  if (/^\d{4}-\d{2}/.test(dateStr)) return dateStr.slice(0, 7);
+  const m = dateStr.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if (m) return `${m[3]}-${m[2]}`;
+  return "";
+}
+
 function isoColor(v: number | null) {
   if (v === null) return "var(--text-300)";
   if (v >= 80) return "var(--green)";
@@ -122,16 +131,22 @@ export default async function ISOPage({
     headcountByGestor[leader] = { area: "", n: 0 };
   }
 
-  // ── 2. LNPS — pesquisa mais recente ─────────────────────────
-  const { data: lnpsMeta } = await supabase
+  // ── 2. LNPS — pesquisa mais recente (mesma lógica do NPS page) ──────
+  // Busca todas as linhas, deduplica por id_pesquisa e ordena via toMonthKey
+  // para suportar datas em dd/MM/yyyy e yyyy-MM-dd corretamente.
+  const { data: lnpsMetaRaw } = await supabase
     .from("elofy_survey_standard")
-    .select("id_pesquisa, nome_pesquisa, data_envio_pesquisa")
+    .select("id_pesquisa, data_envio_pesquisa")
     .ilike("nome_pesquisa", "%lnps%")
-    .order("data_envio_pesquisa", { ascending: false })
-    .limit(500);
+    .limit(5000);
 
-  const lnpsSurveyId = lnpsMeta?.[0]?.id_pesquisa ?? null;
-  const lnpsDate = lnpsMeta?.[0]?.data_envio_pesquisa?.slice(0, 7) ?? null;
+  const seenLnps = new Set<string>();
+  const lnpsDistinct = (lnpsMetaRaw ?? [])
+    .filter(r => { if (seenLnps.has(r.id_pesquisa)) return false; seenLnps.add(r.id_pesquisa); return true; })
+    .sort((a, b) => toMonthKey(b.data_envio_pesquisa ?? "").localeCompare(toMonthKey(a.data_envio_pesquisa ?? "")));
+
+  const lnpsSurveyId = lnpsDistinct[0]?.id_pesquisa ?? null;
+  const lnpsDate = lnpsDistinct[0]?.data_envio_pesquisa ? toMonthKey(lnpsDistinct[0].data_envio_pesquisa) : null;
 
   let lnpsRows: { nome_gestor: string | null; resposta: string | null }[] = [];
   if (lnpsSurveyId) {
