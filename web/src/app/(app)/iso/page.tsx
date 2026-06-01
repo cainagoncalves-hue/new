@@ -184,9 +184,10 @@ export default async function ISOPage({
   // ── 3. ISBE — pesquisa mais recente ────────────────────────
   // Busca todos os registros de uma vez e filtra o mês mais recente em JS,
   // usando toMonthKey() para suportar tanto yyyy-MM-dd quanto dd/MM/yyyy.
+  // Inclui o campo "resposta" como fallback quando score_resposta vier vazio.
   let isbeAllQuery = supabase
     .from("elofy_survey_pulse")
-    .select("gestor, categoria_pergunta, pergunta, score_resposta, data_pulso")
+    .select("gestor, categoria_pergunta, pergunta, score_resposta, resposta, data_pulso")
     .ilike("nome_pesquisa", "%BEM ESTAR%");
 
   if (leader) isbeAllQuery = isbeAllQuery.eq("gestor", leader);
@@ -206,6 +207,28 @@ export default async function ISOPage({
     ? (isbeAllRaw ?? []).filter(r => toMonthKey(r.data_pulso ?? "") === isbeLatestDate)
     : [];
 
+  // Mapa de texto → score numérico (fallback quando score_resposta vem vazio)
+  const ISBE_TEXT_SCORE: Record<string, number> = {
+    "discordo totalmente": 1,
+    "discordo": 2,
+    "concordo": 3,
+    "concordo totalmente": 4,
+    "nunca": 1,
+    "raramente": 2,
+    "frequentemente": 3,
+    "sempre": 4,
+  };
+
+  function parseIsbeScore(scoreStr: string | null, respostaStr: string | null): number | null {
+    // Tenta score_resposta primeiro
+    const numeric = parseFloat(scoreStr ?? "");
+    if (!isNaN(numeric) && numeric >= 1 && numeric <= 4) return numeric;
+    // Fallback: converte texto da resposta
+    const texto = (respostaStr ?? "").toLowerCase().trim();
+    if (texto && ISBE_TEXT_SCORE[texto] !== undefined) return ISBE_TEXT_SCORE[texto];
+    return null;
+  }
+
   // ISBE: por gestor → scores gerais + por pergunta
   const isbeByGestor: Record<string, {
     all: number[];
@@ -214,8 +237,8 @@ export default async function ISOPage({
   for (const row of isbeRows) {
     const g = row.gestor ?? "";
     if (!g) continue;
-    const v = parseFloat(row.score_resposta ?? "");
-    if (isNaN(v) || v < 1 || v > 4) continue;
+    const v = parseIsbeScore(row.score_resposta, row.resposta);
+    if (v === null) continue;
     if (!isbeByGestor[g]) isbeByGestor[g] = { all: [], byQuestion: {} };
     isbeByGestor[g].all.push(v);
     const qKey = row.pergunta ?? "Sem pergunta";
