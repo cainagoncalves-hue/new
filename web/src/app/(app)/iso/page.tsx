@@ -181,38 +181,30 @@ export default async function ISOPage({
     lnpsByGestor[g].push(v);
   }
 
-  // ── 3. ISBE — pesquisa mais recente (ilike para robustez) ───
-  const { data: isbeMeta } = await supabase
+  // ── 3. ISBE — pesquisa mais recente ────────────────────────
+  // Busca todos os registros de uma vez e filtra o mês mais recente em JS,
+  // usando toMonthKey() para suportar tanto yyyy-MM-dd quanto dd/MM/yyyy.
+  let isbeAllQuery = supabase
     .from("elofy_survey_pulse")
-    .select("data_pulso")
-    .ilike("nome_pesquisa", "%BEM ESTAR%")
-    .order("data_pulso", { ascending: false })
-    .limit(1);
+    .select("gestor, categoria_pergunta, pergunta, score_resposta, data_pulso")
+    .ilike("nome_pesquisa", "%BEM ESTAR%");
 
-  const isbeLatestDate = isbeMeta?.[0]?.data_pulso?.slice(0, 7) ?? null;
+  if (leader) isbeAllQuery = isbeAllQuery.eq("gestor", leader);
+  else if (scopedTeamIds && scopedTeamIds.length > 0) isbeAllQuery = isbeAllQuery.in("id_time", scopedTeamIds);
+  else if (areaFilter) isbeAllQuery = isbeAllQuery.in("time", areaFilter);
 
-  let isbeRows: {
-    gestor: string | null;
-    categoria_pergunta: string | null;
-    pergunta: string | null;
-    score_resposta: string | null;
-    data_pulso: string | null;
-  }[] = [];
+  const { data: isbeAllRaw } = await isbeAllQuery.limit(5000);
 
-  if (isbeLatestDate) {
-    let isbeQ = supabase
-      .from("elofy_survey_pulse")
-      .select("gestor, categoria_pergunta, pergunta, score_resposta, data_pulso")
-      .ilike("nome_pesquisa", "%BEM ESTAR%")
-      .gte("data_pulso", `${isbeLatestDate}-01`)
-      .lte("data_pulso", `${isbeLatestDate}-31`);
-    // usa id_time quando disponível; fallback para nome do time
-    if (leader) isbeQ = isbeQ.eq("gestor", leader);
-    else if (scopedTeamIds && scopedTeamIds.length > 0) isbeQ = isbeQ.in("id_time", scopedTeamIds);
-    else if (areaFilter) isbeQ = isbeQ.in("time", areaFilter);
-    const { data } = await isbeQ;
-    isbeRows = data ?? [];
-  }
+  // Determina o mês mais recente normalizando datas
+  const isbeDateKeys = [
+    ...new Set((isbeAllRaw ?? []).map(r => toMonthKey(r.data_pulso ?? "")).filter(Boolean)),
+  ].sort((a, b) => b.localeCompare(a));
+  const isbeLatestDate = isbeDateKeys[0] ?? null;
+
+  // Filtra apenas registros do mês mais recente
+  const isbeRows = isbeLatestDate
+    ? (isbeAllRaw ?? []).filter(r => toMonthKey(r.data_pulso ?? "") === isbeLatestDate)
+    : [];
 
   // ISBE: por gestor → scores gerais + por pergunta
   const isbeByGestor: Record<string, {

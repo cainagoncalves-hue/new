@@ -108,10 +108,18 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   if (!session) redirect("/login");
 
+  // Verifica se o usuário logado é admin para exibir o módulo de dados
+  const { data: appUser } = await supabase
+    .from("app_users")
+    .select("role")
+    .eq("id", session.user.id)
+    .maybeSingle();
+  const isAdmin = appUser?.role === "admin";
+
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Topbar />
-      <AppShell>
+      <AppShell isAdmin={isAdmin}>
         <Suspense fallback={
           <div style={{
             background: "var(--surface)",

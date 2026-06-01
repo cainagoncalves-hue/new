@@ -91,6 +91,16 @@ function ChevronRightIcon() {
   );
 }
 
+function DatabaseIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <ellipse cx="12" cy="5" rx="9" ry="3" />
+      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+    </svg>
+  );
+}
+
 const MODULES = [
   { href: "/", label: "Hub", Icon: HomeIcon, exact: true },
   { href: "/nps", label: "NPS Dashboard", Icon: BarChartIcon, exact: false },
@@ -104,7 +114,7 @@ const MODULES = [
 const SIDEBAR_EXPANDED = 220;
 const SIDEBAR_COLLAPSED = 60;
 
-function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
+function Sidebar({ collapsed, onToggle, isAdmin }: { collapsed: boolean; onToggle: () => void; isAdmin: boolean }) {
   const pathname = usePathname();
 
   return (
@@ -209,11 +219,56 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           );
         })}
       </nav>
+
+      {/* Seção admin — só aparece para administradores */}
+      {isAdmin && (
+        <div style={{ borderTop: "1px solid var(--border)", padding: "8px 0 12px" }}>
+          {!collapsed && (
+            <span style={{
+              display: "block",
+              paddingLeft: 22,
+              paddingBottom: 4,
+              fontSize: 9,
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase" as const,
+              color: "var(--text-200)",
+              whiteSpace: "nowrap",
+            }}>
+              Admin
+            </span>
+          )}
+          <Link
+            href="/dados"
+            title={collapsed ? "Atualização de Dados" : undefined}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: collapsed ? "10px 0" : "10px 14px",
+              justifyContent: collapsed ? "center" : "flex-start",
+              margin: "2px 8px",
+              borderRadius: 8,
+              color: pathname.startsWith("/dados") ? "var(--brand)" : "var(--text-500)",
+              background: pathname.startsWith("/dados") ? "var(--brand-pale)" : "transparent",
+              textDecoration: "none",
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 13,
+              fontWeight: pathname.startsWith("/dados") ? 600 : 400,
+              transition: "background 0.14s ease, color 0.14s ease",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <span style={{ flexShrink: 0 }}><DatabaseIcon /></span>
+            {!collapsed && <span>Atualização de Dados</span>}
+          </Link>
+        </div>
+      )}
     </aside>
   );
 }
 
-export default function AppShell({ children }: { children: React.ReactNode }) {
+export default function AppShell({ children, isAdmin = false }: { children: React.ReactNode; isAdmin?: boolean }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -234,7 +289,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ display: "flex", alignItems: "flex-start" }}>
       {mounted ? (
-        <Sidebar collapsed={collapsed} onToggle={toggle} />
+        <Sidebar collapsed={collapsed} onToggle={toggle} isAdmin={isAdmin} />
       ) : (
         // SSR placeholder — mesma largura para evitar layout shift
         <aside
