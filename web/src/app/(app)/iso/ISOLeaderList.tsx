@@ -24,10 +24,14 @@ export interface ISOLeaderData {
   lnpsScore: number | null;
   lnpsRaw: number | null;
   lnpsN: number;
+  lnpsIsAreaAvg: boolean;
+  lnpsAreaLabel: string;
   isbeScore: number | null;
   isbeRaw: number | null;
   isbeN: number;
   isbeQuestions: ISOQuestion[];
+  isbeIsAreaAvg: boolean;
+  isbeAreaLabel: string;
 }
 
 function isoColor(v: number | null) {
@@ -124,8 +128,6 @@ export default function ISOLeaderList({ leaders }: Props) {
     );
   }
 
-  // getDisplayValue: número exibido no card (pode ser diferente do score usado na barra/cálculo)
-  // getScore:        valor 0-100 para a barra de progresso e colorização
   const ISO_CRITERIA: {
     key: string;
     label: string;
@@ -133,6 +135,7 @@ export default function ISOLeaderList({ leaders }: Props) {
     meta: string;
     getScore: (l: ISOLeaderData) => number | null;
     getDisplayValue?: (l: ISOLeaderData) => number | null;
+    getAreaAvg?: (l: ISOLeaderData) => string | null;
     getDetail: (l: ISOLeaderData) => string;
   }[] = [
     {
@@ -158,10 +161,9 @@ export default function ISOLeaderList({ leaders }: Props) {
       label: "LNPS",
       weight: "40%",
       meta: "Pesquisa mais recente",
-      // score 0-100 para barra/cálculo ISO; displayValue é o NPS bruto (-100 a 100)
-      // para bater com o NPS Dashboard que exibe na mesma escala
       getScore: (l) => l.lnpsScore,
       getDisplayValue: (l) => l.lnpsRaw,
+      getAreaAvg: (l) => l.lnpsIsAreaAvg ? l.lnpsAreaLabel : null,
       getDetail: (l) =>
         l.lnpsRaw !== null
           ? `Contribuição ISO: ${Math.round(l.lnpsScore ?? 0)}/100 · n=${l.lnpsN}`
@@ -174,6 +176,7 @@ export default function ISOLeaderList({ leaders }: Props) {
       meta: "Pesquisa mais recente",
       getScore: (l) => l.isbeScore,
       getDisplayValue: (l) => l.isbeRaw !== null ? parseFloat(l.isbeRaw.toFixed(2)) : null,
+      getAreaAvg: (l) => l.isbeIsAreaAvg ? l.isbeAreaLabel : null,
       getDetail: (l) =>
         l.isbeRaw !== null
           ? `Contribuição ISO: ${Math.round(l.isbeScore ?? 0)}/100 · n=${l.isbeN}`
@@ -235,7 +238,7 @@ export default function ISOLeaderList({ leaders }: Props) {
               {/* Name + area */}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-900)" }}>
-                  {shortName(l.name)}
+                  {l.name}
                 </div>
                 <div style={{ fontSize: 11, color: "var(--text-300)", marginTop: 2 }}>
                   {l.area} · {l.headcount} pessoas
@@ -322,18 +325,13 @@ export default function ISOLeaderList({ leaders }: Props) {
                     gap: 12,
                     padding: 20,
                   }}>
-                    {ISO_CRITERIA.map(({ key, label, weight, meta, getScore, getDisplayValue, getDetail }) => {
-                      const score = getScore(l);           // 0-100 para barra e cor
-                      const displayVal = getDisplayValue   // número exibido ao usuário
-                        ? getDisplayValue(l)
-                        : score;
+                    {ISO_CRITERIA.map(({ key, label, weight, meta, getScore, getDisplayValue, getAreaAvg, getDetail }) => {
+                      const score = getScore(l);
+                      const displayVal = getDisplayValue ? getDisplayValue(l) : score;
+                      const areaAvgLabel = getAreaAvg ? getAreaAvg(l) : null;
                       const c = scoreColor(score);
                       return (
-                        <div key={key} style={{
-                          background: "var(--surface-2)",
-                          borderRadius: 10,
-                          padding: "14px 16px",
-                        }}>
+                        <div key={key} style={{ background: "var(--surface-2)", borderRadius: 10, padding: "14px 16px" }}>
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
                             <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--text-300)" }}>
                               {label}
@@ -344,13 +342,20 @@ export default function ISOLeaderList({ leaders }: Props) {
                           </div>
                           <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 800, color: c, lineHeight: 1, marginBottom: 6 }}>
                             {displayVal !== null ? (
-                              key === "isbe"
-                                ? (displayVal as number).toFixed(2)
-                                : Math.round(displayVal as number)
+                              key === "isbe" ? (displayVal as number).toFixed(2) : Math.round(displayVal as number)
                             ) : "—"}
                           </div>
                           <ProgressBar value={score ?? 0} color={c} />
-                          <div style={{ fontSize: 10, color: "var(--text-300)", marginTop: 8 }}>
+                          {/* Badge de média da área */}
+                          {areaAvgLabel && (
+                            <div style={{ marginTop: 6, display: "inline-flex", alignItems: "center", gap: 4, background: "var(--amber-bg, #fef3c7)", borderRadius: 5, padding: "2px 7px" }}>
+                              <span style={{ fontSize: 8, color: "#92400e" }}>📊</span>
+                              <span style={{ fontSize: 9, fontWeight: 600, color: "#92400e" }}>
+                                Média da área · {areaAvgLabel}
+                              </span>
+                            </div>
+                          )}
+                          <div style={{ fontSize: 10, color: "var(--text-300)", marginTop: areaAvgLabel ? 4 : 8 }}>
                             {meta}
                           </div>
                           <div style={{ fontSize: 10, color: "var(--text-500)", marginTop: 2 }}>
@@ -365,7 +370,7 @@ export default function ISOLeaderList({ leaders }: Props) {
                 {/* ISBE Questions tab */}
                 {currentTab === "isbe" && (
                   <div style={{ padding: 20 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14, flexWrap: "wrap" }}>
                       <div style={{ fontSize: 12, color: "var(--text-500)" }}>
                         {l.isbeN} respondente{l.isbeN !== 1 ? "s" : ""} · Nota geral: {" "}
                         <strong style={{ color: scoreColor(l.isbeScore) }}>
@@ -373,6 +378,14 @@ export default function ISOLeaderList({ leaders }: Props) {
                         </strong>{" "}
                         ({fmt(l.isbeScore)}/100)
                       </div>
+                      {l.isbeIsAreaAvg && (
+                        <div style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "var(--amber-bg, #fef3c7)", borderRadius: 5, padding: "3px 9px" }}>
+                          <span style={{ fontSize: 9 }}>📊</span>
+                          <span style={{ fontSize: 10, fontWeight: 600, color: "#92400e" }}>
+                            Média da área · {l.isbeAreaLabel}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     {l.isbeQuestions.length === 0 ? (

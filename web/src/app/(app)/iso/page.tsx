@@ -9,8 +9,6 @@ const BP_AREAS: Record<string, string[]> = {
   renata_paula: ["DEV - Time Felipe","DEV - Time Gilmar","DEV - Time Jony","DEV - Time Leandro","DIRETORIA TECNOLOGIA","TI - INFRAESTRUTURA","PESQUISA & PRODUTO","NIX","Recrutamento e Seleção","Desenvolvimento Humano Organizacional","Departamento Pessoal","DIRETORIA GENTE & CULTURA"],
 };
 
-// Espelho do LEADER_DATA do FilterBar — garante que os líderes apareçam
-// mesmo quando nenhuma fonte de dados retornou resultado.
 const KNOWN_LEADERS: Record<string, string> = {
   "Henrique Carmellino Filho": "caina",
   "Walquiria Santos Correia": "izabela",
@@ -52,7 +50,6 @@ const KNOWN_LEADERS: Record<string, string> = {
   "Douglas Dos Santos Soares": "caina",
 };
 
-/** Converte data_envio_pesquisa (texto) para chave "YYYY-MM" — igual ao NPS page */
 function toMonthKey(dateStr: string): string {
   if (!dateStr) return "";
   if (/^\d{4}-\d{2}/.test(dateStr)) return dateStr.slice(0, 7);
@@ -85,13 +82,10 @@ function rateToScore(rate: number, meta: number): number {
   return Math.max(0, Math.min(100, (meta / rate) * 100));
 }
 
-function lnpsNormalize(lnps: number) {
-  return (lnps + 100) / 2;
-}
+function lnpsNormalize(lnps: number) { return (lnps + 100) / 2; }
+function isbeNormalize(raw: number) { return ((raw - 1) / 3) * 100; }
 
-function isbeNormalize(raw: number) {
-  return ((raw - 1) / 3) * 100;
-}
+type IsbeGroup = { all: number[]; byQuestion: Record<string, { categoria: string; scores: number[] }> };
 
 export default async function ISOPage({
   searchParams,
@@ -108,42 +102,45 @@ export default async function ISOPage({
   let scopedTeamIds: string[] | null = null;
   if (areaFilter) {
     const { data: teams } = await supabase
-      .from("elofy_teams")
-      .select("elofy_id")
-      .in("nome", areaFilter);
+      .from("elofy_teams").select("elofy_id").in("nome", areaFilter);
     scopedTeamIds = (teams ?? []).map((t: { elofy_id: string }) => t.elofy_id).filter(Boolean);
   }
 
-  // ── 1. Headcount por gestor ──────────────────────────────────
-  let users: { nome_gestor: string | null; nome_time: string | null }[] = [];
+  // ── 1. Colaboradores ativos → headcount, nomes ativos e time de cada líder ──
+  let users: { nome: string | null; nome_gestor: string | null; nome_time: string | null }[] = [];
   try {
     let usersQ = excludeAdmins(
       supabase.from("elofy_users")
-        .select("nome_gestor, nome_time")
+        .select("nome, nome_gestor, nome_time")
         .eq("status", "Ativo"),
       "nome"
     );
     if (areaFilter) usersQ = usersQ.in("nome_time", areaFilter);
-    if (leader) usersQ = usersQ.eq("nome_gestor", leader);
     const { data } = await usersQ;
     users = data ?? [];
   } catch { /* RLS ou tabela indisponível */ }
 
+  // Conjunto de nomes ativos — filtra líderes desligados
+  const activeNames = new Set<string>();
+  // Time próprio de cada pessoa (pelo nome dela, não pelo gestor)
+  const leaderTeamMap: Record<string, string> = {};
+  // Headcount de liderados por gestor
   const headcountByGestor: Record<string, { area: string; n: number }> = {};
+
   for (const u of users) {
+    if (u.nome) {
+      activeNames.add(u.nome);
+      if (u.nome_time) leaderTeamMap[u.nome] = u.nome_time;
+    }
     const g = u.nome_gestor ?? "";
     if (!g || g.toLowerCase().includes("elofy")) continue;
     if (!headcountByGestor[g]) headcountByGestor[g] = { area: u.nome_time ?? "", n: 0 };
     headcountByGestor[g].n++;
   }
-  const gestores = Object.keys(headcountByGestor);
-  if (leader && !headcountByGestor[leader]) {
-    headcountByGestor[leader] = { area: "", n: 0 };
-  }
 
-  // ── 2. LNPS — pesquisa mais recente (mesma lógica do NPS page) ──────
-  // Busca todas as linhas, deduplica por id_pesquisa e ordena via toMonthKey
-  // para suportar datas em dd/MM/yyyy e yyyy-MM-dd corretamente.
+  const gestores = Object.keys(headcountByGestor).filter(g => activeNames.has(g));
+
+  // ── 2. LNPS — pesquisa mais recente ─────────────────────────
   const { data: lnpsMetaRaw } = await supabase
     .from("elofy_survey_standard")
     .select("id_pesquisa, data_envio_pesquisa")
@@ -158,209 +155,206 @@ export default async function ISOPage({
   const lnpsSurveyId = lnpsDistinct[0]?.id_pesquisa ?? null;
   const lnpsDate = lnpsDistinct[0]?.data_envio_pesquisa ? toMonthKey(lnpsDistinct[0].data_envio_pesquisa) : null;
 
-  let lnpsRows: { nome_gestor: string | null; resposta: string | null }[] = [];
+  // Busca SEM filtro de líder individual para poder calcular médias por time
+  let lnpsRows: { nome_gestor: string | null; resposta: string | null; time: string | null }[] = [];
   if (lnpsSurveyId) {
     let lnpsQ = supabase
       .from("elofy_survey_standard")
-      .select("nome_gestor, resposta")
+      .select("nome_gestor, resposta, time")
       .eq("id_pesquisa", lnpsSurveyId);
-    // usa id_time (igual ao NPS page) quando há filtro de BP
-    if (leader) lnpsQ = lnpsQ.eq("nome_gestor", leader);
-    else if (scopedTeamIds && scopedTeamIds.length > 0) lnpsQ = lnpsQ.in("id_time", scopedTeamIds);
+    if (scopedTeamIds && scopedTeamIds.length > 0) lnpsQ = lnpsQ.in("id_time", scopedTeamIds);
     const { data } = await lnpsQ;
     lnpsRows = data ?? [];
   }
 
   const lnpsByGestor: Record<string, number[]> = {};
+  const lnpsByTeam: Record<string, number[]> = {};
   for (const row of lnpsRows) {
-    const g = row.nome_gestor ?? "";
-    if (!g) continue;
     const v = parseFloat(row.resposta ?? "");
     if (isNaN(v)) continue;
-    if (!lnpsByGestor[g]) lnpsByGestor[g] = [];
-    lnpsByGestor[g].push(v);
+    const g = row.nome_gestor ?? "";
+    if (g) { if (!lnpsByGestor[g]) lnpsByGestor[g] = []; lnpsByGestor[g].push(v); }
+    const t = row.time ?? "";
+    if (t) { if (!lnpsByTeam[t]) lnpsByTeam[t] = []; lnpsByTeam[t].push(v); }
   }
 
   // ── 3. ISBE — pesquisa mais recente ────────────────────────
-  // Busca todos os registros de uma vez e filtra o mês mais recente em JS,
-  // usando toMonthKey() para suportar tanto yyyy-MM-dd quanto dd/MM/yyyy.
-  // Inclui o campo "resposta" como fallback quando score_resposta vier vazio.
   let isbeAllQuery = supabase
     .from("elofy_survey_pulse")
-    .select("id_gestor, gestor, categoria_pergunta, pergunta, score_resposta, resposta, data_pulso")
+    .select("id_gestor, gestor, time, categoria_pergunta, pergunta, score_resposta, resposta, data_pulso")
     .ilike("nome_pesquisa", "%BEM ESTAR%");
-
-  if (leader) isbeAllQuery = isbeAllQuery.eq("gestor", leader);
-  else if (scopedTeamIds && scopedTeamIds.length > 0) isbeAllQuery = isbeAllQuery.in("id_time", scopedTeamIds);
+  // Sem filtro de líder individual; aplica só escopo de BP
+  if (scopedTeamIds && scopedTeamIds.length > 0) isbeAllQuery = isbeAllQuery.in("id_time", scopedTeamIds);
   else if (areaFilter) isbeAllQuery = isbeAllQuery.in("time", areaFilter);
 
   const { data: isbeAllRaw } = await isbeAllQuery.limit(5000);
 
-  // Determina o mês mais recente normalizando datas
   const isbeDateKeys = [
     ...new Set((isbeAllRaw ?? []).map(r => toMonthKey(r.data_pulso ?? "")).filter(Boolean)),
   ].sort((a, b) => b.localeCompare(a));
   const isbeLatestDate = isbeDateKeys[0] ?? null;
-
-  // Filtra apenas registros do mês mais recente
   const isbeRows = isbeLatestDate
     ? (isbeAllRaw ?? []).filter(r => toMonthKey(r.data_pulso ?? "") === isbeLatestDate)
     : [];
 
-  // Mapa de texto → score numérico (fallback quando score_resposta vem vazio)
   const ISBE_TEXT_SCORE: Record<string, number> = {
-    "discordo totalmente": 1,
-    "discordo": 2,
-    "concordo": 3,
-    "concordo totalmente": 4,
-    "nunca": 1,
-    "raramente": 2,
-    "frequentemente": 3,
-    "sempre": 4,
+    "discordo totalmente": 1, "discordo": 2, "concordo": 3, "concordo totalmente": 4,
+    "nunca": 1, "raramente": 2, "frequentemente": 3, "sempre": 4,
   };
-
-  function parseIsbeScore(scoreStr: string | null, respostaStr: string | null): number | null {
-    // Tenta score_resposta primeiro
-    const numeric = parseFloat(scoreStr ?? "");
-    if (!isNaN(numeric) && numeric >= 1 && numeric <= 4) return numeric;
-    // Fallback: converte texto da resposta
-    const texto = (respostaStr ?? "").toLowerCase().trim();
-    if (texto && ISBE_TEXT_SCORE[texto] !== undefined) return ISBE_TEXT_SCORE[texto];
-    return null;
+  function parseIsbeScore(s: string | null, r: string | null): number | null {
+    const n = parseFloat(s ?? "");
+    if (!isNaN(n) && n >= 1 && n <= 4) return n;
+    const t = (r ?? "").toLowerCase().trim();
+    return ISBE_TEXT_SCORE[t] !== undefined ? ISBE_TEXT_SCORE[t] : null;
   }
 
-  // ISBE: por gestor → scores gerais + por pergunta
-  // Agrupamos por id_gestor (numérico, sempre preenchido pela API) para não
-  // descartar linhas onde o campo texto `gestor` veio vazio.
-  // Em seguida resolvemos o nome a partir de qualquer linha do mesmo id_gestor.
-  const isbeByGestor: Record<string, {
-    all: number[];
-    byQuestion: Record<string, { categoria: string; scores: number[] }>;
-  }> = {};
+  const isbeByGestor: Record<string, IsbeGroup> = {};
+  const isbeByTeam: Record<string, IsbeGroup> = {};
 
-  // 1ª passagem: mapeia id_gestor → nome_gestor (usa a 1ª linha com nome preenchido)
+  // 1ª passagem: resolve id_gestor → nome
   const gestorNameById: Record<string, string> = {};
   for (const row of isbeRows) {
-    const id = row.id_gestor ?? "";
-    const name = row.gestor ?? "";
+    const id = row.id_gestor ?? "", name = row.gestor ?? "";
     if (id && name && !gestorNameById[id]) gestorNameById[id] = name;
   }
 
-  // 2ª passagem: acumula scores usando id_gestor como chave primária
-  for (const row of isbeRows) {
-    const gId = row.id_gestor ?? "";
-    if (!gId) continue;
-    const g = row.gestor || gestorNameById[gId] || "";
-    if (!g) continue; // id_gestor sem nome em nenhuma linha — descarta
-
-    const v = parseIsbeScore(row.score_resposta, row.resposta);
-    if (v === null) continue;
-    if (!isbeByGestor[g]) isbeByGestor[g] = { all: [], byQuestion: {} };
-    isbeByGestor[g].all.push(v);
-    const qKey = row.pergunta ?? "Sem pergunta";
-    if (!isbeByGestor[g].byQuestion[qKey]) {
-      isbeByGestor[g].byQuestion[qKey] = { categoria: row.categoria_pergunta ?? "", scores: [] };
-    }
-    isbeByGestor[g].byQuestion[qKey].scores.push(v);
+  // 2ª passagem: acumula por gestor E por time
+  function addToGroup(group: Record<string, IsbeGroup>, key: string, v: number, qKey: string, categoria: string) {
+    if (!group[key]) group[key] = { all: [], byQuestion: {} };
+    group[key].all.push(v);
+    if (!group[key].byQuestion[qKey]) group[key].byQuestion[qKey] = { categoria, scores: [] };
+    group[key].byQuestion[qKey].scores.push(v);
   }
 
-  // ── 4. Turnover voluntário (try/catch: tabela pode não existir ainda) ──
-  let desligamentos: { nome_gestor: string | null; tipo: string | null }[] = [];
-  try {
-    const { data } = await supabase
-      .from("manual_desligamentos")
-      .select("nome_gestor, tipo")
-      .eq("tipo", "voluntario");
-    desligamentos = data ?? [];
-  } catch { /* migration 021 não aplicada ainda */ }
+  for (const row of isbeRows) {
+    const v = parseIsbeScore(row.score_resposta, row.resposta);
+    if (v === null) continue;
+    const qKey = row.pergunta ?? "Sem pergunta";
+    const categoria = row.categoria_pergunta ?? "";
 
+    // Por gestor
+    const gId = row.id_gestor ?? "";
+    if (gId) {
+      const g = row.gestor || gestorNameById[gId] || "";
+      if (g) addToGroup(isbeByGestor, g, v, qKey, categoria);
+    }
+
+    // Por time
+    const t = row.time ?? "";
+    if (t) addToGroup(isbeByTeam, t, v, qKey, categoria);
+  }
+
+  // ── 4. Turnover voluntário ───────────────────────────────────
+  let desligamentos: { nome_gestor: string | null }[] = [];
+  try {
+    const { data } = await supabase.from("manual_desligamentos").select("nome_gestor").eq("tipo", "voluntario");
+    desligamentos = data ?? [];
+  } catch { /* migration 021 não aplicada */ }
   const turnoverByGestor: Record<string, number> = {};
   for (const d of desligamentos) {
-    const g = d.nome_gestor ?? "";
-    if (!g) continue;
+    const g = d.nome_gestor ?? ""; if (!g) continue;
     turnoverByGestor[g] = (turnoverByGestor[g] ?? 0) + 1;
   }
 
-  // ── 5. CID F (try/catch: tabela pode não existir ainda) ─────
+  // ── 5. CID F ────────────────────────────────────────────────
   let cidf: { nome_gestor: string | null; nome_colaborador: string | null }[] = [];
   try {
-    const { data } = await supabase
-      .from("manual_cidf")
-      .select("nome_gestor, nome_colaborador")
-      .eq("ausencia_cidf", true);
+    const { data } = await supabase.from("manual_cidf").select("nome_gestor, nome_colaborador").eq("ausencia_cidf", true);
     cidf = data ?? [];
-  } catch { /* migration 021 não aplicada ainda */ }
-
+  } catch { /* migration 021 não aplicada */ }
   const cidfByGestor: Record<string, Set<string>> = {};
   for (const c of cidf) {
-    const g = c.nome_gestor ?? "";
-    if (!g) continue;
+    const g = c.nome_gestor ?? ""; if (!g) continue;
     if (!cidfByGestor[g]) cidfByGestor[g] = new Set();
     cidfByGestor[g].add(c.nome_colaborador ?? "");
   }
 
-  // ── 6. Montar conjunto de gestores ──────────────────────────
-  const allGestores = new Set([
-    ...gestores,
-    ...Object.keys(lnpsByGestor),
-    ...Object.keys(isbeByGestor),
-  ]);
+  // ── 6. Conjunto de gestores ativos ──────────────────────────
+  // Filtra por activeNames para excluir líderes desligados
+  const allGestores = new Set(
+    [...gestores, ...Object.keys(lnpsByGestor), ...Object.keys(isbeByGestor)]
+      .filter(g => activeNames.size === 0 || activeNames.has(g))
+  );
 
-  // Fallback: se nenhuma fonte de dados retornou gestores, usa a lista
-  // estática do FilterBar para ao menos exibir os cards (scores = "—").
+  // Fallback estático se DB não retornou nada
   if (allGestores.size === 0) {
-    if (leader) {
-      allGestores.add(leader);
-    } else {
-      for (const [name, bpId] of Object.entries(KNOWN_LEADERS)) {
-        if (bp === "geral" || bpId === bp) allGestores.add(name);
-      }
-    }
+    const source = leader ? [leader] : Object.entries(KNOWN_LEADERS)
+      .filter(([, bpId]) => bp === "geral" || bpId === bp).map(([n]) => n);
+    source.forEach(n => allGestores.add(n));
   }
 
+  // Filtra pelo líder selecionado (se houver)
+  if (leader) { allGestores.forEach(g => { if (g !== leader) allGestores.delete(g); }); }
+
   // ── 7. Calcular scores por líder ────────────────────────────
+  function buildIsbeQuestions(group: IsbeGroup): ISOQuestion[] {
+    return Object.entries(group.byQuestion).map(([pergunta, { categoria, scores }]) => {
+      const qAvg = avg(scores)!;
+      return { pergunta, categoria, avgRaw: qAvg, score: isbeNormalize(qAvg), n: scores.length };
+    }).sort((a, b) => a.categoria.localeCompare(b.categoria) || a.pergunta.localeCompare(b.pergunta));
+  }
+
   const leaders: ISOLeaderData[] = [];
 
   for (const g of allGestores) {
     const hc = headcountByGestor[g] ?? { area: "", n: 0 };
     const headcount = hc.n;
+    // Time próprio do líder (para buscar média da área quando não tem dado)
+    const leaderOwnTeam = leaderTeamMap[g] || hc.area || "";
 
-    // LNPS
+    // ── LNPS ──
     const lnpsScores = lnpsByGestor[g] ?? [];
     let lnpsRaw: number | null = null;
     let lnpsScore: number | null = null;
+    let lnpsN = lnpsScores.length;
+    let lnpsIsAreaAvg = false;
+    let lnpsAreaLabel = "";
+
     if (lnpsScores.length > 0) {
       const prom = lnpsScores.filter(v => v >= 9).length;
       const detr = lnpsScores.filter(v => v <= 6).length;
       lnpsRaw = ((prom - detr) / lnpsScores.length) * 100;
       lnpsScore = lnpsNormalize(lnpsRaw);
+    } else if (leaderOwnTeam && lnpsByTeam[leaderOwnTeam]?.length) {
+      // Fallback: média da área
+      const ts = lnpsByTeam[leaderOwnTeam];
+      const prom = ts.filter(v => v >= 9).length;
+      const detr = ts.filter(v => v <= 6).length;
+      lnpsRaw = ((prom - detr) / ts.length) * 100;
+      lnpsScore = lnpsNormalize(lnpsRaw);
+      lnpsN = ts.length;
+      lnpsIsAreaAvg = true;
+      lnpsAreaLabel = leaderOwnTeam;
     }
 
-    // ISBE
+    // ── ISBE ──
     const isbeData = isbeByGestor[g];
     let isbeRaw: number | null = null;
     let isbeScore: number | null = null;
     let isbeN = 0;
-    const isbeQuestions: ISOQuestion[] = [];
+    let isbeQuestions: ISOQuestion[] = [];
+    let isbeIsAreaAvg = false;
+    let isbeAreaLabel = "";
+
     if (isbeData && isbeData.all.length > 0) {
       isbeRaw = avg(isbeData.all)!;
       isbeScore = isbeNormalize(isbeRaw);
       const numQ = Object.keys(isbeData.byQuestion).length;
       isbeN = numQ > 0 ? Math.round(isbeData.all.length / numQ) : isbeData.all.length;
-      for (const [pergunta, { categoria, scores }] of Object.entries(isbeData.byQuestion)) {
-        const qAvg = avg(scores)!;
-        isbeQuestions.push({
-          pergunta,
-          categoria,
-          avgRaw: qAvg,
-          score: isbeNormalize(qAvg),
-          n: scores.length,
-        });
-      }
-      isbeQuestions.sort((a, b) => a.categoria.localeCompare(b.categoria) || a.pergunta.localeCompare(b.pergunta));
+      isbeQuestions = buildIsbeQuestions(isbeData);
+    } else if (leaderOwnTeam && isbeByTeam[leaderOwnTeam]?.all.length) {
+      // Fallback: média da área
+      const td = isbeByTeam[leaderOwnTeam];
+      isbeRaw = avg(td.all)!;
+      isbeScore = isbeNormalize(isbeRaw);
+      const numQ = Object.keys(td.byQuestion).length;
+      isbeN = numQ > 0 ? Math.round(td.all.length / numQ) : td.all.length;
+      isbeQuestions = buildIsbeQuestions(td);
+      isbeIsAreaAvg = true;
+      isbeAreaLabel = leaderOwnTeam;
     }
 
-    // Turnover
+    // ── Turnover ──
     const turnoverN = turnoverByGestor[g] ?? 0;
     let turnoverRate: number | null = null;
     let turnoverScore: number | null = null;
@@ -369,7 +363,7 @@ export default async function ISOPage({
       turnoverScore = rateToScore(turnoverRate, 0.008);
     }
 
-    // CID F
+    // ── CID F ──
     const cidfN = cidfByGestor[g]?.size ?? 0;
     let cidfRate: number | null = null;
     let cidfScore: number | null = null;
@@ -378,7 +372,7 @@ export default async function ISOPage({
       cidfScore = rateToScore(cidfRate, 0.0015);
     }
 
-    // ISO final
+    // ── ISO final ──
     const hasData = lnpsScore !== null || isbeScore !== null || turnoverScore !== null || cidfScore !== null;
     let isoScore: number | null = null;
     if (hasData) {
@@ -395,19 +389,10 @@ export default async function ISOPage({
       area: hc.area,
       headcount,
       isoScore,
-      turnoverScore,
-      turnoverRate,
-      turnoverN,
-      cidfScore,
-      cidfRate,
-      cidfN,
-      lnpsScore,
-      lnpsRaw,
-      lnpsN: lnpsScores.length,
-      isbeScore,
-      isbeRaw,
-      isbeN,
-      isbeQuestions,
+      turnoverScore, turnoverRate, turnoverN,
+      cidfScore, cidfRate, cidfN,
+      lnpsScore, lnpsRaw, lnpsN, lnpsIsAreaAvg, lnpsAreaLabel,
+      isbeScore, isbeRaw, isbeN, isbeQuestions, isbeIsAreaAvg, isbeAreaLabel,
     });
   }
 
@@ -426,7 +411,6 @@ export default async function ISOPage({
 
   return (
     <main style={{ maxWidth: 1360, margin: "0 auto", padding: "32px 48px" }}>
-      {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 32 }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
@@ -442,8 +426,6 @@ export default async function ISOPage({
               {leader ? `Líder: ${leader}` : `Carteira: ${bpLabels[bp] ?? bp}`}
             </p>
           )}
-
-          {/* Períodos de referência */}
           <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
             {lnpsDate && (
               <span style={{ fontSize: 11, background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 6, padding: "3px 10px", color: "var(--text-500)" }}>
@@ -458,15 +440,10 @@ export default async function ISOPage({
           </div>
         </div>
 
-        {/* Global ISO score */}
         <div style={{
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "var(--r)",
-          padding: "20px 28px",
-          textAlign: "center",
-          boxShadow: "var(--sh)",
-          minWidth: 140,
+          background: "var(--surface)", border: "1px solid var(--border)",
+          borderRadius: "var(--r)", padding: "20px 28px", textAlign: "center",
+          boxShadow: "var(--sh)", minWidth: 140,
         }}>
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--text-300)", marginBottom: 4 }}>
             ISO Médio
@@ -483,7 +460,6 @@ export default async function ISOPage({
         </div>
       </div>
 
-      {/* Legenda de composição */}
       <div style={{ display: "flex", gap: 10, marginBottom: 28, flexWrap: "wrap" }}>
         {[
           { label: "Turnover Voluntário", weight: "10%", meta: "≤ 0,8%" },
@@ -492,17 +468,10 @@ export default async function ISOPage({
           { label: "ISBE", weight: "40%", meta: "Pesquisa recente" },
         ].map(({ label, weight, meta }) => (
           <div key={label} style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: 8,
-            padding: "8px 14px",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
+            background: "var(--surface)", border: "1px solid var(--border)",
+            borderRadius: 8, padding: "8px 14px", display: "flex", alignItems: "center", gap: 8,
           }}>
-            <span style={{ fontSize: 10, fontWeight: 700, color: "var(--brand)", background: "var(--brand-pale)", padding: "1px 7px", borderRadius: 4 }}>
-              {weight}
-            </span>
+            <span style={{ fontSize: 10, fontWeight: 700, color: "var(--brand)", background: "var(--brand-pale)", padding: "1px 7px", borderRadius: 4 }}>{weight}</span>
             <span style={{ fontSize: 12, color: "var(--text-700)" }}>{label}</span>
             <span style={{ fontSize: 11, color: "var(--text-300)" }}>{meta}</span>
           </div>
