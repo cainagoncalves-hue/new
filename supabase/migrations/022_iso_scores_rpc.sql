@@ -62,8 +62,8 @@ leaders AS (
 -- múltiplos times — garante que a média use TODOS os times, não só o primeiro.
 leader_teams AS (
   SELECT DISTINCT
-    nome_gestor      AS gestor,
-    TRIM(nome_time)  AS team
+    nome_gestor              AS gestor,
+    lower(TRIM(nome_time))   AS team
   FROM elofy_users
   WHERE status = 'Ativo'
     AND nome_gestor IS NOT NULL AND nome_gestor <> ''
@@ -99,7 +99,7 @@ best_lnps AS (
 lnps_resp AS (
   SELECT
     s.nome_gestor                AS gestor,
-    TRIM(s.time)                 AS team,
+    lower(TRIM(s.time))          AS team,
     CAST(s.resposta AS numeric)  AS score
   FROM elofy_survey_standard s
   JOIN best_lnps b ON s.id_pesquisa = b.id_pesquisa
@@ -185,7 +185,7 @@ isbe_raw_scores AS (
   SELECT
     p.id_gestor,
     NULLIF(p.gestor, '')         AS gestor_raw,
-    TRIM(p.time)                 AS team,
+    lower(TRIM(p.time))          AS team,
     p.categoria_pergunta         AS categoria,
     p.pergunta,
     CASE
@@ -251,14 +251,67 @@ isbe_questions_gestor AS (
   FROM isbe_per_q_gestor GROUP BY gestor
 ),
 
--- Fallback ISBE: combina respondentes de TODOS os times do líder.
--- Usa isbe_scored (que já tem dados limpos e per-gestor mais recente),
--- agrupando por nome do time — captura respostas de qualquer respondente
--- naquele time, independente do id_gestor deles.
+-- ── ISBE por time — fonte independente para fallback ─────────────────────────
+-- Usa mês mais recente POR TIME (sem filtro de id_gestor).
+-- Captura liderados cujo gestor não aparece no survey ISBE como respondente
+-- (ex: Lincoln "Regional SP", Luciana "Adm/Financeiro - Time Luciana").
+isbe_team_date_map AS (
+  SELECT
+    lower(TRIM(time))   AS team,
+    data_pulso,
+    CASE
+      WHEN data_pulso ~ '^\d{4}-\d{2}' THEN LEFT(data_pulso, 7)
+      WHEN data_pulso ~ '^\d{2}/\d{2}/\d{4}' THEN
+        CONCAT(SUBSTR(data_pulso, 7, 4), '-', SUBSTR(data_pulso, 4, 2))
+      ELSE ''
+    END AS month_key
+  FROM elofy_survey_pulse
+  WHERE lower(nome_pesquisa) LIKE '%bem estar%'
+    AND data_pulso IS NOT NULL
+    AND time IS NOT NULL AND TRIM(time) <> ''
+),
+isbe_team_latest AS (
+  SELECT team, MAX(month_key) AS latest_month
+  FROM isbe_team_date_map WHERE month_key <> ''
+  GROUP BY team
+),
+isbe_team_latest_dates AS (
+  SELECT DISTINCT d.team, d.data_pulso
+  FROM isbe_team_date_map d
+  JOIN isbe_team_latest l ON d.team = l.team AND d.month_key = l.latest_month
+),
+-- Scores do mês mais recente de cada time (todos os respondentes, sem filtro de id_gestor)
+isbe_team_scores AS (
+  SELECT
+    lower(TRIM(p.time))    AS team,
+    p.categoria_pergunta   AS categoria,
+    p.pergunta,
+    CASE
+      WHEN p.score_resposta ~ '^\d+(\.\d+)?$'
+        AND CAST(p.score_resposta AS numeric) BETWEEN 1 AND 4
+        THEN CAST(p.score_resposta AS numeric)
+      WHEN lower(trim(p.resposta)) = 'discordo totalmente'  THEN 1
+      WHEN lower(trim(p.resposta)) = 'discordo'             THEN 2
+      WHEN lower(trim(p.resposta)) = 'concordo'             THEN 3
+      WHEN lower(trim(p.resposta)) = 'concordo totalmente'  THEN 4
+      WHEN lower(trim(p.resposta)) = 'nunca'                THEN 1
+      WHEN lower(trim(p.resposta)) = 'raramente'            THEN 2
+      WHEN lower(trim(p.resposta)) = 'frequentemente'       THEN 3
+      WHEN lower(trim(p.resposta)) = 'sempre'               THEN 4
+      ELSE NULL
+    END AS score
+  FROM elofy_survey_pulse p
+  JOIN isbe_team_latest_dates tld
+    ON lower(TRIM(p.time)) = tld.team AND p.data_pulso = tld.data_pulso
+  WHERE lower(p.nome_pesquisa) LIKE '%bem estar%'
+),
+
+-- Fallback ISBE: combina scores de TODOS os times do líder (fonte per-team)
 isbe_multi_team_scored AS (
   SELECT lt.gestor, s.categoria, s.pergunta, s.score
   FROM leader_teams lt
-  JOIN isbe_scored s ON lt.team = s.team
+  JOIN isbe_team_scores s ON lt.team = s.team
+  WHERE s.score IS NOT NULL
 ),
 isbe_multi_team_fallback AS (
   SELECT gestor,
