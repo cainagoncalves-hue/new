@@ -55,11 +55,6 @@ function scoreColor(v: number | null) {
   return "var(--red)";
 }
 
-function shortName(name: string) {
-  const parts = name.split(" ");
-  if (parts.length <= 2) return name;
-  return `${parts[0]} ${parts[parts.length - 1]}`;
-}
 
 function initials(name: string) {
   return name.split(" ").filter(p => p.length > 2).slice(0, 2).map(p => p[0]).join("").toUpperCase();

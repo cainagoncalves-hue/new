@@ -9,53 +9,37 @@ const BP_AREAS: Record<string, string[]> = {
   renata_paula: ["DEV - Time Felipe","DEV - Time Gilmar","DEV - Time Jony","DEV - Time Leandro","DIRETORIA TECNOLOGIA","TI - INFRAESTRUTURA","PESQUISA & PRODUTO","NIX","Recrutamento e Seleção","Desenvolvimento Humano Organizacional","Departamento Pessoal","DIRETORIA GENTE & CULTURA"],
 };
 
+// Fallback estático para quando o DB não retorna dados
 const KNOWN_LEADERS: Record<string, string> = {
-  "Henrique Carmellino Filho": "caina",
-  "Walquiria Santos Correia": "izabela",
-  "Gustavo Carmellino": "renata_paula",
-  "Jorge Do Nascimento Junior": "caina",
-  "Leonardo De Oliveira Gama": "caina",
-  "Leandro dos Santos Machado": "renata_paula",
-  "Gabriela Maria Araujo Peres": "izabela",
-  "Danilo Jorge da Silva Novais": "caina",
-  "Jose Edmilson Da Silva": "izabela",
-  "Enock De Oliveira E Silva Neto": "izabela",
-  "Jonialysson Bezerra De Oliveira": "renata_paula",
-  "Jefte de Assumpcao Macedo": "renata_paula",
-  "Nathalia Vasconcelos Trajano Da Silva": "izabela",
-  "Joao Henrique Da Silva": "renata_paula",
-  "Thiago Souza Silva": "caina",
-  "Gabriel Fidelis Gonzaga Dos Santos": "izabela",
+  "Henrique Carmellino Filho": "caina", "Walquiria Santos Correia": "izabela",
+  "Gustavo Carmellino": "renata_paula", "Jorge Do Nascimento Junior": "caina",
+  "Leonardo De Oliveira Gama": "caina", "Leandro dos Santos Machado": "renata_paula",
+  "Gabriela Maria Araujo Peres": "izabela", "Danilo Jorge da Silva Novais": "caina",
+  "Jose Edmilson Da Silva": "izabela", "Enock De Oliveira E Silva Neto": "izabela",
+  "Jonialysson Bezerra De Oliveira": "renata_paula", "Jefte de Assumpcao Macedo": "renata_paula",
+  "Nathalia Vasconcelos Trajano Da Silva": "izabela", "Joao Henrique Da Silva": "renata_paula",
+  "Thiago Souza Silva": "caina", "Gabriel Fidelis Gonzaga Dos Santos": "izabela",
   "Rafael Nascimento Ribeiro": "caina",
   "Rodrigo Jose Anderson do Nascimento Goncalves da Silva": "izabela",
-  "Marcos Flavio De Paiva Reis": "caina",
-  "Publio Maswell Matos Cavalcanti": "izabela",
-  "Anderson Frederick Bernardes De Oliveira": "renata_paula",
-  "Camila Alves Da Silva": "renata_paula",
-  "Anderson Luis Lima da Silva": "izabela",
-  "Gabrielle Vitoria Fernandes Tavares": "caina",
-  "Tomas Signorelli Navarro Lima": "caina",
-  "Aline Alves de Oliveira": "izabela",
-  "Felipe Ayres Lins": "renata_paula",
-  "Arthur Alexandre Fracalossi Carvalho": "caina",
-  "Renata Oliveira De Moura Duarte": "renata_paula",
-  "Luana Dos Santos Silva": "izabela",
-  "Flavio Simao De Lima": "caina",
-  "Walisson Deyvson Barbosa Pernambuco": "izabela",
-  "Victor Fernando Soares de Barros": "izabela",
-  "Gilmar Oliveira E Silva Junior": "renata_paula",
+  "Marcos Flavio De Paiva Reis": "caina", "Publio Maswell Matos Cavalcanti": "izabela",
+  "Anderson Frederick Bernardes De Oliveira": "renata_paula", "Camila Alves Da Silva": "renata_paula",
+  "Anderson Luis Lima da Silva": "izabela", "Gabrielle Vitoria Fernandes Tavares": "caina",
+  "Tomas Signorelli Navarro Lima": "caina", "Aline Alves de Oliveira": "izabela",
+  "Felipe Ayres Lins": "renata_paula", "Arthur Alexandre Fracalossi Carvalho": "caina",
+  "Renata Oliveira De Moura Duarte": "renata_paula", "Luana Dos Santos Silva": "izabela",
+  "Flavio Simao De Lima": "caina", "Walisson Deyvson Barbosa Pernambuco": "izabela",
+  "Victor Fernando Soares de Barros": "izabela", "Gilmar Oliveira E Silva Junior": "renata_paula",
   "Paula Mikaelly Pimentel Silva Vieira": "renata_paula",
   "Deoclecio Tadeu Jorge de Campos Filho": "caina",
-  "Elza Maria Eluana Da Silva Dias": "renata_paula",
-  "Douglas Dos Santos Soares": "caina",
+  "Elza Maria Eluana Da Silva Dias": "renata_paula", "Douglas Dos Santos Soares": "caina",
 };
 
-function toMonthKey(dateStr: string): string {
-  if (!dateStr) return "";
-  if (/^\d{4}-\d{2}/.test(dateStr)) return dateStr.slice(0, 7);
-  const m = dateStr.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
-  if (m) return `${m[3]}-${m[2]}`;
-  return "";
+// Converte datas em texto para "YYYY-MM" — suporta yyyy-MM-dd e dd/MM/yyyy
+function toMonthKey(d: string): string {
+  if (!d) return "";
+  if (/^\d{4}-\d{2}/.test(d)) return d.slice(0, 7);
+  const m = d.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  return m ? `${m[3]}-${m[2]}` : "";
 }
 
 function isoColor(v: number | null) {
@@ -70,16 +54,14 @@ function isoLabel(v: number | null) {
   if (v >= 70) return "Moderada";
   return "Crítica";
 }
-function avg(arr: number[]) {
-  if (!arr.length) return null;
-  return arr.reduce((a, b) => a + b, 0) / arr.length;
+function avg(arr: number[]): number | null {
+  return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null;
 }
 function rateToScore(rate: number, meta: number): number {
-  if (rate <= meta) return 100;
-  return Math.max(0, Math.min(100, (meta / rate) * 100));
+  return rate <= meta ? 100 : Math.max(0, Math.min(100, (meta / rate) * 100));
 }
-function lnpsNormalize(lnps: number) { return (lnps + 100) / 2; }
-function isbeNormalize(raw: number) { return ((raw - 1) / 3) * 100; }
+function lnpsNormalize(v: number) { return (v + 100) / 2; }
+function isbeNormalize(v: number) { return ((v - 1) / 3) * 100; }
 
 type IsbeGroup = {
   all: number[];
@@ -105,22 +87,9 @@ export default async function ISOPage({
     scopedTeamIds = (teams ?? []).map((t: { elofy_id: string }) => t.elofy_id).filter(Boolean);
   }
 
-  // ── 1a. Nomes ativos SEM filtro de área ─────────────────────
-  // IMPORTANTE: não aplicar areaFilter aqui.
-  // Os líderes frequentemente têm nome_time diferente do time dos seus liderados
-  // (ex: líder está em "DIRETORIA COMERCIAL", liderados em "REGIONAL SP").
-  // Se filtrássemos por área aqui, os líderes seriam excluídos de activeNames
-  // e removidos indevidamente do módulo.
-  const activeNames = new Set<string>();
-  try {
-    const { data: allActive } = await excludeAdmins(
-      supabase.from("elofy_users").select("nome").eq("status", "Ativo"),
-      "nome"
-    );
-    for (const u of allActive ?? []) { if (u.nome) activeNames.add(u.nome); }
-  } catch { /* RLS ou tabela indisponível */ }
-
-  // ── 1b. Headcount por gestor — COM filtro de área ────────────
+  // ── 1. Headcount por gestor ──────────────────────────────────
+  // Fonte única de verdade para "líderes ativos":
+  // quem tem ao menos um liderado ativo em elofy_users = líder ativo.
   const headcountByGestor: Record<string, { area: string; n: number }> = {};
   try {
     let usersQ = excludeAdmins(
@@ -137,66 +106,68 @@ export default async function ISOPage({
     }
   } catch { /* RLS ou tabela indisponível */ }
 
-  // Gestores com headcount cujo nome é ativo no sistema
-  const gestores = Object.keys(headcountByGestor).filter(
-    g => activeNames.size === 0 || activeNames.has(g)
-  );
+  // Conjunto de gestores ativos — base para filtrar o módulo
+  const gestoresList = new Set(Object.keys(headcountByGestor));
 
   // ── 2. LNPS — pesquisa mais recente ─────────────────────────
+  // Segue o mesmo padrão do NPS Dashboard: busca os IDs das surveys,
+  // deduplica, ordena por mês normalizado e pega a mais recente.
   const { data: lnpsMetaRaw } = await supabase
     .from("elofy_survey_standard")
     .select("id_pesquisa, data_envio_pesquisa")
     .ilike("nome_pesquisa", "%lnps%")
     .limit(5000);
 
-  // Deduplica por id_pesquisa e ordena por mês normalizado (suporta ambos os formatos de data)
   const seenLnps = new Set<string>();
   const lnpsDistinct = (lnpsMetaRaw ?? [])
-    .filter(r => { if (seenLnps.has(r.id_pesquisa)) return false; seenLnps.add(r.id_pesquisa); return true; })
-    .sort((a, b) => toMonthKey(b.data_envio_pesquisa ?? "").localeCompare(toMonthKey(a.data_envio_pesquisa ?? "")));
+    .filter(r => {
+      if (seenLnps.has(r.id_pesquisa)) return false;
+      seenLnps.add(r.id_pesquisa);
+      return true;
+    })
+    .sort((a, b) =>
+      toMonthKey(b.data_envio_pesquisa ?? "").localeCompare(toMonthKey(a.data_envio_pesquisa ?? ""))
+    );
 
   const lnpsSurveyId = lnpsDistinct[0]?.id_pesquisa ?? null;
   const lnpsDate = lnpsDistinct[0]?.data_envio_pesquisa
     ? toMonthKey(lnpsDistinct[0].data_envio_pesquisa) : null;
 
-  // Busca respostas. Inclui `time` para derivar o time do gestor a partir
-  // das suas próprias respostas (mais confiável que elofy_users.nome_time,
-  // que pode divergir por formato de nome).
+  // Busca respostas aplicando escopo NO SQL (padrão applyScope do NPS page).
+  // Isso evita o truncation padrão de 1000 linhas do Supabase e reduz o
+  // volume de dados transmitido — exatamente o que o NPS Dashboard faz.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function applyLnpsScope(q: any): any {
+    if (leader) return q.eq("nome_gestor", leader);
+    if (scopedTeamIds?.length) return q.in("id_time", scopedTeamIds);
+    return q;
+  }
+
   let lnpsRows: { nome_gestor: string | null; resposta: string | null; time: string | null }[] = [];
   if (lnpsSurveyId) {
-    let lnpsQ = supabase
-      .from("elofy_survey_standard")
-      .select("nome_gestor, resposta, time")
-      .eq("id_pesquisa", lnpsSurveyId);
-    if (scopedTeamIds && scopedTeamIds.length > 0) lnpsQ = lnpsQ.in("id_time", scopedTeamIds);
-    const { data } = await lnpsQ;
+    const { data } = await applyLnpsScope(
+      supabase.from("elofy_survey_standard")
+        .select("nome_gestor, resposta, time")
+        .eq("id_pesquisa", lnpsSurveyId)
+    ).limit(5000);
     lnpsRows = data ?? [];
   }
 
-  // Por gestor e por time (para calcular média de área como fallback)
+  // Agrupa por gestor e por time (time = fallback de área)
   const lnpsByGestor: Record<string, number[]> = {};
   const lnpsByTeam: Record<string, number[]> = {};
-  // Mapa: nome_gestor → time (derivado das próprias respostas, mesmo formato da survey)
-  const leaderTeamFromLnps: Record<string, string> = {};
-
   for (const row of lnpsRows) {
     const v = parseFloat(row.resposta ?? "");
     if (isNaN(v)) continue;
     const g = row.nome_gestor ?? "";
     const t = row.time ?? "";
-    if (g) {
-      if (!lnpsByGestor[g]) lnpsByGestor[g] = [];
-      lnpsByGestor[g].push(v);
-      // Registra o time deste gestor conforme aparece na survey
-      if (t && !leaderTeamFromLnps[g]) leaderTeamFromLnps[g] = t;
-    }
-    if (t) {
-      if (!lnpsByTeam[t]) lnpsByTeam[t] = [];
-      lnpsByTeam[t].push(v);
-    }
+    if (g) { (lnpsByGestor[g] ??= []).push(v); }
+    if (t) { (lnpsByTeam[t] ??= []).push(v); }
   }
 
   // ── 3. ISBE — pesquisa mais recente ────────────────────────
+  // Fonte: elofy_survey_pulse WHERE nome_pesquisa ilike '%BEM ESTAR%'
+  // Score: campo score_resposta (1-4); fallback para texto do campo resposta.
   const ISBE_TEXT_SCORE: Record<string, number> = {
     "discordo totalmente": 1, "discordo": 2, "concordo": 3, "concordo totalmente": 4,
     "nunca": 1, "raramente": 2, "frequentemente": 3, "sempre": 4,
@@ -208,16 +179,17 @@ export default async function ISOPage({
     return ISBE_TEXT_SCORE[t] !== undefined ? ISBE_TEXT_SCORE[t] : null;
   }
 
-  let isbeAllQuery = supabase
+  let isbeQuery = supabase
     .from("elofy_survey_pulse")
     .select("id_gestor, gestor, time, categoria_pergunta, pergunta, score_resposta, resposta, data_pulso")
     .ilike("nome_pesquisa", "%BEM ESTAR%");
-  if (scopedTeamIds && scopedTeamIds.length > 0) isbeAllQuery = isbeAllQuery.in("id_time", scopedTeamIds);
-  else if (areaFilter) isbeAllQuery = isbeAllQuery.in("time", areaFilter);
+  // Aplica escopo de BP (sem filtro de líder individual — precisamos de todos para calcular fallback de área)
+  if (scopedTeamIds?.length) isbeQuery = isbeQuery.in("id_time", scopedTeamIds);
+  else if (areaFilter) isbeQuery = isbeQuery.in("time", areaFilter);
 
-  const { data: isbeAllRaw } = await isbeAllQuery.limit(5000);
+  const { data: isbeAllRaw } = await isbeQuery.limit(5000);
 
-  // Determina o mês mais recente normalizando datas (suporta dd/MM/yyyy e yyyy-MM-dd)
+  // Determina o mês mais recente normalizando datas
   const isbeDateKeys = [
     ...new Set((isbeAllRaw ?? []).map(r => toMonthKey(r.data_pulso ?? "")).filter(Boolean)),
   ].sort((a, b) => b.localeCompare(a));
@@ -226,16 +198,13 @@ export default async function ISOPage({
     ? (isbeAllRaw ?? []).filter(r => toMonthKey(r.data_pulso ?? "") === isbeLatestDate)
     : [];
 
-  const isbeByGestor: Record<string, IsbeGroup> = {};
-  const isbeByTeam: Record<string, IsbeGroup> = {};
-  // Mapa: nome_gestor → time (derivado das respostas ISBE)
-  const leaderTeamFromIsbe: Record<string, string> = {};
-
-  function addToGroup(group: Record<string, IsbeGroup>, key: string, v: number, qKey: string, categoria: string) {
-    if (!group[key]) group[key] = { all: [], byQuestion: {} };
-    group[key].all.push(v);
-    if (!group[key].byQuestion[qKey]) group[key].byQuestion[qKey] = { categoria, scores: [] };
-    group[key].byQuestion[qKey].scores.push(v);
+  function addToIsbeGroup(
+    group: Record<string, IsbeGroup>,
+    key: string, v: number, q: string, cat: string
+  ) {
+    (group[key] ??= { all: [], byQuestion: {} }).all.push(v);
+    const bq = group[key].byQuestion;
+    (bq[q] ??= { categoria: cat, scores: [] }).scores.push(v);
   }
 
   // 1ª passagem: resolve id_gestor → nome (pega 1ª linha com nome preenchido)
@@ -245,32 +214,30 @@ export default async function ISOPage({
     if (id && name && !gestorNameById[id]) gestorNameById[id] = name;
   }
 
-  // 2ª passagem: acumula scores por gestor e por time
+  const isbeByGestor: Record<string, IsbeGroup> = {};
+  const isbeByTeam: Record<string, IsbeGroup> = {};
+
+  // 2ª passagem: acumula scores por gestor (via id_gestor como chave primária)
+  // e por time (para fallback de área)
   for (const row of isbeRows) {
     const v = parseIsbeScore(row.score_resposta, row.resposta);
     if (v === null) continue;
     const qKey = row.pergunta ?? "Sem pergunta";
-    const categoria = row.categoria_pergunta ?? "";
+    const cat = row.categoria_pergunta ?? "";
     const t = row.time ?? "";
-
-    // Por gestor (usando id_gestor como chave primária para não perder linhas com gestor vazio)
     const gId = row.id_gestor ?? "";
     if (gId) {
       const g = row.gestor || gestorNameById[gId] || "";
-      if (g) {
-        addToGroup(isbeByGestor, g, v, qKey, categoria);
-        if (t && !leaderTeamFromIsbe[g]) leaderTeamFromIsbe[g] = t;
-      }
+      if (g) addToIsbeGroup(isbeByGestor, g, v, qKey, cat);
     }
-
-    // Por time (para calcular média de área como fallback)
-    if (t) addToGroup(isbeByTeam, t, v, qKey, categoria);
+    if (t) addToIsbeGroup(isbeByTeam, t, v, qKey, cat);
   }
 
   // ── 4. Turnover voluntário ───────────────────────────────────
   let desligamentos: { nome_gestor: string | null }[] = [];
   try {
-    const { data } = await supabase.from("manual_desligamentos").select("nome_gestor").eq("tipo", "voluntario");
+    const { data } = await supabase
+      .from("manual_desligamentos").select("nome_gestor").eq("tipo", "voluntario");
     desligamentos = data ?? [];
   } catch { /* migration 021 não aplicada */ }
   const turnoverByGestor: Record<string, number> = {};
@@ -282,31 +249,26 @@ export default async function ISOPage({
   // ── 5. CID F ────────────────────────────────────────────────
   let cidf: { nome_gestor: string | null; nome_colaborador: string | null }[] = [];
   try {
-    const { data } = await supabase.from("manual_cidf").select("nome_gestor, nome_colaborador").eq("ausencia_cidf", true);
+    const { data } = await supabase
+      .from("manual_cidf").select("nome_gestor, nome_colaborador").eq("ausencia_cidf", true);
     cidf = data ?? [];
   } catch { /* migration 021 não aplicada */ }
   const cidfByGestor: Record<string, Set<string>> = {};
   for (const c of cidf) {
     const g = c.nome_gestor ?? ""; if (!g) continue;
-    if (!cidfByGestor[g]) cidfByGestor[g] = new Set();
-    cidfByGestor[g].add(c.nome_colaborador ?? "");
+    (cidfByGestor[g] ??= new Set()).add(c.nome_colaborador ?? "");
   }
 
-  // ── 6. Conjunto final de gestores ───────────────────────────
-  // Une todas as fontes e filtra apenas líderes ativos.
-  // activeNames foi construído SEM filtro de área para não excluir líderes
-  // que têm nome_time diferente do time dos seus liderados.
-  const allGestoresRaw = new Set([
-    ...gestores,
-    ...Object.keys(lnpsByGestor),
-    ...Object.keys(isbeByGestor),
-  ]);
-
+  // ── 6. Conjunto de gestores a exibir ────────────────────────
+  // Une as três fontes (headcount, LNPS, ISBE) e filtra por gestoresList:
+  // só aparecem líderes que têm ao menos um liderado ativo — líderes
+  // desligados não aparecem em headcountByGestor e são removidos aqui.
   const allGestores = new Set(
-    [...allGestoresRaw].filter(g => activeNames.size === 0 || activeNames.has(g))
+    [...gestoresList, ...Object.keys(lnpsByGestor), ...Object.keys(isbeByGestor)]
+      .filter(g => gestoresList.size === 0 || gestoresList.has(g))
   );
 
-  // Fallback estático se o DB não retornou nada
+  // Fallback estático se DB não retornou nada
   if (allGestores.size === 0) {
     const source = leader
       ? [leader]
@@ -316,12 +278,12 @@ export default async function ISOPage({
     source.forEach(n => allGestores.add(n));
   }
 
-  // Aplica filtro de líder individual (se selecionado no FilterBar)
+  // Restringe ao líder selecionado no FilterBar
   if (leader) {
     for (const g of allGestores) { if (g !== leader) allGestores.delete(g); }
   }
 
-  // ── 7. Calcular scores por líder ────────────────────────────
+  // ── 7. Calcula scores por líder ─────────────────────────────
   function buildIsbeQuestions(group: IsbeGroup): ISOQuestion[] {
     return Object.entries(group.byQuestion)
       .map(([pergunta, { categoria, scores }]) => {
@@ -336,28 +298,22 @@ export default async function ISOPage({
   for (const g of allGestores) {
     const hc = headcountByGestor[g] ?? { area: "", n: 0 };
     const headcount = hc.n;
-
-    // Time do líder: prioridade às surveys (mesmo formato dos dados de fallback),
-    // depois elofy_users. Isso garante que leaderTeam bata com as chaves de lnpsByTeam/isbeByTeam.
-    const leaderTeam = leaderTeamFromLnps[g] || leaderTeamFromIsbe[g] || hc.area || "";
+    // Time dos liderados deste gestor — mesma fonte que lnpsByTeam/isbeByTeam
+    // (ambos vêm do Elofy sync, então o formato é consistente)
+    const leaderTeam = hc.area;
 
     // ── LNPS ──
     const lnpsScores = lnpsByGestor[g] ?? [];
-    let lnpsRaw: number | null = null;
-    let lnpsScore: number | null = null;
-    let lnpsN = 0;
-    let lnpsIsAreaAvg = false;
-    let lnpsAreaLabel = "";
+    let lnpsRaw: number | null = null, lnpsScore: number | null = null, lnpsN = 0;
+    let lnpsIsAreaAvg = false, lnpsAreaLabel = "";
 
     if (lnpsScores.length > 0) {
-      // Dados próprios do líder
       const prom = lnpsScores.filter(v => v >= 9).length;
       const detr = lnpsScores.filter(v => v <= 6).length;
       lnpsRaw = ((prom - detr) / lnpsScores.length) * 100;
       lnpsScore = lnpsNormalize(lnpsRaw);
       lnpsN = lnpsScores.length;
     } else if (leaderTeam && lnpsByTeam[leaderTeam]?.length) {
-      // Fallback: média da área (só ativa quando não há dado próprio)
       const ts = lnpsByTeam[leaderTeam];
       const prom = ts.filter(v => v >= 9).length;
       const detr = ts.filter(v => v <= 6).length;
@@ -370,22 +326,17 @@ export default async function ISOPage({
 
     // ── ISBE ──
     const isbeData = isbeByGestor[g];
-    let isbeRaw: number | null = null;
-    let isbeScore: number | null = null;
-    let isbeN = 0;
+    let isbeRaw: number | null = null, isbeScore: number | null = null, isbeN = 0;
     let isbeQuestions: ISOQuestion[] = [];
-    let isbeIsAreaAvg = false;
-    let isbeAreaLabel = "";
+    let isbeIsAreaAvg = false, isbeAreaLabel = "";
 
-    if (isbeData && isbeData.all.length > 0) {
-      // Dados próprios do líder
+    if (isbeData?.all.length) {
       isbeRaw = avg(isbeData.all)!;
       isbeScore = isbeNormalize(isbeRaw);
       const numQ = Object.keys(isbeData.byQuestion).length;
       isbeN = numQ > 0 ? Math.round(isbeData.all.length / numQ) : isbeData.all.length;
       isbeQuestions = buildIsbeQuestions(isbeData);
     } else if (leaderTeam && isbeByTeam[leaderTeam]?.all.length) {
-      // Fallback: média da área (só ativa quando não há dado próprio)
       const td = isbeByTeam[leaderTeam];
       isbeRaw = avg(td.all)!;
       isbeScore = isbeNormalize(isbeRaw);
@@ -398,8 +349,7 @@ export default async function ISOPage({
 
     // ── Turnover ──
     const turnoverN = turnoverByGestor[g] ?? 0;
-    let turnoverRate: number | null = null;
-    let turnoverScore: number | null = null;
+    let turnoverRate: number | null = null, turnoverScore: number | null = null;
     if (headcount > 0) {
       turnoverRate = turnoverN / headcount;
       turnoverScore = rateToScore(turnoverRate, 0.008);
@@ -407,8 +357,7 @@ export default async function ISOPage({
 
     // ── CID F ──
     const cidfN = cidfByGestor[g]?.size ?? 0;
-    let cidfRate: number | null = null;
-    let cidfScore: number | null = null;
+    let cidfRate: number | null = null, cidfScore: number | null = null;
     if (headcount > 0) {
       cidfRate = cidfN / headcount;
       cidfScore = rateToScore(cidfRate, 0.0015);
@@ -417,15 +366,12 @@ export default async function ISOPage({
     // ── ISO composto ──
     const hasData = lnpsScore !== null || isbeScore !== null
       || turnoverScore !== null || cidfScore !== null;
-    let isoScore: number | null = null;
-    if (hasData) {
-      isoScore = Math.round(
-        (turnoverScore ?? 100) * 0.10 +
-        (cidfScore    ?? 100) * 0.10 +
-        (lnpsScore    ??   0) * 0.40 +
-        (isbeScore    ??   0) * 0.40
-      );
-    }
+    const isoScore = hasData ? Math.round(
+      (turnoverScore ?? 100) * 0.10 +
+      (cidfScore    ?? 100) * 0.10 +
+      (lnpsScore    ??   0) * 0.40 +
+      (isbeScore    ??   0) * 0.40
+    ) : null;
 
     leaders.push({
       name: g, area: hc.area, headcount, isoScore,
