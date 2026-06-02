@@ -48,7 +48,9 @@ function toMonthKey(d: string): string {
 // a página vir incompleta (sinal de que acabou).
 const PAGE = 1000;
 async function fetchAllPages<T>(
-  buildQ: (from: number, to: number) => Promise<{ data: T[] | null; error: unknown }>
+  // Supabase query builders são PromiseLike (têm .then mas não .catch/.finally),
+  // por isso usamos PromiseLike em vez de Promise.
+  buildQ: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: unknown }>
 ): Promise<T[]> {
   const all: T[] = [];
   let from = 0;
