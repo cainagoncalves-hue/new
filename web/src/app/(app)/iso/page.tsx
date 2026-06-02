@@ -42,6 +42,26 @@ function toMonthKey(d: string): string {
   return m ? `${m[3]}-${m[2]}` : "";
 }
 
+// Busca todas as páginas de uma query Supabase sem limite fixo.
+// Supabase retorna no máximo 1000 linhas por padrão; sem paginação dados
+// são perdidos silenciosamente. Chama buildQ(from, to) repetidamente até
+// a página vir incompleta (sinal de que acabou).
+const PAGE = 1000;
+async function fetchAllPages<T>(
+  buildQ: (from: number, to: number) => Promise<{ data: T[] | null; error: unknown }>
+): Promise<T[]> {
+  const all: T[] = [];
+  let from = 0;
+  for (;;) {
+    const { data, error } = await buildQ(from, from + PAGE - 1);
+    if (error || !data?.length) break;
+    all.push(...data);
+    if (data.length < PAGE) break; // última página
+    from += PAGE;
+  }
+  return all;
+}
+
 function isoColor(v: number | null) {
   if (v === null) return "var(--text-300)";
   if (v >= 80) return "var(--green)";
@@ -92,13 +112,17 @@ export default async function ISOPage({
   // quem tem ao menos um liderado ativo em elofy_users = líder ativo.
   const headcountByGestor: Record<string, { area: string; n: number }> = {};
   try {
-    let usersQ = excludeAdmins(
-      supabase.from("elofy_users").select("nome_gestor, nome_time").eq("status", "Ativo"),
-      "nome"
+    const users = await fetchAllPages<{ nome_gestor: string | null; nome_time: string | null }>(
+      (from, to) => {
+        let q = excludeAdmins(
+          supabase.from("elofy_users").select("nome_gestor, nome_time").eq("status", "Ativo"),
+          "nome"
+        );
+        if (areaFilter) q = q.in("nome_time", areaFilter);
+        return q.range(from, to);
+      }
     );
-    if (areaFilter) usersQ = usersQ.in("nome_time", areaFilter);
-    const { data: users } = await usersQ;
-    for (const u of users ?? []) {
+    for (const u of users) {
       const g = u.nome_gestor ?? "";
       if (!g || g.toLowerCase().includes("elofy")) continue;
       if (!headcountByGestor[g]) headcountByGestor[g] = { area: u.nome_time ?? "", n: 0 };
@@ -145,12 +169,14 @@ export default async function ISOPage({
 
   let lnpsRows: { nome_gestor: string | null; resposta: string | null; time: string | null }[] = [];
   if (lnpsSurveyId) {
-    const { data } = await applyLnpsScope(
-      supabase.from("elofy_survey_standard")
-        .select("nome_gestor, resposta, time")
-        .eq("id_pesquisa", lnpsSurveyId)
-    ).limit(5000);
-    lnpsRows = data ?? [];
+    lnpsRows = await fetchAllPages<{ nome_gestor: string | null; resposta: string | null; time: string | null }>(
+      (from, to) =>
+        applyLnpsScope(
+          supabase.from("elofy_survey_standard")
+            .select("nome_gestor, resposta, time")
+            .eq("id_pesquisa", lnpsSurveyId)
+        ).range(from, to)
+    );
   }
 
   // Agrupa por gestor e por time (time = fallback de área)
@@ -179,23 +205,54 @@ export default async function ISOPage({
     return ISBE_TEXT_SCORE[t] !== undefined ? ISBE_TEXT_SCORE[t] : null;
   }
 
-  let isbeQuery = supabase
-    .from("elofy_survey_pulse")
-    .select("id_gestor, gestor, time, categoria_pergunta, pergunta, score_resposta, resposta, data_pulso")
-    .ilike("nome_pesquisa", "%BEM ESTAR%");
-  // Aplica escopo de BP (sem filtro de líder individual — precisamos de todos para calcular fallback de área)
-  if (scopedTeamIds?.length) isbeQuery = isbeQuery.in("id_time", scopedTeamIds);
-  else if (areaFilter) isbeQuery = isbeQuery.in("time", areaFilter);
+  // ISBE — passo 1: descobre o mês mais recente buscando só a coluna de data
+  // (payload mínimo — apenas 1 campo por linha, sem limite de histórico relevante)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function applyIsbeScope(q: any): any {
+    if (scopedTeamIds?.length) return q.in("id_time", scopedTeamIds);
+    if (areaFilter) return q.in("time", areaFilter);
+    return q;
+  }
 
-  const { data: isbeAllRaw } = await isbeQuery.limit(5000);
+  const isbeDateRows = await fetchAllPages<{ data_pulso: string | null }>(
+    (from, to) =>
+      applyIsbeScope(
+        supabase.from("elofy_survey_pulse")
+          .select("data_pulso")
+          .ilike("nome_pesquisa", "%BEM ESTAR%")
+      ).range(from, to)
+  );
 
-  // Determina o mês mais recente normalizando datas
-  const isbeDateKeys = [
-    ...new Set((isbeAllRaw ?? []).map(r => toMonthKey(r.data_pulso ?? "")).filter(Boolean)),
-  ].sort((a, b) => b.localeCompare(a));
-  const isbeLatestDate = isbeDateKeys[0] ?? null;
-  const isbeRows = isbeLatestDate
-    ? (isbeAllRaw ?? []).filter(r => toMonthKey(r.data_pulso ?? "") === isbeLatestDate)
+  // Normaliza e agrupa valores brutos pelo mês ("YYYY-MM"), ordena desc
+  const isbeByRawDate = new Map<string, string[]>(); // monthKey → raw values
+  for (const r of isbeDateRows) {
+    const raw = r.data_pulso ?? "";
+    const key = toMonthKey(raw);
+    if (!key) continue;
+    if (!isbeByRawDate.has(key)) isbeByRawDate.set(key, []);
+    if (!isbeByRawDate.get(key)!.includes(raw)) isbeByRawDate.get(key)!.push(raw);
+  }
+  const isbeLatestDate = [...isbeByRawDate.keys()].sort((a, b) => b.localeCompare(a))[0] ?? null;
+  // Valores brutos de data_pulso do mês mais recente (para filtrar no SQL)
+  const isbeLatestRawDates = isbeLatestDate ? (isbeByRawDate.get(isbeLatestDate) ?? []) : [];
+
+  // ISBE — passo 2: busca os dados completos APENAS do mês mais recente (paginado)
+  // Filtra data_pulso IN (valores do mês) no SQL — funciona com qualquer formato de data
+  type IsbeRow = {
+    id_gestor: string | null; gestor: string | null; time: string | null;
+    categoria_pergunta: string | null; pergunta: string | null;
+    score_resposta: string | null; resposta: string | null; data_pulso: string | null;
+  };
+  const isbeRows: IsbeRow[] = isbeLatestRawDates.length > 0
+    ? await fetchAllPages<IsbeRow>(
+        (from, to) =>
+          applyIsbeScope(
+            supabase.from("elofy_survey_pulse")
+              .select("id_gestor, gestor, time, categoria_pergunta, pergunta, score_resposta, resposta, data_pulso")
+              .ilike("nome_pesquisa", "%BEM ESTAR%")
+              .in("data_pulso", isbeLatestRawDates)
+          ).range(from, to)
+      )
     : [];
 
   function addToIsbeGroup(
