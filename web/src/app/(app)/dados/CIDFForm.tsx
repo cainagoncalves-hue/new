@@ -51,7 +51,7 @@ export default function CIDFForm({ gestores, records }: Props) {
         <div style={{ ...fieldStyle, justifyContent: "flex-end" }}>
           <label style={labelStyle}>Ausência CID F</label>
           <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 8 }}>
-            <input type="hidden" name="ausencia_cidf" value="false" />
+            <input type="hidden" name="ausencia_cidf" value="true" />
             <input
               type="checkbox"
               id="ausencia_cidf_check"
