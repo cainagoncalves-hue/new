@@ -28,12 +28,22 @@ async function syncSurveys() {
   return rows.length;
 }
 
-async function getSurveyIds(): Promise<string[]> {
-  const { data } = await supabase
+// Quando fromDate é passado, busca todos os surveys a partir daquela data
+// (sem LIMIT). Útil para re-sync pontual de um período específico.
+// Sem fromDate, retorna os 30 mais recentes (comportamento padrão do cron).
+async function getSurveyIds(fromDate?: string): Promise<string[]> {
+  let query = supabase
     .from("elofy_surveys")
     .select("elofy_id")
-    .neq("situacao", "Encerrada")
-    .limit(20);
+    .order("data_inicio", { ascending: false });
+
+  if (fromDate) {
+    query = query.gte("data_inicio", fromDate);
+  } else {
+    query = query.limit(30);
+  }
+
+  const { data } = await query;
   return (data ?? []).map((r: { elofy_id: string }) => r.elofy_id).filter(Boolean);
 }
 
@@ -220,16 +230,24 @@ async function syncSurveyDetails(surveyIds: string[]) {
   return counts;
 }
 
-Deno.serve(async () => {
+Deno.serve(async (req) => {
   const startedAt = new Date().toISOString();
+
+  // Aceita { from_date: "YYYY-MM-DD" } no body para re-sync direcionado por período.
+  // Sem body (ex: chamada do cron), usa o comportamento padrão (últimos 30 surveys).
+  let fromDate: string | undefined;
+  try {
+    const body = await req.json();
+    if (typeof body?.from_date === "string") fromDate = body.from_date;
+  } catch { /* body vazio ou não-JSON — ok */ }
 
   try {
     const surveysCount = await syncSurveys();
-    const surveyIds = await getSurveyIds();
+    const surveyIds = await getSurveyIds(fromDate);
     const counts = await syncSurveyDetails(surveyIds);
 
-    const results = { surveys: surveysCount, ...counts };
-    const total = Object.values(results).reduce((a, b) => a + b, 0);
+    const results = { surveys: surveysCount, ...counts, from_date: fromDate ?? "últimos 30" };
+    const total = Object.values(results).reduce((a, b) => typeof b === "number" ? a + b : a, 0);
     await logSync(supabase, "sync-pesquisas", "success", total, undefined, startedAt);
 
     return new Response(JSON.stringify({ ok: true, results }), {
