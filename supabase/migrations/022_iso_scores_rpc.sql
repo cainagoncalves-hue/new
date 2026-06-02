@@ -43,25 +43,36 @@ AS $$
 WITH
 
 -- ── Líderes ativos (headcount por gestor) ────────────────────────────────────
--- Conta liderados ativos; exclui contas admin da plataforma Elofy.
--- CTE nomeada "leaders" (não "headcount") para evitar conflito com a
--- coluna de saída de mesmo nome na RETURNS TABLE.
+-- TRIM no area evita problemas de espaços vindos do Elofy.
 leaders AS (
   SELECT
-    nome_gestor            AS gestor,
-    MIN(nome_time)         AS area,
-    COUNT(*)               AS n
+    nome_gestor                 AS gestor,
+    TRIM(MIN(nome_time))        AS area,
+    COUNT(*)                    AS n
   FROM elofy_users
   WHERE status = 'Ativo'
-    AND nome_gestor IS NOT NULL
-    AND nome_gestor <> ''
+    AND nome_gestor IS NOT NULL AND nome_gestor <> ''
     AND lower(nome_gestor) NOT LIKE '%elofy%'
     AND nome NOT IN ('Z Elofy', 'Gente Cultura')
   GROUP BY nome_gestor
 ),
 
+-- Todos os times de cada líder (com TRIM).
+-- Usado nos fallbacks de LNPS e ISBE para líderes que gerenciam
+-- múltiplos times — garante que a média use TODOS os times, não só o primeiro.
+leader_teams AS (
+  SELECT DISTINCT
+    nome_gestor      AS gestor,
+    TRIM(nome_time)  AS team
+  FROM elofy_users
+  WHERE status = 'Ativo'
+    AND nome_gestor IS NOT NULL AND nome_gestor <> ''
+    AND lower(nome_gestor) NOT LIKE '%elofy%'
+    AND nome NOT IN ('Z Elofy', 'Gente Cultura')
+    AND nome_time IS NOT NULL AND nome_time <> ''
+),
+
 -- ── LNPS — survey mais recente ────────────────────────────────────────────────
--- Converte data_envio_pesquisa → YYYY-MM (suporta yyyy-MM-dd e dd/MM/yyyy)
 lnps_surveys_months AS (
   SELECT
     id_pesquisa,
@@ -84,19 +95,19 @@ best_lnps AS (
   LIMIT 1
 ),
 
--- Respostas da survey LNPS mais recente (escala 0-10)
+-- Respostas da survey LNPS mais recente — TRIM no time para joins limpos
 lnps_resp AS (
   SELECT
-    s.nome_gestor               AS gestor,
-    s.time                      AS team,
-    CAST(s.resposta AS numeric) AS score
+    s.nome_gestor                AS gestor,
+    TRIM(s.time)                 AS team,
+    CAST(s.resposta AS numeric)  AS score
   FROM elofy_survey_standard s
   JOIN best_lnps b ON s.id_pesquisa = b.id_pesquisa
   WHERE s.resposta ~ '^\d+(\.\d+)?$'
     AND CAST(s.resposta AS numeric) BETWEEN 0 AND 10
 ),
 
--- NPS bruto por gestor: (promotores - detratores) / total × 100
+-- NPS direto por gestor: (promotores − detratores) / total × 100
 lnps_agg_gestor_raw AS (
   SELECT
     gestor,
@@ -108,36 +119,36 @@ lnps_agg_gestor_raw AS (
   WHERE gestor IS NOT NULL AND gestor <> ''
   GROUP BY gestor
 ),
--- Normalizado: (nps_raw + 100) / 2  →  escala 0-100
 lnps_by_gestor AS (
   SELECT gestor, n, nps_raw, (nps_raw + 100) / 2 AS nps_score
   FROM lnps_agg_gestor_raw
 ),
 
--- Fallback: NPS por time (média da área)
-lnps_agg_team_raw AS (
+-- Fallback LNPS: combina respondentes de TODOS os times do líder.
+-- Resolve dois problemas:
+-- 1) Líderes sem resposta direta no LNPS usam média dos seus times
+-- 2) Líderes com múltiplos times usam todos, não só o primeiro
+lnps_multi_team_agg AS (
   SELECT
-    team,
-    COUNT(*) AS n,
-    (SUM(CASE WHEN score >= 9 THEN 1 ELSE 0 END)::numeric
-     - SUM(CASE WHEN score <= 6 THEN 1 ELSE 0 END)::numeric
-    ) / COUNT(*)::numeric * 100 AS nps_raw
-  FROM lnps_resp
-  WHERE team IS NOT NULL AND team <> ''
-  GROUP BY team
+    lt.gestor,
+    COUNT(*)                                                              AS n,
+    (SUM(CASE WHEN lr.score >= 9 THEN 1 ELSE 0 END)::numeric
+     - SUM(CASE WHEN lr.score <= 6 THEN 1 ELSE 0 END)::numeric
+    ) / COUNT(*)::numeric * 100                                           AS nps_raw
+  FROM leader_teams lt
+  JOIN lnps_resp lr ON lt.team = lr.team
+  GROUP BY lt.gestor
+  HAVING COUNT(*) > 0
 ),
-lnps_by_team AS (
-  SELECT team, n, nps_raw, (nps_raw + 100) / 2 AS nps_score
-  FROM lnps_agg_team_raw
+lnps_multi_team_fallback AS (
+  SELECT gestor, n, nps_raw, (nps_raw + 100) / 2 AS nps_score
+  FROM lnps_multi_team_agg
 ),
 
 -- ── ISBE — mês mais recente POR LÍDER ────────────────────────────────────────
--- Cada líder (id_gestor) usa seu próprio mês mais recente de dados ISBE.
--- Isso evita que um novo ciclo de survey (ex: mai/2026 com poucos respondentes)
--- oculte os dados de líderes que não participaram desse ciclo mas têm dados
--- em meses anteriores (ex: Anderson=mar/26, Gabriel=abr/26, Gilmar=abr/26).
+-- Cada líder usa seu próprio mês mais recente de dados ISBE (per-gestor).
+-- Evita que um novo ciclo oculte dados de líderes que não participaram.
 
--- Converte data_pulso → YYYY-MM (suporta yyyy-MM-dd e dd/MM/yyyy)
 isbe_dates_months AS (
   SELECT
     data_pulso,
@@ -153,22 +164,15 @@ isbe_dates_months AS (
     AND data_pulso IS NOT NULL
     AND id_gestor IS NOT NULL AND id_gestor <> ''
 ),
--- Mês mais recente global — usado no header da página (isbe_mes)
 latest_isbe_month AS (
-  SELECT month_key
-  FROM isbe_dates_months
-  WHERE month_key <> ''
-  ORDER BY month_key DESC
-  LIMIT 1
+  SELECT month_key FROM isbe_dates_months
+  WHERE month_key <> '' ORDER BY month_key DESC LIMIT 1
 ),
--- Mês mais recente por id_gestor
 isbe_latest_per_gestor AS (
   SELECT id_gestor, MAX(month_key) AS latest_month
-  FROM isbe_dates_months
-  WHERE month_key <> ''
+  FROM isbe_dates_months WHERE month_key <> ''
   GROUP BY id_gestor
 ),
--- data_pulso exatos de cada gestor no seu mês mais recente
 isbe_latest_dates_per_gestor AS (
   SELECT DISTINCT d.id_gestor, d.data_pulso
   FROM isbe_dates_months d
@@ -176,14 +180,13 @@ isbe_latest_dates_per_gestor AS (
     ON d.id_gestor = l.id_gestor AND d.month_key = l.latest_month
 ),
 
--- Parse dos scores usando o mês mais recente de cada gestor
--- Tenta score_resposta numérico (1-4); fallback para mapeamento de texto
+-- Parse dos scores — mês mais recente por gestor, TRIM no time
 isbe_raw_scores AS (
   SELECT
     p.id_gestor,
-    NULLIF(p.gestor, '')          AS gestor_raw,
-    p.time                        AS team,
-    p.categoria_pergunta          AS categoria,
+    NULLIF(p.gestor, '')         AS gestor_raw,
+    TRIM(p.time)                 AS team,
+    p.categoria_pergunta         AS categoria,
     p.pergunta,
     CASE
       WHEN p.score_resposta ~ '^\d+(\.\d+)?$'
@@ -200,13 +203,11 @@ isbe_raw_scores AS (
       ELSE NULL
     END AS score
   FROM elofy_survey_pulse p
-  -- JOIN garante que cada líder usa apenas o seu mês mais recente
   JOIN isbe_latest_dates_per_gestor d
     ON p.id_gestor = d.id_gestor AND p.data_pulso = d.data_pulso
   WHERE lower(p.nome_pesquisa) LIKE '%bem estar%'
 ),
 
--- Resolve nome do gestor via id_gestor (quando a coluna gestor está vazia)
 gestor_name_map AS (
   SELECT DISTINCT ON (id_gestor) id_gestor, gestor_raw AS nome
   FROM isbe_raw_scores
@@ -214,7 +215,6 @@ gestor_name_map AS (
   ORDER BY id_gestor
 ),
 
--- Linhas com score válido e nome do gestor resolvido
 isbe_scored AS (
   SELECT
     COALESCE(r.gestor_raw, m.nome, '') AS gestor,
@@ -227,74 +227,64 @@ isbe_scored AS (
   WHERE r.score IS NOT NULL
 ),
 
--- Agregação geral por gestor: score médio e contagem de respondentes
+-- ISBE direto por gestor
 isbe_by_gestor AS (
-  SELECT
-    gestor,
-    AVG(score)                                                         AS avg_score,
-    ROUND(COUNT(*)::numeric / NULLIF(COUNT(DISTINCT pergunta), 0))     AS n_respondents
-  FROM isbe_scored
-  WHERE gestor <> ''
+  SELECT gestor,
+    AVG(score)                                                          AS avg_score,
+    ROUND(COUNT(*)::numeric / NULLIF(COUNT(DISTINCT pergunta), 0))      AS n_respondents
+  FROM isbe_scored WHERE gestor <> ''
   GROUP BY gestor
 ),
-
--- Detalhe por pergunta para o card expandido do líder
 isbe_per_q_gestor AS (
   SELECT gestor, categoria, pergunta, AVG(score) AS q_avg, COUNT(*) AS q_n
-  FROM isbe_scored
-  WHERE gestor <> ''
+  FROM isbe_scored WHERE gestor <> ''
   GROUP BY gestor, categoria, pergunta
 ),
 isbe_questions_gestor AS (
-  SELECT
-    gestor,
-    jsonb_agg(
-      jsonb_build_object(
-        'pergunta',  pergunta,
-        'categoria', categoria,
-        'avgRaw',    ROUND(q_avg::numeric, 4),
-        'score',     ROUND((((q_avg - 1) / 3.0) * 100)::numeric, 2),
-        'n',         q_n
-      ) ORDER BY categoria, pergunta
-    ) AS perguntas
-  FROM isbe_per_q_gestor
-  GROUP BY gestor
+  SELECT gestor,
+    jsonb_agg(jsonb_build_object(
+      'pergunta', pergunta, 'categoria', categoria,
+      'avgRaw',   ROUND(q_avg::numeric, 4),
+      'score',    ROUND((((q_avg - 1) / 3.0) * 100)::numeric, 2),
+      'n',        q_n
+    ) ORDER BY categoria, pergunta) AS perguntas
+  FROM isbe_per_q_gestor GROUP BY gestor
 ),
 
--- Fallback: ISBE por time (média da área)
-isbe_by_team AS (
-  SELECT
-    team,
-    AVG(score)                                                         AS avg_score,
-    ROUND(COUNT(*)::numeric / NULLIF(COUNT(DISTINCT pergunta), 0))     AS n_respondents
-  FROM isbe_scored
-  WHERE team IS NOT NULL AND team <> ''
-  GROUP BY team
+-- Fallback ISBE: combina respondentes de TODOS os times do líder.
+-- Usa isbe_scored (que já tem dados limpos e per-gestor mais recente),
+-- agrupando por nome do time — captura respostas de qualquer respondente
+-- naquele time, independente do id_gestor deles.
+isbe_multi_team_scored AS (
+  SELECT lt.gestor, s.categoria, s.pergunta, s.score
+  FROM leader_teams lt
+  JOIN isbe_scored s ON lt.team = s.team
 ),
-isbe_per_q_team AS (
-  SELECT team, categoria, pergunta, AVG(score) AS q_avg, COUNT(*) AS q_n
-  FROM isbe_scored
-  WHERE team IS NOT NULL AND team <> ''
-  GROUP BY team, categoria, pergunta
+isbe_multi_team_fallback AS (
+  SELECT gestor,
+    AVG(score)                                                          AS avg_score,
+    ROUND(COUNT(*)::numeric / NULLIF(COUNT(DISTINCT pergunta), 0))      AS n_respondents
+  FROM isbe_multi_team_scored
+  GROUP BY gestor
+  HAVING COUNT(*) > 0
 ),
-isbe_questions_team AS (
-  SELECT
-    team,
-    jsonb_agg(
-      jsonb_build_object(
-        'pergunta',  pergunta,
-        'categoria', categoria,
-        'avgRaw',    ROUND(q_avg::numeric, 4),
-        'score',     ROUND((((q_avg - 1) / 3.0) * 100)::numeric, 2),
-        'n',         q_n
-      ) ORDER BY categoria, pergunta
-    ) AS perguntas
-  FROM isbe_per_q_team
-  GROUP BY team
+isbe_per_q_multi_team AS (
+  SELECT gestor, categoria, pergunta, AVG(score) AS q_avg, COUNT(*) AS q_n
+  FROM isbe_multi_team_scored
+  GROUP BY gestor, categoria, pergunta
+),
+isbe_questions_multi_team AS (
+  SELECT gestor,
+    jsonb_agg(jsonb_build_object(
+      'pergunta', pergunta, 'categoria', categoria,
+      'avgRaw',   ROUND(q_avg::numeric, 4),
+      'score',    ROUND((((q_avg - 1) / 3.0) * 100)::numeric, 2),
+      'n',        q_n
+    ) ORDER BY categoria, pergunta) AS perguntas
+  FROM isbe_per_q_multi_team GROUP BY gestor
 ),
 
 -- ── Turnover voluntário ───────────────────────────────────────────────────────
--- CTE nomeada "turnover_cte" para evitar conflito com colunas de saída.
 turnover_cte AS (
   SELECT nome_gestor AS gestor, COUNT(*) AS n
   FROM manual_desligamentos
@@ -304,7 +294,6 @@ turnover_cte AS (
 ),
 
 -- ── CID F ─────────────────────────────────────────────────────────────────────
--- CTE nomeada "cidf_cte" por consistência.
 cidf_cte AS (
   SELECT nome_gestor AS gestor, COUNT(DISTINCT nome_colaborador) AS n
   FROM manual_cidf
@@ -342,40 +331,40 @@ scores AS (
       END
     ELSE NULL END                                                          AS cidf_score,
 
-    -- LNPS (com fallback para média da área)
-    COALESCE(lg.nps_raw,   lt.nps_raw)                                   AS lnps_raw,
-    COALESCE(lg.nps_score, lt.nps_score)                                  AS lnps_score,
-    COALESCE(lg.n,         lt.n,  0)                                      AS lnps_n,
-    (lg.gestor IS NULL AND lt.team IS NOT NULL)                           AS lnps_is_area_avg,
-    CASE WHEN lg.gestor IS NULL AND lt.team IS NOT NULL THEN l.area
-         ELSE '' END                                                       AS lnps_area_label,
+    -- LNPS direto; fallback = média dos times do líder
+    COALESCE(lg.nps_raw,   ltf.nps_raw)                                  AS lnps_raw,
+    COALESCE(lg.nps_score, ltf.nps_score)                                 AS lnps_score,
+    COALESCE(lg.n,         ltf.n, 0)                                      AS lnps_n,
+    (lg.gestor IS NULL AND ltf.gestor IS NOT NULL)                        AS lnps_is_area_avg,
+    CASE WHEN lg.gestor IS NULL AND ltf.gestor IS NOT NULL
+         THEN l.area ELSE '' END                                           AS lnps_area_label,
 
-    -- ISBE (com fallback para média da área)
-    COALESCE(ig.avg_score, it.avg_score)                                  AS isbe_raw_val,
+    -- ISBE direto; fallback = média dos times do líder
+    COALESCE(ig.avg_score, itf.avg_score)                                 AS isbe_raw_val,
     CASE
-      WHEN ig.avg_score IS NOT NULL THEN ((ig.avg_score - 1) / 3.0) * 100
-      WHEN it.avg_score IS NOT NULL THEN ((it.avg_score - 1) / 3.0) * 100
+      WHEN ig.avg_score  IS NOT NULL THEN ((ig.avg_score  - 1) / 3.0) * 100
+      WHEN itf.avg_score IS NOT NULL THEN ((itf.avg_score - 1) / 3.0) * 100
       ELSE NULL
     END                                                                    AS isbe_score,
-    COALESCE(ig.n_respondents, it.n_respondents, 0)                       AS isbe_n,
-    (ig.gestor IS NULL AND it.team IS NOT NULL)                           AS isbe_is_area_avg,
-    CASE WHEN ig.gestor IS NULL AND it.team IS NOT NULL THEN l.area
-         ELSE '' END                                                       AS isbe_area_label,
-    COALESCE(iq.perguntas, iqt.perguntas, '[]'::jsonb)                   AS perguntas_isbe,
+    COALESCE(ig.n_respondents, itf.n_respondents, 0)                      AS isbe_n,
+    (ig.gestor IS NULL AND itf.gestor IS NOT NULL)                        AS isbe_is_area_avg,
+    CASE WHEN ig.gestor IS NULL AND itf.gestor IS NOT NULL
+         THEN l.area ELSE '' END                                           AS isbe_area_label,
+    COALESCE(iqg.perguntas, iqmt.perguntas, '[]'::jsonb)                  AS perguntas_isbe,
 
-    -- Metadados das pesquisas (iguais para todos os líderes)
-    (SELECT month_key FROM best_lnps LIMIT 1)                             AS lnps_date,
+    -- Metadados das pesquisas
+    (SELECT month_key FROM best_lnps        LIMIT 1)                      AS lnps_date,
     (SELECT month_key FROM latest_isbe_month LIMIT 1)                     AS isbe_mes
 
   FROM leaders l
-  LEFT JOIN turnover_cte        tv  ON l.gestor = tv.gestor
-  LEFT JOIN cidf_cte            cf  ON l.gestor = cf.gestor
-  LEFT JOIN lnps_by_gestor      lg  ON l.gestor = lg.gestor
-  LEFT JOIN lnps_by_team        lt  ON l.area   = lt.team AND lg.gestor IS NULL
-  LEFT JOIN isbe_by_gestor      ig  ON l.gestor = ig.gestor
-  LEFT JOIN isbe_by_team        it  ON l.area   = it.team AND ig.gestor IS NULL
-  LEFT JOIN isbe_questions_gestor iq  ON l.gestor = iq.gestor
-  LEFT JOIN isbe_questions_team   iqt ON l.area   = iqt.team AND iq.gestor IS NULL
+  LEFT JOIN turnover_cte             tv   ON l.gestor = tv.gestor
+  LEFT JOIN cidf_cte                 cf   ON l.gestor = cf.gestor
+  LEFT JOIN lnps_by_gestor           lg   ON l.gestor = lg.gestor
+  LEFT JOIN lnps_multi_team_fallback ltf  ON l.gestor = ltf.gestor  AND lg.gestor  IS NULL
+  LEFT JOIN isbe_by_gestor           ig   ON l.gestor = ig.gestor
+  LEFT JOIN isbe_multi_team_fallback itf  ON l.gestor = itf.gestor  AND ig.gestor  IS NULL
+  LEFT JOIN isbe_questions_gestor    iqg  ON l.gestor = iqg.gestor
+  LEFT JOIN isbe_questions_multi_team iqmt ON l.gestor = iqmt.gestor AND iqg.gestor IS NULL
 )
 
 SELECT
