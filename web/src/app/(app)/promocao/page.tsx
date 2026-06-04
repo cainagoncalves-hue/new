@@ -19,7 +19,7 @@ type CulturaState = Record<CulturaKey, boolean>;
 // ─── Culture Pillars ──────────────────────────────────────────────────────────
 const PILARES = [
   {
-    label: "1. Colaborativos", icon: "🤝",
+    label: "1. Colaborativos", icon: "",
     questions: [
       { key: "c1", text: "Compartilha contextos e constrói soluções de forma integrada com o time?" },
       { key: "c2", text: "Atua proativamente eliminando retrabalhos e gargalos entre áreas parceiras?" },
@@ -27,7 +27,7 @@ const PILARES = [
     ],
   },
   {
-    label: "2. Relevantes", icon: "⭐",
+    label: "2. Relevantes", icon: "",
     questions: [
       { key: "r1", text: "Analisa o real impacto e prioridade de uma demanda antes de executá-la?" },
       { key: "r2", text: "Direciona suas rotinas com foco total na geração de valor real para o cliente?" },
@@ -35,7 +35,7 @@ const PILARES = [
     ],
   },
   {
-    label: "3. Corajosos", icon: "⚡",
+    label: "3. Corajosos", icon: "",
     questions: [
       { key: "co1", text: "Tem maturidade para encarar conversas de alinhamento e feedbacks complexos?" },
       { key: "co2", text: "Assume a responsabilidade de seus atos, agindo rápido diante de falhas?" },
@@ -43,7 +43,7 @@ const PILARES = [
     ],
   },
   {
-    label: "4. Inconformados", icon: "⇡",
+    label: "4. Inconformados", icon: "",
     questions: [
       { key: "i1", text: "Mostra curiosidade constante e abertura sadia para novos aprendizados?" },
       { key: "i2", text: "Evita o comodismo e busca caminhos de melhoria mesmo no que já roda bem?" },
@@ -51,7 +51,7 @@ const PILARES = [
     ],
   },
   {
-    label: "5. Proativos", icon: "🏅",
+    label: "5. Proativos", icon: "",
     questions: [
       { key: "p1", text: "Antecipa potenciais gargalos e riscos antes que causem impacto?" },
       { key: "p2", text: "Atua de maneira autônoma e resolutiva sem necessitar de cobranças frequentes?" },
@@ -59,7 +59,7 @@ const PILARES = [
     ],
   },
   {
-    label: "6. Simples", icon: "✓",
+    label: "6. Simples", icon: "",
     questions: [
       { key: "s1", text: "Resolve demandas complexas através de saídas limpas, organizadas e diretas?" },
       { key: "s2", text: "Simplifica o entendimento geral de rotinas reduzindo burocracias de fluxo?" },
@@ -67,7 +67,7 @@ const PILARES = [
     ],
   },
   {
-    label: "7. Disciplinados", icon: "🎯",
+    label: "7. Disciplinados", icon: "",
     questions: [
       { key: "d1", text: "Mantém dedicação técnica firme, consistência e foco em períodos de alta pressão?" },
       { key: "d2", text: "Segue com integridade os prazos e acordos estabelecidos coletivamente?" },
@@ -131,7 +131,7 @@ function SectionCard({
         alignItems: "center",
         gap: 12,
       }}>
-        <span style={{ fontSize: 20, lineHeight: 1, flexShrink: 0 }}>{icon}</span>
+        {icon && <span style={{ fontSize: 20, lineHeight: 1, flexShrink: 0 }}>{icon}</span>}
         <div>
           <div style={{
             fontFamily: "'DM Sans', sans-serif",
@@ -267,7 +267,7 @@ export default function PromocaoPage() {
   type StatusConfig = { label: string; bg: string; text: string; border: string; bar: string; cardBg: string; heading: string; body: string };
   const status: StatusConfig = !blocked && nota >= 8.5
     ? {
-        label: "ELEGÍVEL IMEDIATO 🏆",
+        label: "ELEGÍVEL IMEDIATO",
         bg: "var(--green-bg)", text: "var(--green-text)", border: "#6EE7B7",
         bar: "var(--green)", cardBg: "#F0FDF4",
         heading: "Altamente Recomendado",
@@ -275,14 +275,14 @@ export default function PromocaoPage() {
       }
     : !blocked && nota >= 6.0
     ? {
-        label: "REVISÃO RECOMENDADA ⏳",
+        label: "REVISÃO RECOMENDADA",
         bg: "var(--amber-bg)", text: "var(--amber-text)", border: "#FCD34D",
         bar: "var(--amber)", cardBg: "#FFFBEB",
         heading: "Maturação em Andamento",
         body: "O profissional atende às metas vigentes, porém apresenta gaps leves nas subperguntas do mapa comportamental. Recomenda-se alinhamento estruturado com People para validação do timing.",
       }
     : {
-        label: "INELEGÍVEL NO MOMENTO ❌",
+        label: "INELEGÍVEL NO MOMENTO",
         bg: "var(--red-bg)", text: "var(--red-text)", border: "#FCA5A5",
         bar: "var(--red)", cardBg: "#FFF5F5",
         heading: "Foco em Plano de Desenvolvimento",
@@ -362,7 +362,7 @@ export default function PromocaoPage() {
             flexShrink: 0,
           }}
         >
-          🖨️ Imprimir / PDF
+          Imprimir / PDF
         </button>
       </div>
 
@@ -426,7 +426,7 @@ export default function PromocaoPage() {
 
         {/* Performance */}
         <SectionCard
-          icon="📈"
+          icon=""
           title="Avaliação de Desempenho do Ciclo"
           subtitle="Selecione o nível de entrega técnica demonstrado de acordo com a meta semestral."
         >
@@ -455,7 +455,7 @@ export default function PromocaoPage() {
 
         {/* Remuneração e Retenção */}
         <SectionCard
-          icon="📊"
+          icon=""
           title="Posicionamento de Remuneração e Retenção"
           subtitle="Histórico de reajustes e mapeamento de riscos e potenciais estratégicos."
         >
@@ -552,7 +552,7 @@ export default function PromocaoPage() {
 
         {/* Pilares Culturais */}
         <SectionCard
-          icon="🦁"
+          icon=""
           title="Pilares e Comportamentos (Culture Book)"
           subtitle="Mapeamento direto com base no manual prático de cultura e conduta diária."
         >
@@ -574,7 +574,7 @@ export default function PromocaoPage() {
                   color: "var(--brand)",
                   marginBottom: 10,
                 }}>
-                  {pilar.icon} {pilar.label}
+                  {pilar.label}
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {pilar.questions.map(q => (
@@ -604,7 +604,7 @@ export default function PromocaoPage() {
 
         {/* Evidências Práticas */}
         <SectionCard
-          icon="📝"
+          icon=""
           title="Caixa de Evidências Práticas"
           subtitle="Informe quais projetos estratégicos, entregas técnicas ou ações justificam esta solicitação."
         >
