@@ -314,8 +314,35 @@ export default function PromocaoPage() {
     display: "block",
   };
 
+  const handleSalvar = () => {
+    const style = document.createElement("style");
+    style.id = "promocao-print-style";
+    style.textContent = `
+      @media print {
+        body * { visibility: hidden !important; }
+        #promocao-print-area, #promocao-print-area * { visibility: visible !important; }
+        #promocao-print-area {
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100% !important;
+          padding: 32px 48px !important;
+          background: white !important;
+        }
+        body { background: white !important; margin: 0 !important; }
+        #save-pdf-btn { display: none !important; }
+        textarea { border: 1px solid #D8D0F0 !important; }
+      }
+    `;
+    document.head.appendChild(style);
+    window.print();
+    window.addEventListener("afterprint", () => {
+      document.getElementById("promocao-print-style")?.remove();
+    }, { once: true });
+  };
+
   return (
-    <div style={{ padding: "40px 48px", maxWidth: 960, margin: "0 auto" }}>
+    <div id="promocao-print-area" style={{ padding: "40px 48px", maxWidth: 960, margin: "0 auto" }}>
 
       {/* Page Header */}
       <div style={{
@@ -345,15 +372,16 @@ export default function PromocaoPage() {
           </p>
         </div>
         <button
-          onClick={() => window.print()}
+          id="save-pdf-btn"
+          onClick={handleSalvar}
           style={{
-            padding: "8px 16px",
+            padding: "8px 18px",
             borderRadius: 8,
-            border: "1px solid var(--border-2)",
-            background: "var(--surface)",
-            color: "var(--text-500)",
+            border: "none",
+            background: "var(--brand)",
+            color: "#fff",
             fontSize: 12,
-            fontWeight: 500,
+            fontWeight: 600,
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
@@ -362,7 +390,7 @@ export default function PromocaoPage() {
             flexShrink: 0,
           }}
         >
-          Imprimir / PDF
+          Salvar PDF
         </button>
       </div>
 
