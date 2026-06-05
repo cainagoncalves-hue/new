@@ -3,6 +3,13 @@ import Link from "next/link";
 import ISOLeaderList, { type ISOLeaderData, type ISOQuestion } from "./ISOLeaderList";
 import { getBPAreas, type BPKey } from "@/lib/bp";
 
+function formatMonthLabel(key: string): string {
+  const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  const [year, month] = key.split("-").map(Number);
+  if (!year || !month || month < 1 || month > 12) return key;
+  return `${months[month - 1]} ${year}`;
+}
+
 function isoColor(v: number | null) {
   if (v === null) return "var(--text-300)";
   if (v >= 80) return "var(--green)";
@@ -19,11 +26,35 @@ function isoLabel(v: number | null) {
 export default async function ISOPage({
   searchParams,
 }: {
-  searchParams: Promise<{ bp?: string; leader?: string }>;
+  searchParams: Promise<{ bp?: string; leader?: string; mes?: string }>;
 }) {
-  const { bp = "geral", leader = "" } = await searchParams;
+  const { bp = "geral", leader = "", mes = "" } = await searchParams;
   const supabase = await createClient();
   const bpAreas = await getBPAreas(supabase);
+
+  // Meses disponíveis: union dos meses com dados manuais (turnover + CID-F)
+  const [{ data: desDates }, { data: cidfDates }] = await Promise.all([
+    supabase.from("manual_desligamentos").select("mes_referencia"),
+    supabase.from("manual_cidf").select("mes_referencia"),
+  ]);
+
+  const isoMonthSet = new Set<string>();
+  for (const row of [...(desDates ?? []), ...(cidfDates ?? [])]) {
+    const key = (row.mes_referencia as string)?.slice(0, 7);
+    if (key) isoMonthSet.add(key);
+  }
+  const periods = [...isoMonthSet]
+    .sort((a, b) => b.localeCompare(a))
+    .map(key => ({ key, label: formatMonthLabel(key) }));
+  const activeMes = mes || (periods[0]?.key ?? "");
+
+  function periodUrl(key: string) {
+    const params = new URLSearchParams();
+    if (bp !== "geral") params.set("bp", bp);
+    if (leader) params.set("leader", leader);
+    params.set("mes", key);
+    return `/iso?${params.toString()}`;
+  }
 
   type ISORow = {
     gestor_nome: string; area: string | null; headcount: number;
@@ -37,7 +68,7 @@ export default async function ISOPage({
     perguntas_isbe: ISOQuestion[] | null;
     lnps_date: string | null; isbe_mes: string | null;
   };
-  const { data: rows } = await supabase.rpc("get_iso_scores") as { data: ISORow[] | null; error: unknown };
+  const { data: rows } = await supabase.rpc("get_iso_scores", { p_mes: activeMes }) as { data: ISORow[] | null; error: unknown };
 
   const allLeaders: ISOLeaderData[] = (rows ?? []).map((row) => ({
     name: row.gestor_nome,
@@ -134,12 +165,40 @@ export default async function ISOPage({
         </div>
       </div>
 
+      {/* Filtro de período */}
+      {periods.length > 1 && (
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
+          {periods.map((p) => {
+            const isActive = p.key === activeMes;
+            return (
+              <a
+                key={p.key}
+                href={periodUrl(p.key)}
+                style={{
+                  padding: "6px 16px",
+                  borderRadius: 20,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  textDecoration: "none",
+                  background: isActive ? "var(--brand)" : "var(--surface)",
+                  color: isActive ? "#fff" : "var(--text-500)",
+                  border: `1px solid ${isActive ? "var(--brand)" : "var(--border)"}`,
+                  transition: "all 0.15s",
+                }}
+              >
+                {p.label}
+              </a>
+            );
+          })}
+        </div>
+      )}
+
       <div style={{ display: "flex", gap: 10, marginBottom: 28, flexWrap: "wrap" }}>
         {[
           { label: "Turnover Voluntário", weight: "10%", meta: "≤ 0,8%" },
           { label: "Absenteísmo CID F",   weight: "10%", meta: "≤ 0,15%" },
-          { label: "LNPS",                weight: "40%", meta: "Pesquisa recente" },
-          { label: "ISBE",                weight: "40%", meta: "Pesquisa recente" },
+          { label: "LNPS",                weight: "40%", meta: "Pesquisa mais recente até o mês" },
+          { label: "ISBE",                weight: "40%", meta: "Pesquisa mais recente até o mês" },
         ].map(({ label, weight, meta }) => (
           <div key={label} style={{
             background: "var(--surface)", border: "1px solid var(--border)",

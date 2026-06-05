@@ -128,7 +128,9 @@ export default async function IMGPage({
 
   const mesSet = new Set<string>();
   for (const row of mesRows ?? []) {
-    if (row.mes_referencia) mesSet.add(row.mes_referencia as string);
+    // mes_referencia é date → vem como "YYYY-MM-DD"; normaliza para "YYYY-MM"
+    const key = (row.mes_referencia as string)?.slice(0, 7);
+    if (key) mesSet.add(key);
   }
   const periods = [...mesSet]
     .sort((a, b) => b.localeCompare(a))
@@ -164,7 +166,8 @@ export default async function IMGPage({
   let manualQ = supabase
     .from("manual_img_indicadores")
     .select("nome_gestor, indicador, valor_pct");
-  if (activeMes) manualQ = manualQ.eq("mes_referencia", activeMes);
+  // mes_referencia é date → precisa do formato YYYY-MM-DD
+  if (activeMes) manualQ = manualQ.eq("mes_referencia", `${activeMes}-01`);
 
   let fbQ = supabase
     .from("elofy_feedbacks")
