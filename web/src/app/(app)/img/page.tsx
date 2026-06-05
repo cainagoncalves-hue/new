@@ -109,9 +109,9 @@ export default async function IMGPage({
   // ── Users no escopo ──────────────────────────────────────────────────────────
   let usersQ = excludeAdmins(
     supabase.from("elofy_users")
-      .select("nome_colaborador, nome_gestor, nome_time, elofy_id")
+      .select("nome, nome_gestor, nome_time, elofy_id")
       .eq("status", "Ativo"),
-    "nome_colaborador"
+    "nome"
   );
   if (areaFilter) usersQ = usersQ.in("nome_time", areaFilter);
   if (leader)     usersQ = usersQ.eq("nome_gestor", leader);
@@ -211,11 +211,11 @@ export default async function IMGPage({
   // mgrMap: líder → { area, reports[] }
   type Report = { nome: string; elofy_id: string };
   const mgrMap: Record<string, { area: string; reports: Report[] }> = {};
-  for (const u of (users as Array<{ nome_colaborador: string; nome_gestor: string; nome_time: string; elofy_id: string }> ?? [])) {
+  for (const u of (users as Array<{ nome: string; nome_gestor: string; nome_time: string; elofy_id: string }> ?? [])) {
     const mgr = u.nome_gestor ?? "";
     if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
     if (!mgrMap[mgr]) mgrMap[mgr] = { area: u.nome_time ?? "", reports: [] };
-    mgrMap[mgr].reports.push({ nome: u.nome_colaborador ?? "", elofy_id: u.elofy_id ?? "" });
+    mgrMap[mgr].reports.push({ nome: u.nome ?? "", elofy_id: u.elofy_id ?? "" });
   }
 
   // ── Cálculo por líder (metodologia completa) ─────────────────────────────────
