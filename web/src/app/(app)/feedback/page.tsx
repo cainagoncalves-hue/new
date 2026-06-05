@@ -88,47 +88,45 @@ export default async function FeedbackPage({
     return `/feedback?${params.toString()}`;
   }
 
-  // Get all active users with their manager
+  // Get all active users with their manager (include elofy_id for reliable matching)
   let usersQ = excludeAdmins(
-    supabase.from("elofy_users").select("nome, id_gestor, nome_gestor, nome_time").eq("status", "Ativo"),
+    supabase.from("elofy_users").select("nome, elofy_id, nome_gestor, nome_time").eq("status", "Ativo"),
     "nome"
   );
   if (areaFilter) usersQ = usersQ.in("nome_time", areaFilter);
   if (leader) usersQ = usersQ.eq("nome_gestor", leader);
   const { data: users } = await usersQ;
 
-  // Get feedback recipients for the selected month
-  let fbQ = excludeAdmins(
-    excludeAdmins(
-      supabase.from("elofy_feedbacks")
-        .select("usuario_destinatario, time_destinatario, usuario_remetente")
-        .gte("data_feedback", monthStart)
-        .lt("data_feedback", monthEnd),
-      "usuario_destinatario"
-    ),
-    "usuario_remetente"
-  );
-  if (areaFilter) fbQ = fbQ.in("time_destinatario", areaFilter);
+  // Get feedback recipients for the selected month — filter by elofy_id (same pattern as img/page)
+  // This is required for the RLS policy on elofy_feedbacks to return data correctly
+  const allUserIds = (users ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean);
+
+  let fbQ = supabase
+    .from("elofy_feedbacks")
+    .select("id_usuario_destinatario")
+    .gte("data_feedback", monthStart)
+    .lt("data_feedback", monthEnd);
+  if (allUserIds.length > 0) fbQ = fbQ.in("id_usuario_destinatario", allUserIds);
   const { data: feedbacks } = await fbQ;
 
-  const feedbackSet = new Set((feedbacks ?? []).map(f => f.usuario_destinatario?.toLowerCase().trim()));
+  const feedbackSet = new Set((feedbacks ?? []).map((f: { id_usuario_destinatario: string }) => f.id_usuario_destinatario).filter(Boolean));
 
   // Group by manager
   const leaderMap: Record<string, {
     area: string;
-    reports: string[];
+    reports: Array<{ nome: string; elofy_id: string }>;
   }> = {};
 
   for (const u of users ?? []) {
     const mgr = u.nome_gestor ?? "";
     if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
     if (!leaderMap[mgr]) leaderMap[mgr] = { area: u.nome_time ?? "", reports: [] };
-    leaderMap[mgr].reports.push(u.nome ?? "");
+    leaderMap[mgr].reports.push({ nome: u.nome ?? "", elofy_id: u.elofy_id ?? "" });
   }
 
   const leaders: LeaderFeedback[] = Object.entries(leaderMap).map(([name, data]) => {
-    const withFeedback = data.reports.filter(r => feedbackSet.has(r.toLowerCase().trim()));
-    const withoutFeedback = data.reports.filter(r => !feedbackSet.has(r.toLowerCase().trim()));
+    const withFeedback = data.reports.filter(r => feedbackSet.has(r.elofy_id)).map(r => r.nome);
+    const withoutFeedback = data.reports.filter(r => !feedbackSet.has(r.elofy_id)).map(r => r.nome);
     const coverage = data.reports.length > 0 ? Math.round((withFeedback.length / data.reports.length) * 100) : 0;
     return {
       name,
