@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import FilterBar from "@/components/FilterBar";
 import AppShell from "@/components/AppShell";
 import { Suspense } from "react";
+import { getBPLeaders } from "@/lib/bp";
 
 async function Topbar() {
   const supabase = await createClient();
@@ -116,6 +117,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     .maybeSingle();
   const isAdmin = appUser?.role === "admin";
 
+  // Carrega líderes do banco para alimentar o FilterBar (Client Component)
+  const leaders = await getBPLeaders(supabase);
+
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Topbar />
@@ -127,7 +131,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             height: 56,
           }} />
         }>
-          <FilterBar />
+          <FilterBar leaders={leaders} />
         </Suspense>
         {children}
         <footer style={{

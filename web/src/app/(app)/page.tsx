@@ -1,12 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { excludeAdmins } from "@/lib/adminAccounts";
-
-// BP area mappings (mirrors index.html)
-const BP_AREAS: Record<string, string[]> = {
-  caina: ["DIRETORIA COMERCIAL","DIRETORIA MARKETING","MARKETING -  DIGITAL","MARKETING -  EVENTOS","PRÉ-VENDAS","VENDAS INTERNAS","REGIONAL BA","REGIONAL ES","REGIONAL GO","REGIONAL MG","REGIONAL MS","REGIONAL MT","REGIONAL NE","REGIONAL PR","REGIONAL RJ","REGIONAL RS/SC","REGIONAL SP"],
-  izabela: ["CS","CS - Time Aline","CS - Time Luana","CX","CX - Reversão","CX - Time Gabriel","SUPORTE","SUPORTE - Time Edmilson","SUPORTE - Time Enock","SUPORTE - Time Gabriela","SUPORTE - Time Nathalia","ADMINISTRATIVO/FINANCEIRO REC","ADMINISTRATIVO/FINANCEIRO SP","DIRETORIA FINANCEIRA","OSM","SERVIÇOS GERAIS REC","SERVIÇOS GERAIS SP","DIRETORIA OPERAÇÕES"],
-  renata_paula: ["DEV - Time Felipe","DEV - Time Gilmar","DEV - Time Jony","DEV - Time Leandro","DIRETORIA TECNOLOGIA","TI - INFRAESTRUTURA","PESQUISA & PRODUTO","NIX","Recrutamento e Seleção","Desenvolvimento Humano Organizacional","Departamento Pessoal","DIRETORIA GENTE & CULTURA"],
-};
+import { getBPAreas, type BPKey } from "@/lib/bp";
 
 const LEADER_AREAS: Record<string, string[]> = {
   "Henrique Carmellino Filho": ["DIRETORIA  GERAL","DIRETORIA COMERCIAL","DIRETORIA FINANCEIRA","DIRETORIA MARKETING","DIRETORIA OPERAÇÕES","MARKETING -  DIGITAL"],
@@ -255,13 +249,14 @@ export default async function HomePage({
 }) {
   const { bp = "geral", leader = "" } = await searchParams;
   const supabase = await createClient();
+  const bpAreas = await getBPAreas(supabase);
 
   // Determine which teams to filter by
   let areaFilter: string[] | null = null;
   if (leader && LEADER_AREAS[leader]) {
     areaFilter = LEADER_AREAS[leader];
-  } else if (bp !== "geral" && BP_AREAS[bp]) {
-    areaFilter = BP_AREAS[bp];
+  } else if (bp !== "geral" && bpAreas[bp as BPKey]) {
+    areaFilter = bpAreas[bp as BPKey];
   }
 
   // Headcount
@@ -370,10 +365,10 @@ export default async function HomePage({
       "nome"
     );
     acompanhadosUserIds = (liderados ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean);
-  } else if (bp !== "geral" && BP_AREAS[bp]) {
+  } else if (bp !== "geral" && bpAreas[bp as BPKey]) {
     // BP: todos os usuários das áreas desse BP por nome_time (conjuntos disjuntos → sem double-count)
     const { data: membros } = await excludeAdmins(
-      supabase.from("elofy_users").select("elofy_id").in("nome_time", BP_AREAS[bp]).eq("status", "Ativo"),
+      supabase.from("elofy_users").select("elofy_id").in("nome_time", bpAreas[bp as BPKey]).eq("status", "Ativo"),
       "nome"
     );
     acompanhadosUserIds = (membros ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean);

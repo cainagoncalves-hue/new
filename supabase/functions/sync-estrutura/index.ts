@@ -99,7 +99,18 @@ Deno.serve(async () => {
     results.positions = await syncPositions();
     results.users = await syncUsers();
 
-    const total = Object.values(results).reduce((a: number, b) => a + Number(b), 0);
+    // Reconstrói bp_gestor_map com base em bp_area_map + elofy_users recém-sincronizado
+    const { error: rebuildErr } = await supabase.rpc("rebuild_bp_gestor_map");
+    if (rebuildErr) {
+      console.error("rebuild_bp_gestor_map falhou:", rebuildErr.message);
+    } else {
+      results.bp_gestor_map = "reconstruído";
+    }
+
+    const total = Object.values(results).reduce(
+      (a: number, b) => (typeof b === "number" ? a + b : a),
+      0,
+    );
     await logSync(supabase, "sync-estrutura", "success", total, undefined, startedAt);
 
     return new Response(JSON.stringify({ ok: true, results }), {

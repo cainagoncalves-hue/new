@@ -1,11 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-
-const BP_AREAS: Record<string, string[]> = {
-  caina: ["DIRETORIA COMERCIAL","DIRETORIA MARKETING","MARKETING -  DIGITAL","MARKETING -  EVENTOS","PRÉ-VENDAS","VENDAS INTERNAS","REGIONAL BA","REGIONAL ES","REGIONAL GO","REGIONAL MG","REGIONAL MS","REGIONAL MT","REGIONAL NE","REGIONAL PR","REGIONAL RJ","REGIONAL RS/SC","REGIONAL SP"],
-  izabela: ["CS","CS - Time Aline","CS - Time Luana","CX","CX - Reversão","CX - Time Gabriel","SUPORTE","SUPORTE - Time Edmilson","SUPORTE - Time Enock","SUPORTE - Time Gabriela","SUPORTE - Time Nathalia","ADMINISTRATIVO/FINANCEIRO REC","ADMINISTRATIVO/FINANCEIRO SP","DIRETORIA FINANCEIRA","OSM","SERVIÇOS GERAIS REC","SERVIÇOS GERAIS SP","DIRETORIA OPERAÇÕES"],
-  renata_paula: ["DEV - Time Felipe","DEV - Time Gilmar","DEV - Time Jony","DEV - Time Leandro","DIRETORIA TECNOLOGIA","TI - INFRAESTRUTURA","PESQUISA & PRODUTO","NIX","Recrutamento e Seleção","Desenvolvimento Humano Organizacional","Departamento Pessoal","DIRETORIA GENTE & CULTURA"],
-};
+import { getBPAreas, type BPKey } from "@/lib/bp";
 
 function calcNPS(scores: number[]) {
   if (!scores.length) return null;
@@ -194,9 +189,10 @@ export default async function NPSPage({
 }) {
   const { bp = "geral", leader = "", mes = "" } = await searchParams;
   const supabase = await createClient();
+  const bpAreas = await getBPAreas(supabase);
 
   let areaFilter: string[] | null = null;
-  if (bp !== "geral" && BP_AREAS[bp]) areaFilter = BP_AREAS[bp];
+  if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];
 
   // Lookup team IDs for BP-scoped filtering
   let scopedTeamIds: string[] | null = null;

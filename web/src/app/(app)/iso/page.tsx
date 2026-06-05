@@ -1,12 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import ISOLeaderList, { type ISOLeaderData, type ISOQuestion } from "./ISOLeaderList";
-
-const BP_AREAS: Record<string, string[]> = {
-  caina: ["DIRETORIA COMERCIAL","DIRETORIA MARKETING","MARKETING -  DIGITAL","MARKETING -  EVENTOS","PRÉ-VENDAS","VENDAS INTERNAS","REGIONAL BA","REGIONAL ES","REGIONAL GO","REGIONAL MG","REGIONAL MS","REGIONAL MT","REGIONAL NE","REGIONAL PR","REGIONAL RJ","REGIONAL RS/SC","REGIONAL SP"],
-  izabela: ["CS","CS - Time Aline","CS - Time Luana","CX","CX - Reversão","CX - Time Gabriel","SUPORTE","SUPORTE - Time Edmilson","SUPORTE - Time Enock","SUPORTE - Time Gabriela","SUPORTE - Time Nathalia","ADMINISTRATIVO/FINANCEIRO REC","ADMINISTRATIVO/FINANCEIRO SP","DIRETORIA FINANCEIRA","OSM","SERVIÇOS GERAIS REC","SERVIÇOS GERAIS SP","DIRETORIA OPERAÇÕES"],
-  renata_paula: ["DEV - Time Felipe","DEV - Time Gilmar","DEV - Time Jony","DEV - Time Leandro","DIRETORIA TECNOLOGIA","TI - INFRAESTRUTURA","PESQUISA & PRODUTO","NIX","Recrutamento e Seleção","Desenvolvimento Humano Organizacional","Departamento Pessoal","DIRETORIA GENTE & CULTURA"],
-};
+import { getBPAreas, type BPKey } from "@/lib/bp";
 
 function isoColor(v: number | null) {
   if (v === null) return "var(--text-300)";
@@ -28,6 +23,7 @@ export default async function ISOPage({
 }) {
   const { bp = "geral", leader = "" } = await searchParams;
   const supabase = await createClient();
+  const bpAreas = await getBPAreas(supabase);
 
   type ISORow = {
     gestor_nome: string; area: string | null; headcount: number;
@@ -67,8 +63,8 @@ export default async function ISOPage({
     isbeAreaLabel: row.isbe_area_label ?? "",
   }));
 
-  // Filtros client-side sobre os 38 líderes retornados
-  const areaFilter = bp !== "geral" ? (BP_AREAS[bp] ?? null) : null;
+  // Filtros client-side sobre os líderes retornados
+  const areaFilter = bp !== "geral" ? (bpAreas[bp as BPKey] ?? null) : null;
   const leaders = allLeaders
     .filter((l) => !areaFilter || areaFilter.includes(l.area))
     .filter((l) => !leader || l.name === leader);

@@ -2,56 +2,21 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback } from "react";
+import type { BPKey } from "@/lib/bp";
 
 const BPS = [
-  { id: "geral", label: "Geral", initial: "" },
-  { id: "caina", label: "Cainã · Comercial & Marketing", initial: "C" },
-  { id: "izabela", label: "Izabela · CX/CS & Financeiro", initial: "I" },
+  { id: "geral",        label: "Geral",                          initial: "" },
+  { id: "caina",        label: "Cainã · Comercial & Marketing",  initial: "C" },
+  { id: "izabela",      label: "Izabela · CX/CS & Financeiro",   initial: "I" },
   { id: "renata_paula", label: "Renata/Paula · Tecnologia & RH", initial: "R/P" },
 ];
 
-const LEADER_DATA: Record<string, { bp: string }> = {
-  "Henrique Carmellino Filho": { bp: "caina" },
-  "Walquiria Santos Correia": { bp: "izabela" },
-  "Gustavo Carmellino": { bp: "renata_paula" },
-  "Jorge Do Nascimento Junior": { bp: "caina" },
-  "Leonardo De Oliveira Gama": { bp: "caina" },
-  "Leandro dos Santos Machado": { bp: "renata_paula" },
-  "Gabriela Maria Araujo Peres": { bp: "izabela" },
-  "Danilo Jorge da Silva Novais": { bp: "caina" },
-  "Jose Edmilson Da Silva": { bp: "izabela" },
-  "Enock De Oliveira E Silva Neto": { bp: "izabela" },
-  "Jonialysson Bezerra De Oliveira": { bp: "renata_paula" },
-  "Jefte de Assumpcao Macedo": { bp: "renata_paula" },
-  "Nathalia Vasconcelos Trajano Da Silva": { bp: "izabela" },
-  "Joao Henrique Da Silva": { bp: "renata_paula" },
-  "Thiago Souza Silva": { bp: "caina" },
-  "Gabriel Fidelis Gonzaga Dos Santos": { bp: "izabela" },
-  "Rafael Nascimento Ribeiro": { bp: "caina" },
-  "Rodrigo Jose Anderson do Nascimento Goncalves da Silva": { bp: "izabela" },
-  "Marcos Flavio De Paiva Reis": { bp: "caina" },
-  "Publio Maswell Matos Cavalcanti": { bp: "izabela" },
-  "Anderson Frederick Bernardes De Oliveira": { bp: "renata_paula" },
-  "Camila Alves Da Silva": { bp: "renata_paula" },
-  "Anderson Luis Lima da Silva": { bp: "izabela" },
-  "Gabrielle Vitoria Fernandes Tavares": { bp: "caina" },
-  "Tomas Signorelli Navarro Lima": { bp: "caina" },
-  "Aline Alves de Oliveira": { bp: "izabela" },
-  "Felipe Ayres Lins": { bp: "renata_paula" },
-  "Arthur Alexandre Fracalossi Carvalho": { bp: "caina" },
-  "Renata Oliveira De Moura Duarte": { bp: "renata_paula" },
-  "Luana Dos Santos Silva": { bp: "izabela" },
-  "Flavio Simao De Lima": { bp: "caina" },
-  "Walisson Deyvson Barbosa Pernambuco": { bp: "izabela" },
-  "Victor Fernando Soares de Barros": { bp: "izabela" },
-  "Gilmar Oliveira E Silva Junior": { bp: "renata_paula" },
-  "Paula Mikaelly Pimentel Silva Vieira": { bp: "renata_paula" },
-  "Deoclecio Tadeu Jorge de Campos Filho": { bp: "caina" },
-  "Elza Maria Eluana Da Silva Dias": { bp: "renata_paula" },
-  "Douglas Dos Santos Soares": { bp: "caina" },
-};
+interface FilterBarProps {
+  /** Lista vinda do banco (bp_gestor_map) — passada pelo layout Server Component */
+  leaders: { nome_gestor: string; bp: BPKey }[];
+}
 
-export default function FilterBar() {
+export default function FilterBar({ leaders }: FilterBarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -74,13 +39,12 @@ export default function FilterBar() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const leaders =
-    bp === "geral"
-      ? Object.keys(LEADER_DATA).sort()
-      : Object.entries(LEADER_DATA)
-          .filter(([, d]) => d.bp === bp)
-          .map(([name]) => name)
-          .sort();
+  // Filtra líderes pelo BP selecionado; deduplica por nome
+  const leaderNames = bp === "geral"
+    ? [...new Set(leaders.map((l) => l.nome_gestor))].sort()
+    : [...new Set(
+        leaders.filter((l) => l.bp === bp).map((l) => l.nome_gestor),
+      )].sort();
 
   return (
     <div style={{
@@ -165,7 +129,7 @@ export default function FilterBar() {
           }}
         >
           <option value="">Todos os líderes</option>
-          {leaders.map((name) => (
+          {leaderNames.map((name) => (
             <option key={name} value={name}>{name}</option>
           ))}
         </select>
