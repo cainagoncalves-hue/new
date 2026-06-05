@@ -569,10 +569,7 @@ export default async function HomePage({
     }
     const resultados = atingPts !== null ? atingPts / 12 : 0;
 
-    // Inclui o líder apenas se houver ao menos 1 fonte além do feedback automático
-    const hasExtraData = isoPts !== null || talPts !== null || planMax > 0 || finMax > 0 || atingPts !== null;
-    if (!hasExtraData) continue;
-
+    // Todos os líderes com liderados entram na média — dados parciais geram score parcial
     imgLeaderScores.push(Math.round(
       (pessoas * 0.30 + resultados * 0.30 + planejamento * 0.20 + financeiro * 0.20) * 100
     ));
