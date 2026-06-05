@@ -28,14 +28,26 @@ const INDICADORES: Record<string, string> = {
 
 const MONTH = new Date().toISOString().slice(0, 7);
 
+/** Escapa campo CSV se contiver vírgula, aspas ou quebra de linha */
+function csvCell(s: string): string {
+  if (s.includes(",") || s.includes('"') || s.includes("\n")) {
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+  return s;
+}
+
 function downloadTemplate(gestores: string[]) {
-  const exampleGestor = gestores[0] ?? "Nome Completo do Gestor";
   const currentMonth = new Date().toISOString().slice(0, 7);
 
   const lines: string[] = ["nome_gestor,mes_referencia,indicador,valor_pct"];
-  for (const ind of Object.keys(INDICADORES)) {
-    lines.push(`${exampleGestor},${currentMonth},${ind},100`);
+
+  // Uma linha por gestor × indicador — valor 0 como placeholder para preenchimento
+  for (const gestor of gestores) {
+    for (const ind of Object.keys(INDICADORES)) {
+      lines.push(`${csvCell(gestor)},${currentMonth},${ind},0`);
+    }
   }
+
   lines.push("");
   lines.push("# ── Valores válidos para o campo indicador ────────────────────");
   for (const [key, label] of Object.entries(INDICADORES)) {
@@ -53,7 +65,7 @@ function downloadTemplate(gestores: string[]) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `img_indicadores_modelo_${currentMonth}.csv`;
+  a.download = `img_indicadores_${currentMonth}.csv`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
