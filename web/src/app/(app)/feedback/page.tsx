@@ -101,14 +101,14 @@ export default async function FeedbackPage({
   let fbQ = excludeAdmins(
     excludeAdmins(
       supabase.from("elofy_feedbacks")
-        .select("usuario_destinatario, time_usuario_destinatario, usuario_remetente")
+        .select("usuario_destinatario, time_destinatario, usuario_remetente")
         .gte("data_feedback", monthStart)
         .lt("data_feedback", monthEnd),
       "usuario_destinatario"
     ),
     "usuario_remetente"
   );
-  if (areaFilter) fbQ = fbQ.in("time_usuario_destinatario", areaFilter);
+  if (areaFilter) fbQ = fbQ.in("time_destinatario", areaFilter);
   const { data: feedbacks } = await fbQ;
 
   const feedbackSet = new Set((feedbacks ?? []).map(f => f.usuario_destinatario?.toLowerCase().trim()));
