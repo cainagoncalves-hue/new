@@ -3,17 +3,41 @@ import Link from "next/link";
 import { excludeAdmins } from "@/lib/adminAccounts";
 import { getBPAreas, type BPKey } from "@/lib/bp";
 
+// ── Utilitários visuais ────────────────────────────────────────────────────────
+
 function pctColor(pct: number) {
   if (pct >= 80) return "var(--green)";
   if (pct >= 50) return "var(--amber)";
   return "var(--red)";
 }
 
-function imgLabel(pct: number) {
-  if (pct >= 95) return "Avançado";
-  if (pct >= 80) return "Intermediário";
-  if (pct >= 60) return "Básico";
-  return "Inicial";
+function ptsColor(pts: number | null): string {
+  if (pts === null) return "var(--text-300)";
+  if (pts === 12) return "var(--green-text)";
+  if (pts === 10) return "var(--brand)";
+  if (pts === 5) return "var(--amber-text)";
+  return "var(--red-text)";
+}
+
+function ptsBg(pts: number | null): string {
+  if (pts === null) return "var(--surface-2)";
+  if (pts === 12) return "var(--green-bg)";
+  if (pts === 10) return "var(--brand-pale)";
+  if (pts === 5) return "var(--amber-bg)";
+  return "var(--red-bg)";
+}
+
+// Conceito conforme IMG_Metodologia.md — régua do check-in oficial
+function imgLabel(pct: number): string {
+  if (pct >= 100) return "Excelência";
+  if (pct >= 70) return "Intermediário";
+  return "Básico";
+}
+
+function imgBadge(pct: number): { bg: string; color: string } {
+  if (pct >= 100) return { bg: "var(--green-bg)", color: "var(--green-text)" };
+  if (pct >= 70) return { bg: "var(--amber-bg)", color: "var(--amber-text)" };
+  return { bg: "var(--red-bg)", color: "var(--red-text)" };
 }
 
 function shortName(name: string) {
@@ -26,16 +50,46 @@ function initials(name: string) {
   return name.split(" ").filter(p => p.length > 2).slice(0, 2).map(p => p[0]).join("").toUpperCase();
 }
 
+// ── Réguas de pontuação (IMG_Metodologia.md – Camada 1) ───────────────────────
+
+function scoreGeneral(pct: number): number {
+  if (pct >= 100) return 12; if (pct >= 90) return 10; if (pct >= 70) return 5; return 0;
+}
+function scorePrazo(pct: number): number {
+  if (pct >= 100) return 12; if (pct >= 95) return 10; if (pct >= 66.5) return 5; return 0;
+}
+function scoreISO(raw: number): number { return raw >= 75 ? 12 : 10; }
+function scoreAtingimento(pct: number): number {
+  if (pct > 80) return 12; if (pct === 80) return 10; if (pct >= 56) return 5; return 0;
+}
+
+// ── Interfaces ─────────────────────────────────────────────────────────────────
+
+interface Indicator {
+  label: string;
+  value: number | null;     // valor bruto (%)
+  displayValue: string;     // ex: "85%" ou "72" (ISO)
+  pts: number | null;       // 0/5/10/12 — null = sem dados
+  source: "Elofy" | "ISO" | "Manual";
+}
+
+interface Pilar {
+  key: string;
+  label: string;
+  peso: number;             // ex: 0.30
+  score: number;            // 0–100%
+  indicators: Indicator[];
+}
+
 interface LeaderIMG {
   name: string;
   area: string;
   headcount: number;
-  fbCoverage: number;      // % with feedback
-  okrProgress: number;     // avg OKR progress
-  pdiProgress: number;     // avg PDI progress
-  oneOneCount: number;     // 1:1s done
-  imgScore: number;        // composite 0-100
+  imgScore: number;
+  pilares: Pilar[];
 }
+
+// ── Página ─────────────────────────────────────────────────────────────────────
 
 export default async function IMGPage({
   searchParams,
@@ -49,121 +103,301 @@ export default async function IMGPage({
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];
 
-  // Headcount by manager
+  const now = new Date();
+  const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
+  // ── Users no escopo ──────────────────────────────────────────────────────────
   let usersQ = excludeAdmins(
-    supabase.from("elofy_users").select("nome_colaborador, nome_gestor, nome_time, elofy_id").eq("status", "Ativo"),
+    supabase.from("elofy_users")
+      .select("nome_colaborador, nome_gestor, nome_time, elofy_id")
+      .eq("status", "Ativo"),
     "nome_colaborador"
   );
   if (areaFilter) usersQ = usersQ.in("nome_time", areaFilter);
-  if (leader) usersQ = usersQ.eq("nome_gestor", leader);
+  if (leader)     usersQ = usersQ.eq("nome_gestor", leader);
   const { data: users } = await usersQ;
 
-  // Feedbacks in last 90 days
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - 90);
-  const cutoffStr = cutoff.toISOString().split("T")[0];
+  const allUserIds = (users as Array<{ elofy_id: string }> ?? [])
+    .map(u => u.elofy_id).filter(Boolean);
+
+  // ── Mês de referência mais recente dos indicadores manuais ───────────────────
+  const { data: latestMesRow } = await supabase
+    .from("manual_img_indicadores")
+    .select("mes_referencia")
+    .order("mes_referencia", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const latestMes = latestMesRow?.mes_referencia ?? null;
+
+  // ── Queries paralelas ────────────────────────────────────────────────────────
+  let manualQ = supabase
+    .from("manual_img_indicadores")
+    .select("nome_gestor, indicador, valor_pct");
+  if (latestMes) manualQ = manualQ.eq("mes_referencia", latestMes);
+
   let fbQ = supabase
     .from("elofy_feedbacks")
-    .select("usuario_destinatario, time_usuario_destinatario")
-    .gte("data_feedback", cutoffStr);
-  if (areaFilter) fbQ = fbQ.in("time_usuario_destinatario", areaFilter);
-  const { data: feedbacks } = await fbQ;
-  const feedbackSet = new Set((feedbacks ?? []).map(f => f.usuario_destinatario?.toLowerCase().trim()));
+    .select("id_usuario_destinatario")
+    .gte("data_feedback", `${monthStr}-01`);
+  if (allUserIds.length > 0) fbQ = fbQ.in("id_usuario_destinatario", allUserIds);
 
-  // OKR progress per user
-  let okrQ = supabase
-    .from("elofy_okrs_v2")
-    .select("nome_responsavel, progresso_kr, nome_time")
-    .not("progresso_kr", "is", null);
-  if (areaFilter) okrQ = okrQ.in("nome_time", areaFilter);
-  if (leader) okrQ = okrQ.eq("nome_responsavel", leader);
-  const { data: okrs } = await okrQ;
-
-  // PDI progress per user
-  let pdiQ = supabase
-    .from("elofy_iniciativas_pdi")
-    .select("nome_responsavel, progresso_iniciativa");
-  if (leader) pdiQ = pdiQ.eq("nome_responsavel", leader);
-  const { data: pdis } = await pdiQ;
-
-  // 1:1s this quarter
-  const quarterStart = "2026-01-01";
   let ooQ = supabase
     .from("elofy_one_one")
-    .select("nome_usuario_convidado, nome_usuario_remetente, time_usuario_convidado, status_reuniao")
-    .gte("data_reuniao", quarterStart)
-    .eq("status_reuniao", "Realizada");
-  if (areaFilter) ooQ = ooQ.in("time_usuario_convidado", areaFilter);
-  const { data: oneOnes } = await ooQ;
+    .select("id_usuario_convidado")
+    .gte("data", `${monthStr}-01`);
+  if (allUserIds.length > 0) ooQ = ooQ.in("id_usuario_convidado", allUserIds);
 
-  // Build per-manager lookup
-  type MgrData = {
-    area: string;
-    reports: string[];
-  };
-  const mgrMap: Record<string, MgrData> = {};
-  for (const u of users ?? []) {
+  let krQ = supabase
+    .from("elofy_key_results")
+    .select("id_responsavel, progresso")
+    .eq("ativo", "true");
+  if (allUserIds.length > 0) krQ = krQ.in("id_responsavel", allUserIds);
+
+  const [
+    { data: fbRows },
+    { data: ooRows },
+    { data: isoRows },
+    { data: talentos },
+    { data: manualIndicadores },
+    { data: keyResults },
+  ] = await Promise.all([
+    fbQ,
+    ooQ,
+    supabase.rpc("get_iso_scores"),
+    supabase.from("manual_talentos_chave").select("nome_gestor, status"),
+    manualQ,
+    krQ,
+  ]);
+
+  // ── Lookups auxiliares ───────────────────────────────────────────────────────
+
+  // Set de elofy_ids acompanhados no mês (feedback OU 1:1)
+  const accompSet = new Set([
+    ...(fbRows ?? []).map(r => r.id_usuario_destinatario),
+    ...(ooRows ?? []).map(r => r.id_usuario_convidado),
+  ].filter(Boolean));
+
+  // ISO por líder
+  const isoByLeader: Record<string, number> = {};
+  for (const r of (isoRows as Array<{ gestor_nome: string; iso_score: number | null }> ?? [])) {
+    if (r.iso_score !== null) isoByLeader[r.gestor_nome] = Number(r.iso_score);
+  }
+
+  // Talentos por líder
+  const talByLeader: Record<string, { total: number; comPlano: number }> = {};
+  for (const t of (talentos as Array<{ nome_gestor: string; status: string }> ?? [])) {
+    const mgr = t.nome_gestor ?? ""; if (!mgr) continue;
+    if (!talByLeader[mgr]) talByLeader[mgr] = { total: 0, comPlano: 0 };
+    talByLeader[mgr].total++;
+    if (t.status !== "nao_iniciado") talByLeader[mgr].comPlano++;
+  }
+
+  // Indicadores manuais por líder
+  const manualByLeader: Record<string, Record<string, number>> = {};
+  for (const m of (manualIndicadores as Array<{ nome_gestor: string; indicador: string; valor_pct: number }> ?? [])) {
+    const mgr = m.nome_gestor ?? ""; if (!mgr) continue;
+    if (!manualByLeader[mgr]) manualByLeader[mgr] = {};
+    manualByLeader[mgr][m.indicador] = Number(m.valor_pct);
+  }
+
+  // KRs por colaborador (elofy_id → progressos)
+  const krByUser: Record<string, number[]> = {};
+  for (const kr of (keyResults as Array<{ id_responsavel: string; progresso: string }> ?? [])) {
+    const uid = kr.id_responsavel ?? ""; if (!uid) continue;
+    const p = parseFloat(kr.progresso ?? "");
+    if (!isNaN(p)) { (krByUser[uid] ??= []).push(p); }
+  }
+
+  // mgrMap: líder → { area, reports[] }
+  type Report = { nome: string; elofy_id: string };
+  const mgrMap: Record<string, { area: string; reports: Report[] }> = {};
+  for (const u of (users as Array<{ nome_colaborador: string; nome_gestor: string; nome_time: string; elofy_id: string }> ?? [])) {
     const mgr = u.nome_gestor ?? "";
     if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
     if (!mgrMap[mgr]) mgrMap[mgr] = { area: u.nome_time ?? "", reports: [] };
-    mgrMap[mgr].reports.push(u.nome_colaborador ?? "");
+    mgrMap[mgr].reports.push({ nome: u.nome_colaborador ?? "", elofy_id: u.elofy_id ?? "" });
   }
 
-  // OKR progress by leader (avg)
-  const okrByLeader: Record<string, number[]> = {};
-  for (const okr of okrs ?? []) {
-    const name = okr.nome_responsavel ?? "";
-    if (!name) continue;
-    const progress = typeof okr.progresso_kr === "number" ? okr.progresso_kr : parseInt(okr.progresso_kr ?? "0", 10);
-    if (!okrByLeader[name]) okrByLeader[name] = [];
-    okrByLeader[name].push(progress);
-  }
-
-  // PDI by leader
-  const pdiByLeader: Record<string, number[]> = {};
-  for (const pdi of pdis ?? []) {
-    const name = pdi.nome_responsavel ?? "";
-    if (!name) continue;
-    const progress = typeof pdi.progresso_iniciativa === "number" ? pdi.progresso_iniciativa : parseInt(pdi.progresso_iniciativa ?? "0", 10);
-    if (!pdiByLeader[name]) pdiByLeader[name] = [];
-    pdiByLeader[name].push(progress);
-  }
-
-  // 1:1 by leader (who made the meeting)
-  const ooByLeader: Record<string, number> = {};
-  for (const oo of oneOnes ?? []) {
-    const name = oo.nome_usuario_remetente ?? "";
-    if (!name) continue;
-    ooByLeader[name] = (ooByLeader[name] ?? 0) + 1;
-  }
-
-  function avg(arr: number[]) {
-    if (!arr.length) return 0;
-    return arr.reduce((a, b) => a + b, 0) / arr.length;
-  }
+  // ── Cálculo por líder (metodologia completa) ─────────────────────────────────
 
   const leaders: LeaderIMG[] = Object.entries(mgrMap).map(([name, data]) => {
-    const withFb = data.reports.filter(r => feedbackSet.has(r.toLowerCase().trim())).length;
-    const fbCoverage = data.reports.length > 0 ? Math.round((withFb / data.reports.length) * 100) : 0;
-    const okrProgress = Math.min(100, Math.round(avg(okrByLeader[name] ?? [])));
-    const pdiProgress = Math.min(100, Math.round(avg(pdiByLeader[name] ?? [])));
-    const oneOneCount = ooByLeader[name] ?? 0;
-    // Composite IMG: feedback 35%, OKR 35%, PDI 20%, 1:1 10%
-    const ooScore = Math.min(100, oneOneCount * 10); // 10 meetings = 100
-    const imgScore = Math.round(fbCoverage * 0.35 + okrProgress * 0.35 + pdiProgress * 0.20 + ooScore * 0.10);
-    return {
-      name,
-      area: data.area,
-      headcount: data.reports.length,
-      fbCoverage,
-      okrProgress,
-      pdiProgress,
-      oneOneCount,
-      imgScore,
-    };
+    const reports = data.reports;
+    const man = manualByLeader[name] ?? {};
+
+    // ── Pilar Pessoas (30%) ──────────────────────────────────────────────────
+    const withAccomp = reports.filter(r => accompSet.has(r.elofy_id)).length;
+    const fbPct = reports.length > 0 ? Math.round((withAccomp / reports.length) * 100) : 0;
+    const fbPts = scoreGeneral(fbPct);
+
+    const isoPct = isoByLeader[name] ?? null;
+    const isoPts = isoPct !== null ? scoreISO(isoPct) : null;
+
+    const tal = talByLeader[name];
+    const talPct = tal && tal.total > 0 ? Math.round((tal.comPlano / tal.total) * 100) : null;
+    const talPts = talPct !== null ? scoreGeneral(talPct) : null;
+
+    const pessoasPts = fbPts + (isoPts ?? 0) + (talPts ?? 0);
+    const pessoasMax = 12 + (isoPts !== null ? 12 : 0) + (talPts !== null ? 12 : 0);
+    const pessoasScore = pessoasMax > 0 ? Math.round((pessoasPts / pessoasMax) * 100) : 0;
+
+    // ── Pilar Planejamento (20%) ─────────────────────────────────────────────
+    const metasPct    = "metas_registradas" in man ? man.metas_registradas : null;
+    const metasPts    = metasPct    !== null ? scoreGeneral(metasPct)    : null;
+    const checkinsPct = "checkins_prazo"     in man ? man.checkins_prazo     : null;
+    const checkinsPts = checkinsPct !== null ? scorePrazo(checkinsPct)   : null;
+    const reuniaoPct  = "reuniao_resultado"  in man ? man.reuniao_resultado  : null;
+    const reuniaoPts  = reuniaoPct  !== null ? scorePrazo(reuniaoPct)    : null;
+    const rdmPct      = "rdm_prazo"          in man ? man.rdm_prazo          : null;
+    const rdmPts      = rdmPct      !== null ? scorePrazo(rdmPct)        : null;
+
+    const planPts = (metasPts ?? 0) + (checkinsPts ?? 0) + (reuniaoPts ?? 0) + (rdmPts ?? 0);
+    const planMax = [metasPts, checkinsPts, reuniaoPts, rdmPts].filter(v => v !== null).length * 12;
+    const planScore = planMax > 0 ? Math.round((planPts / planMax) * 100) : 0;
+
+    // ── Pilar Financeiro (20%) ───────────────────────────────────────────────
+    const hcPct    = "headcount_previsto"   in man ? man.headcount_previsto   : null;
+    const hcPts    = hcPct    !== null ? scoreGeneral(hcPct)    : null;
+    const custoPct = "custo_folha_previsto" in man ? man.custo_folha_previsto : null;
+    const custoPts = custoPct !== null ? scoreGeneral(custoPct) : null;
+
+    const finPts = (hcPts ?? 0) + (custoPts ?? 0);
+    const finMax = [hcPts, custoPts].filter(v => v !== null).length * 12;
+    const finScore = finMax > 0 ? Math.round((finPts / finMax) * 100) : 0;
+
+    // ── Pilar Resultados (30%) ───────────────────────────────────────────────
+    const reportsWithKRs = reports.filter(r => (krByUser[r.elofy_id]?.length ?? 0) > 0);
+    let atingPct: number | null = null;
+    let atingPts: number | null = null;
+    if (reportsWithKRs.length > 0) {
+      const atingiram = reportsWithKRs.filter(r => {
+        const krs = krByUser[r.elofy_id] ?? [];
+        return krs.reduce((a, b) => a + b, 0) / krs.length >= 100;
+      }).length;
+      atingPct = Math.round((atingiram / reportsWithKRs.length) * 100);
+      atingPts = scoreAtingimento(atingPct);
+    }
+    const resScore = atingPts !== null ? Math.round((atingPts / 12) * 100) : 0;
+
+    // ── IMG Final ────────────────────────────────────────────────────────────
+    const imgScore = Math.round(
+      (pessoasScore / 100 * 0.30 +
+       resScore     / 100 * 0.30 +
+       planScore    / 100 * 0.20 +
+       finScore     / 100 * 0.20) * 100
+    );
+
+    // ── Estrutura de pilares para o render ───────────────────────────────────
+    const pilares: Pilar[] = [
+      {
+        key: "pessoas",
+        label: "Pessoas",
+        peso: 0.30,
+        score: pessoasScore,
+        indicators: [
+          {
+            label: "Feedbacks / Acompanhados",
+            value: fbPct,
+            displayValue: `${fbPct}%`,
+            pts: fbPts,
+            source: "Elofy",
+          },
+          {
+            label: "ISO SIEG",
+            value: isoPct !== null ? Math.round(isoPct) : null,
+            displayValue: isoPct !== null ? String(Math.round(isoPct)) : "—",
+            pts: isoPts,
+            source: "ISO",
+          },
+          {
+            label: "Talentos Chave Mapeados",
+            value: talPct,
+            displayValue: talPct !== null ? `${talPct}%` : "—",
+            pts: talPts,
+            source: "Manual",
+          },
+        ],
+      },
+      {
+        key: "planejamento",
+        label: "Planejamento",
+        peso: 0.20,
+        score: planScore,
+        indicators: [
+          {
+            label: "100% Metas Registradas",
+            value: metasPct,
+            displayValue: metasPct !== null ? `${metasPct}%` : "—",
+            pts: metasPts,
+            source: "Manual",
+          },
+          {
+            label: "Check-ins no Prazo",
+            value: checkinsPct,
+            displayValue: checkinsPct !== null ? `${checkinsPct}%` : "—",
+            pts: checkinsPts,
+            source: "Manual",
+          },
+          {
+            label: "Reunião de Resultado",
+            value: reuniaoPct,
+            displayValue: reuniaoPct !== null ? `${reuniaoPct}%` : "—",
+            pts: reuniaoPts,
+            source: "Manual",
+          },
+          {
+            label: "RDMs no Prazo",
+            value: rdmPct,
+            displayValue: rdmPct !== null ? `${rdmPct}%` : "—",
+            pts: rdmPts,
+            source: "Manual",
+          },
+        ],
+      },
+      {
+        key: "financeiro",
+        label: "Financeiro",
+        peso: 0.20,
+        score: finScore,
+        indicators: [
+          {
+            label: "Headcount Dentro do Previsto",
+            value: hcPct,
+            displayValue: hcPct !== null ? `${hcPct}%` : "—",
+            pts: hcPts,
+            source: "Manual",
+          },
+          {
+            label: "Custo de Folha Dentro do Previsto",
+            value: custoPct,
+            displayValue: custoPct !== null ? `${custoPct}%` : "—",
+            pts: custoPts,
+            source: "Manual",
+          },
+        ],
+      },
+      {
+        key: "resultados",
+        label: "Resultados",
+        peso: 0.30,
+        score: resScore,
+        indicators: [
+          {
+            label: "Atingimento de Metas (≥80% do time)",
+            value: atingPct,
+            displayValue: atingPct !== null ? `${atingPct}%` : "—",
+            pts: atingPts,
+            source: "Elofy",
+          },
+        ],
+      },
+    ];
+
+    return { name, area: data.area, headcount: reports.length, imgScore, pilares };
   }).sort((a, b) => b.imgScore - a.imgScore);
 
-  const globalIMG = leaders.length ? Math.round(leaders.reduce((s, l) => s + l.imgScore, 0) / leaders.length) : null;
+  const globalIMG = leaders.length
+    ? Math.round(leaders.reduce((s, l) => s + l.imgScore, 0) / leaders.length)
+    : null;
 
   const bpLabels: Record<string, string> = {
     caina: "Cainã · Comercial & Marketing",
@@ -171,16 +405,18 @@ export default async function IMGPage({
     renata_paula: "Renata/Paula · Tecnologia & RH",
   };
 
-  const PILLARS = [
-    { key: "feedback", label: "Pessoas", desc: "Cobertura de Feedback", getValue: (l: LeaderIMG) => l.fbCoverage },
-    { key: "okr", label: "Resultados", desc: "Progresso de OKRs", getValue: (l: LeaderIMG) => l.okrProgress },
-    { key: "pdi", label: "Planejamento", desc: "Progresso de PDI", getValue: (l: LeaderIMG) => l.pdiProgress },
-    { key: "oo", label: "Financeiro", desc: "1:1s Realizados (×10)", getValue: (l: LeaderIMG) => Math.min(100, l.oneOneCount * 10) },
-  ];
-
   return (
     <main style={{ maxWidth: 1360, margin: "0 auto", padding: "32px 48px" }}>
-      {/* Header */}
+      {/* CSS para o details/summary */}
+      <style>{`
+        details.img-card > summary { list-style: none; cursor: pointer; }
+        details.img-card > summary::-webkit-details-marker { display: none; }
+        details.img-card > summary::marker { display: none; }
+        details.img-card[open] .img-chevron { transform: rotate(90deg); }
+        .img-chevron { display: inline-block; transition: transform 0.15s ease; }
+      `}</style>
+
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 32 }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
@@ -191,6 +427,9 @@ export default async function IMGPage({
           <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 800, color: "var(--text-900)" }}>
             IMG · Verificação de Indicadores
           </h1>
+          <p style={{ fontSize: 12, color: "var(--text-300)", marginTop: 4 }}>
+            Metodologia: Pessoas 30% · Resultados 30% · Planejamento 20% · Financeiro 20%
+          </p>
           {(bp !== "geral" || leader) && (
             <p style={{ fontSize: 13, color: "var(--text-500)", marginTop: 6 }}>
               {leader ? `Líder: ${leader}` : `Carteira: ${bpLabels[bp] ?? bp}`}
@@ -198,129 +437,216 @@ export default async function IMGPage({
           )}
         </div>
 
-        {/* Global IMG */}
-        {globalIMG !== null && (
-          <div style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--r)",
-            padding: "20px 28px",
-            textAlign: "center",
-            boxShadow: "var(--sh)",
-          }}>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--text-300)", marginBottom: 4 }}>
-              IMG Médio
+        {/* IMG Médio global */}
+        {globalIMG !== null && (() => {
+          const badge = imgBadge(globalIMG);
+          return (
+            <div style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--r)",
+              padding: "20px 28px",
+              textAlign: "center" as const,
+              boxShadow: "var(--sh)",
+              minWidth: 150,
+            }}>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--text-300)", marginBottom: 4 }}>
+                IMG Médio
+              </div>
+              <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 40, fontWeight: 800, color: pctColor(globalIMG), lineHeight: 1 }}>
+                {globalIMG}%
+              </div>
+              <span style={{
+                display: "inline-flex", alignItems: "center",
+                fontSize: 11, fontWeight: 600, padding: "2px 10px",
+                borderRadius: 8, marginTop: 6,
+                background: badge.bg, color: badge.color,
+              }}>
+                {imgLabel(globalIMG)}
+              </span>
+              <div style={{ fontSize: 11, color: "var(--text-300)", marginTop: 6 }}>
+                {leaders.length} lídere{leaders.length !== 1 ? "s" : ""}
+              </div>
             </div>
-            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 40, fontWeight: 800, color: pctColor(globalIMG), lineHeight: 1 }}>
-              {globalIMG}%
-            </div>
-            <div style={{ fontSize: 11, color: pctColor(globalIMG), fontWeight: 600, marginTop: 4 }}>
-              {imgLabel(globalIMG)}
-            </div>
-            <div style={{ fontSize: 11, color: "var(--text-300)", marginTop: 4 }}>
-              {leaders.length} líderes
-            </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
 
+      {/* ── Lista de líderes ────────────────────────────────────────────────── */}
       {leaders.length === 0 ? (
         <div style={{ textAlign: "center", padding: "60px 0", color: "var(--text-300)" }}>
           Nenhum dado encontrado para os filtros selecionados.
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column" as const, gap: 14 }}>
+        <div style={{ display: "flex", flexDirection: "column" as const, gap: 10 }}>
           {leaders.map((l) => {
-            const imgColor = pctColor(l.imgScore);
+            const badge = imgBadge(l.imgScore);
             return (
-              <div
+              <details
                 key={l.name}
+                className="img-card"
                 style={{
                   background: "var(--surface)",
                   border: "1px solid var(--border)",
                   borderRadius: "var(--r)",
-                  padding: 24,
                   boxShadow: "var(--sh)",
+                  overflow: "hidden",
                 }}
               >
-                {/* Header row */}
-                <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
-                  <div style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 11,
-                    background: "var(--brand-pale)",
-                    color: "var(--brand)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 14,
-                    fontWeight: 800,
-                    flexShrink: 0,
-                    fontFamily: "'Syne', sans-serif",
-                  }}>
-                    {initials(l.name)}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: "var(--text-900)" }}>{l.name}</div>
-                    <div style={{ fontSize: 11, color: "var(--text-300)", marginTop: 2 }}>{l.area} · {l.headcount} pessoas</div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 32, fontWeight: 800, color: imgColor, lineHeight: 1 }}>
-                      {l.imgScore}%
+                {/* ── Header colapsado ───────────────────────────────────── */}
+                <summary style={{ padding: "18px 24px", userSelect: "none" as const }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                    {/* Avatar */}
+                    <div style={{
+                      width: 42, height: 42, borderRadius: 10, flexShrink: 0,
+                      background: "var(--brand-pale)", color: "var(--brand)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 13, fontWeight: 800, fontFamily: "'Syne', sans-serif",
+                    }}>
+                      {initials(l.name)}
                     </div>
-                    <div style={{ fontSize: 11, color: imgColor, fontWeight: 600, marginTop: 2 }}>
-                      {imgLabel(l.imgScore)}
-                    </div>
-                  </div>
-                </div>
 
-                {/* Pillars */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
-                  {PILLARS.map(({ key, label, desc, getValue }) => {
-                    const val = getValue(l);
-                    const color = pctColor(val);
-                    return (
-                      <div key={key} style={{
-                        background: "var(--surface-2)",
-                        borderRadius: 10,
-                        padding: "14px 16px",
-                      }}>
-                        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--text-300)", marginBottom: 4 }}>
-                          {label}
-                        </div>
-                        <div style={{ fontSize: 11, color: "var(--text-500)", marginBottom: 8 }}>{desc}</div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <div style={{
-                            flex: 1,
-                            height: 6,
-                            background: "var(--border)",
-                            borderRadius: 3,
-                            overflow: "hidden",
-                          }}>
-                            <div style={{
-                              height: "100%",
-                              width: `${val}%`,
-                              background: color,
-                              borderRadius: 3,
-                            }} />
+                    {/* Nome + área */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-900)" }}>
+                        {shortName(l.name)}
+                      </div>
+                      <div style={{ fontSize: 11, color: "var(--text-300)", marginTop: 2 }}>
+                        {l.area} · {l.headcount} pessoa{l.headcount !== 1 ? "s" : ""}
+                      </div>
+                    </div>
+
+                    {/* Mini scores dos pilares */}
+                    <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+                      {l.pilares.map(p => (
+                        <div key={p.key} style={{ textAlign: "center" as const, minWidth: 48 }}>
+                          <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "var(--text-300)", marginBottom: 2 }}>
+                            {p.label.slice(0, 6)}
                           </div>
-                          <span style={{
-                            fontFamily: "'Syne', sans-serif",
-                            fontSize: 14,
-                            fontWeight: 700,
-                            color,
-                            minWidth: 36,
-                            textAlign: "right",
-                          }}>
-                            {key === "oo" ? l.oneOneCount : `${val}%`}
-                          </span>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: pctColor(p.score) }}>
+                            {p.score}%
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* IMG score */}
+                    <div style={{ textAlign: "right" as const, flexShrink: 0 }}>
+                      <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 800, color: pctColor(l.imgScore), lineHeight: 1 }}>
+                        {l.imgScore}%
+                      </div>
+                      <span style={{
+                        display: "inline-flex", alignItems: "center",
+                        fontSize: 10, fontWeight: 600, padding: "2px 8px",
+                        borderRadius: 6, marginTop: 4,
+                        background: badge.bg, color: badge.color,
+                      }}>
+                        {imgLabel(l.imgScore)}
+                      </span>
+                    </div>
+
+                    {/* Chevron */}
+                    <span className="img-chevron" style={{ fontSize: 14, color: "var(--text-300)", flexShrink: 0, marginLeft: 4 }}>
+                      ▸
+                    </span>
+                  </div>
+                </summary>
+
+                {/* ── Conteúdo expandido: 4 pilares ──────────────────────── */}
+                <div style={{
+                  borderTop: "1px solid var(--border)",
+                  padding: "20px 24px",
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, 1fr)",
+                  gap: 12,
+                }}>
+                  {l.pilares.map(p => (
+                    <div key={p.key} style={{
+                      background: "var(--surface-2)",
+                      borderRadius: 10,
+                      padding: "16px",
+                    }}>
+                      {/* Cabeçalho do pilar */}
+                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 10 }}>
+                        <div>
+                          <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "var(--text-500)" }}>
+                            {p.label}
+                          </div>
+                          <div style={{ fontSize: 9, color: "var(--text-300)", marginTop: 1 }}>
+                            Peso {Math.round(p.peso * 100)}%
+                          </div>
+                        </div>
+                        <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, color: pctColor(p.score), lineHeight: 1 }}>
+                          {p.score}%
                         </div>
                       </div>
-                    );
-                  })}
+
+                      {/* Barra do pilar */}
+                      <div style={{ height: 4, background: "var(--border)", borderRadius: 2, marginBottom: 12, overflow: "hidden" }}>
+                        <div style={{
+                          height: "100%",
+                          width: `${Math.min(100, p.score)}%`,
+                          background: pctColor(p.score),
+                          borderRadius: 2,
+                        }} />
+                      </div>
+
+                      {/* Indicadores */}
+                      <div style={{ display: "flex", flexDirection: "column" as const, gap: 6 }}>
+                        {p.indicators.map(ind => (
+                          <div key={ind.label} style={{
+                            background: "var(--surface)",
+                            border: "1px solid var(--border)",
+                            borderRadius: 8,
+                            padding: "8px 10px",
+                          }}>
+                            {/* Nome + fonte + pontos */}
+                            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 6, marginBottom: 6 }}>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ fontSize: 10, color: "var(--text-700)", lineHeight: 1.35 }}>
+                                  {ind.label}
+                                </div>
+                                <div style={{ fontSize: 9, color: "var(--text-300)", marginTop: 2 }}>
+                                  {ind.source}
+                                </div>
+                              </div>
+                              <span style={{
+                                flexShrink: 0,
+                                fontSize: 10, fontWeight: 700,
+                                padding: "2px 7px", borderRadius: 6,
+                                background: ptsBg(ind.pts),
+                                color: ptsColor(ind.pts),
+                              }}>
+                                {ind.pts !== null ? `${ind.pts}/12` : "—"}
+                              </span>
+                            </div>
+
+                            {/* Barra + valor */}
+                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                              <div style={{ flex: 1, height: 3, background: "var(--border)", borderRadius: 2, overflow: "hidden" }}>
+                                {ind.value !== null && (
+                                  <div style={{
+                                    height: "100%",
+                                    width: `${Math.min(100, Math.max(0, ind.value))}%`,
+                                    background: ind.pts !== null ? pctColor(ind.value) : "var(--text-300)",
+                                    borderRadius: 2,
+                                  }} />
+                                )}
+                              </div>
+                              <span style={{
+                                fontSize: 11, fontWeight: 700, minWidth: 34, textAlign: "right" as const,
+                                color: ind.pts !== null ? pctColor(ind.value ?? 0) : "var(--text-300)",
+                              }}>
+                                {ind.displayValue}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
+              </details>
             );
           })}
         </div>
