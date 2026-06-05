@@ -6,6 +6,18 @@
 -- ============================================================
 
 -- ------------------------------------------------------------
+-- 0. Garante que bp_gestor_map existe (criada originalmente
+--    na 020, mas pode estar ausente em ambientes sem ela)
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS bp_gestor_map (
+  id          SERIAL PRIMARY KEY,
+  nome_gestor TEXT NOT NULL,
+  bp          TEXT NOT NULL,
+  created_at  TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (nome_gestor, bp)
+);
+
+-- ------------------------------------------------------------
 -- 1. Tabela principal: nome_time → bp
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS bp_area_map (
