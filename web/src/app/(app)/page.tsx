@@ -65,6 +65,43 @@ function npsLabel(v: number | null) {
   return "Crítico";
 }
 
+// IMG helpers — metodologia oficial (IMG_Metodologia.md)
+function imgLabel(v: number | null) {
+  if (v === null) return null;
+  if (v >= 100) return "Excelência";
+  if (v >= 70) return "Intermediário";
+  return "Básico";
+}
+function imgClass(v: number | null) {
+  if (v === null) return "";
+  if (v >= 100) return "green";
+  if (v >= 70) return "amber";
+  return "red";
+}
+// Régua geral (feedbacks, talentos, headcount, custo folha, metas registradas)
+function scoreGeneral(pct: number): number {
+  if (pct >= 100) return 12;
+  if (pct >= 90) return 10;
+  if (pct >= 70) return 5;
+  return 0;
+}
+// Régua disciplina de processo (check-ins, reunião resultado, RDM)
+function scorePrazo(pct: number): number {
+  if (pct >= 100) return 12;
+  if (pct >= 95) return 10;
+  if (pct >= 66.5) return 5;
+  return 0;
+}
+// ISO SIEG: threshold 75
+function scoreISO(raw: number): number { return raw >= 75 ? 12 : 10; }
+// Atingimento de metas: % do time que atingiu
+function scoreAtingimento(pct: number): number {
+  if (pct > 80) return 12;
+  if (pct === 80) return 10;
+  if (pct >= 56) return 5;
+  return 0;
+}
+
 interface KPICardProps {
   icon: string;
   bg: string;
@@ -393,6 +430,158 @@ export default async function HomePage({
     ...(ooRows ?? []).map((r) => r.id_usuario_convidado),
   ].filter(Boolean)).size;
 
+  // ── IMG — Índice de Maturidade de Gestão ─────────────────────────────────
+  // Mês de referência mais recente dos indicadores manuais
+  const { data: latestMesRow } = await supabase
+    .from("manual_img_indicadores")
+    .select("mes_referencia")
+    .order("mes_referencia", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const latestMes = latestMesRow?.mes_referencia ?? null;
+
+  // Users no escopo — necessário para montar o mgrMap por liderados
+  let imgUsersQ = excludeAdmins(
+    supabase.from("elofy_users")
+      .select("nome_colaborador, nome_gestor, elofy_id")
+      .eq("status", "Ativo"),
+    "nome_colaborador"
+  );
+  if (areaFilter) imgUsersQ = imgUsersQ.in("nome_time", areaFilter);
+  if (leader)     imgUsersQ = imgUsersQ.eq("nome_gestor", leader);
+
+  // Indicadores manuais do mês mais recente
+  let manualQ = supabase
+    .from("manual_img_indicadores")
+    .select("nome_gestor, indicador, valor_pct");
+  if (latestMes) manualQ = manualQ.eq("mes_referencia", latestMes);
+
+  // Executa as 4 queries em paralelo
+  const [
+    { data: imgUsers },
+    { data: isoRows },
+    { data: talentos },
+    { data: manualIndicadores },
+  ] = await Promise.all([
+    imgUsersQ,
+    supabase.rpc("get_iso_scores"),
+    supabase.from("manual_talentos_chave").select("nome_gestor, status"),
+    manualQ,
+  ]);
+
+  // Key results dos liderados (atingimento de metas)
+  const allSubordinateIds = (imgUsers as Array<{ elofy_id: string }> ?? [])
+    .map(u => u.elofy_id).filter(Boolean);
+  let krQ = supabase
+    .from("elofy_key_results")
+    .select("id_responsavel, progresso")
+    .eq("ativo", "true");
+  if (allSubordinateIds.length > 0) krQ = krQ.in("id_responsavel", allSubordinateIds);
+  const { data: keyResults } = await krQ;
+
+  // Lookups por líder
+  const isoByLeader: Record<string, number> = {};
+  for (const r of (isoRows as Array<{ gestor_nome: string; iso_score: number | null }> ?? [])) {
+    if (r.iso_score !== null) isoByLeader[r.gestor_nome] = Number(r.iso_score);
+  }
+
+  const talByLeader: Record<string, { total: number; comPlano: number }> = {};
+  for (const t of (talentos as Array<{ nome_gestor: string; status: string }> ?? [])) {
+    const mgr = t.nome_gestor ?? ""; if (!mgr) continue;
+    if (!talByLeader[mgr]) talByLeader[mgr] = { total: 0, comPlano: 0 };
+    talByLeader[mgr].total++;
+    if (t.status !== "nao_iniciado") talByLeader[mgr].comPlano++;
+  }
+
+  const manualByLeader: Record<string, Record<string, number>> = {};
+  for (const m of (manualIndicadores as Array<{ nome_gestor: string; indicador: string; valor_pct: number }> ?? [])) {
+    const mgr = m.nome_gestor ?? ""; if (!mgr) continue;
+    if (!manualByLeader[mgr]) manualByLeader[mgr] = {};
+    manualByLeader[mgr][m.indicador] = Number(m.valor_pct);
+  }
+
+  const krByUser: Record<string, number[]> = {};
+  for (const kr of (keyResults as Array<{ id_responsavel: string; progresso: string }> ?? [])) {
+    const uid = kr.id_responsavel ?? ""; if (!uid) continue;
+    const p = parseFloat(kr.progresso ?? "");
+    if (!isNaN(p)) { (krByUser[uid] ??= []).push(p); }
+  }
+
+  // mgrMap: leader → liderados diretos
+  type ImgReport = { nome: string; elofy_id: string };
+  const imgMgrMap: Record<string, ImgReport[]> = {};
+  for (const u of (imgUsers as Array<{ nome_colaborador: string; nome_gestor: string; elofy_id: string }> ?? [])) {
+    const mgr = u.nome_gestor ?? "";
+    if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
+    (imgMgrMap[mgr] ??= []).push({ nome: u.nome_colaborador ?? "", elofy_id: u.elofy_id ?? "" });
+  }
+
+  // Set de elofy_ids acompanhados no mês (reutiliza fbRows/ooRows já calculados para o KPI Acompanhados)
+  const accompSet = new Set([
+    ...(fbRows ?? []).map(r => r.id_usuario_destinatario),
+    ...(ooRows ?? []).map(r => r.id_usuario_convidado),
+  ].filter(Boolean));
+
+  // Pontuação por líder → IMG individual → média global
+  const imgLeaderScores: number[] = [];
+  for (const [name, reports] of Object.entries(imgMgrMap)) {
+    if (reports.length === 0) continue;
+
+    // Pessoas (30%): Feedbacks + ISO + Talentos chave
+    const withAccomp = reports.filter(r => accompSet.has(r.elofy_id)).length;
+    const fbPts = scoreGeneral(Math.round((withAccomp / reports.length) * 100));
+    const isoPct = isoByLeader[name] ?? null;
+    const isoPts = isoPct !== null ? scoreISO(isoPct) : null;
+    const tal = talByLeader[name];
+    const talPts = tal && tal.total > 0
+      ? scoreGeneral(Math.round((tal.comPlano / tal.total) * 100))
+      : null;
+    const pessoasPts = fbPts + (isoPts ?? 0) + (talPts ?? 0);
+    const pessoasMax = 12 + (isoPts !== null ? 12 : 0) + (talPts !== null ? 12 : 0);
+    const pessoas = pessoasMax > 0 ? pessoasPts / pessoasMax : 0;
+
+    // Planejamento (20%): Metas registradas + Check-ins + Reunião + RDM
+    const man = manualByLeader[name] ?? {};
+    const metasPts    = "metas_registradas" in man ? scoreGeneral(man.metas_registradas) : null;
+    const checkinsPts = "checkins_prazo"     in man ? scorePrazo(man.checkins_prazo)      : null;
+    const reuniaoPts  = "reuniao_resultado"  in man ? scorePrazo(man.reuniao_resultado)   : null;
+    const rdmPts      = "rdm_prazo"          in man ? scorePrazo(man.rdm_prazo)           : null;
+    const planPts = (metasPts ?? 0) + (checkinsPts ?? 0) + (reuniaoPts ?? 0) + (rdmPts ?? 0);
+    const planMax = [metasPts, checkinsPts, reuniaoPts, rdmPts].filter(v => v !== null).length * 12;
+    const planejamento = planMax > 0 ? planPts / planMax : 0;
+
+    // Financeiro (20%): Headcount previsto + Custo de folha
+    const hcPts    = "headcount_previsto"   in man ? scoreGeneral(man.headcount_previsto)   : null;
+    const custoPts = "custo_folha_previsto" in man ? scoreGeneral(man.custo_folha_previsto) : null;
+    const finPts = (hcPts ?? 0) + (custoPts ?? 0);
+    const finMax = [hcPts, custoPts].filter(v => v !== null).length * 12;
+    const financeiro = finMax > 0 ? finPts / finMax : 0;
+
+    // Resultados (30%): Atingimento de metas via elofy_key_results
+    const reportsWithKRs = reports.filter(r => (krByUser[r.elofy_id]?.length ?? 0) > 0);
+    let atingPts: number | null = null;
+    if (reportsWithKRs.length > 0) {
+      const atingiram = reportsWithKRs.filter(r => {
+        const krs = krByUser[r.elofy_id] ?? [];
+        return krs.reduce((a, b) => a + b, 0) / krs.length >= 100;
+      }).length;
+      atingPts = scoreAtingimento(Math.round((atingiram / reportsWithKRs.length) * 100));
+    }
+    const resultados = atingPts !== null ? atingPts / 12 : 0;
+
+    // Inclui o líder apenas se houver ao menos 1 fonte além do feedback automático
+    const hasExtraData = isoPts !== null || talPts !== null || planMax > 0 || finMax > 0 || atingPts !== null;
+    if (!hasExtraData) continue;
+
+    imgLeaderScores.push(Math.round(
+      (pessoas * 0.30 + resultados * 0.30 + planejamento * 0.20 + financeiro * 0.20) * 100
+    ));
+  }
+
+  const globalIMG = imgLeaderScores.length
+    ? Math.round(imgLeaderScores.reduce((a, b) => a + b, 0) / imgLeaderScores.length)
+    : null;
+
   // Context banner label
   const bpLabels: Record<string, string> = {
     caina: "Cainã · Comercial & Marketing",
@@ -479,7 +668,7 @@ export default async function HomePage({
         <KPICard icon="📊" bg="#EDE9FE" label="eNPS" value={enps} badge={npsLabel(enps)} badgeClass={npsClass(enps)} delay={0.09} />
         <KPICard icon="⭐" bg="#FFF7ED" label="LNPS" value={lnps} badge={npsLabel(lnps)} badgeClass={npsClass(lnps)} delay={0.14} />
         <KPICard icon="💬" bg="#EFF6FF" label="Acompanhados" value={acompanhados} delay={0.19} />
-        <KPICard icon="🎯" bg="#FEF3C7" label="Taxa de Resposta" value={enpsRespondentes > 0 ? Math.round((enpsRespondentes / (hc ?? 1)) * 100) : null} suffix="%" delay={0.24} />
+        <KPICard icon="📈" bg="#FFF7ED" label="IMG" value={globalIMG} suffix="%" badge={imgLabel(globalIMG)} badgeClass={imgClass(globalIMG) || undefined} delay={0.24} />
       </div>
 
       {/* Divider */}
