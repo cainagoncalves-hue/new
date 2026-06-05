@@ -3,6 +3,19 @@ import Link from "next/link";
 import { excludeAdmins } from "@/lib/adminAccounts";
 import { getBPAreas, type BPKey } from "@/lib/bp";
 
+function formatMonthLabel(key: string): string {
+  const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  const [year, month] = key.split("-").map(Number);
+  if (!year || !month || month < 1 || month > 12) return key;
+  return `${months[month - 1]} ${year}`;
+}
+
+function nextMonth(mesStr: string): string {
+  const [year, month] = mesStr.split("-").map(Number);
+  if (month === 12) return `${year + 1}-01`;
+  return `${year}-${String(month + 1).padStart(2, "0")}`;
+}
+
 function coverageColor(pct: number) {
   if (pct >= 80) return "var(--green)";
   if (pct >= 50) return "var(--amber)";
@@ -37,14 +50,43 @@ interface LeaderFeedback {
 export default async function FeedbackPage({
   searchParams,
 }: {
-  searchParams: Promise<{ bp?: string; leader?: string }>;
+  searchParams: Promise<{ bp?: string; leader?: string; mes?: string }>;
 }) {
-  const { bp = "geral", leader = "" } = await searchParams;
+  const { bp = "geral", leader = "", mes = "" } = await searchParams;
   const supabase = await createClient();
   const bpAreas = await getBPAreas(supabase);
 
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];
+
+  // Fetch distinct months for period filter
+  const { data: fbDateRows } = await supabase
+    .from("elofy_feedbacks")
+    .select("data_feedback")
+    .not("data_feedback", "is", null)
+    .order("data_feedback", { ascending: false })
+    .limit(5000);
+
+  const monthKeySet = new Set<string>();
+  for (const row of fbDateRows ?? []) {
+    const key = (row.data_feedback as string)?.slice(0, 7);
+    if (key) monthKeySet.add(key);
+  }
+  const periods = [...monthKeySet]
+    .sort((a, b) => b.localeCompare(a))
+    .map(key => ({ key, label: formatMonthLabel(key) }));
+  const activeMes = mes || (periods[0]?.key ?? "");
+
+  const monthStart = activeMes ? `${activeMes}-01` : "9999-01-01";
+  const monthEnd = activeMes ? nextMonth(activeMes) : "9999-01-02";
+
+  function periodUrl(key: string) {
+    const params = new URLSearchParams();
+    if (bp !== "geral") params.set("bp", bp);
+    if (leader) params.set("leader", leader);
+    params.set("mes", key);
+    return `/feedback?${params.toString()}`;
+  }
 
   // Get all active users with their manager
   let usersQ = excludeAdmins(
@@ -55,14 +97,13 @@ export default async function FeedbackPage({
   if (leader) usersQ = usersQ.eq("nome_gestor", leader);
   const { data: users } = await usersQ;
 
-  // Get feedback recipients in the last 90 days
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - 90);
-  const cutoffStr = cutoff.toISOString().split("T")[0];
-
+  // Get feedback recipients for the selected month
   let fbQ = excludeAdmins(
     excludeAdmins(
-      supabase.from("elofy_feedbacks").select("usuario_destinatario, time_usuario_destinatario, usuario_remetente").gte("data_feedback", cutoffStr),
+      supabase.from("elofy_feedbacks")
+        .select("usuario_destinatario, time_usuario_destinatario, usuario_remetente")
+        .gte("data_feedback", monthStart)
+        .lt("data_feedback", monthEnd),
       "usuario_destinatario"
     ),
     "usuario_remetente"
@@ -152,6 +193,34 @@ export default async function FeedbackPage({
           </div>
         </div>
       </div>
+
+      {/* Filtro de período */}
+      {periods.length > 1 && (
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
+          {periods.map((p) => {
+            const isActive = p.key === activeMes;
+            return (
+              <a
+                key={p.key}
+                href={periodUrl(p.key)}
+                style={{
+                  padding: "6px 16px",
+                  borderRadius: 20,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  textDecoration: "none",
+                  background: isActive ? "var(--brand)" : "var(--surface)",
+                  color: isActive ? "#fff" : "var(--text-500)",
+                  border: `1px solid ${isActive ? "var(--brand)" : "var(--border)"}`,
+                  transition: "all 0.15s",
+                }}
+              >
+                {p.label}
+              </a>
+            );
+          })}
+        </div>
+      )}
 
       {leaders.length === 0 ? (
         <div style={{ textAlign: "center", padding: "60px 0", color: "var(--text-300)" }}>

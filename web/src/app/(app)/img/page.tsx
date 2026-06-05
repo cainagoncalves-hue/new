@@ -89,22 +89,62 @@ interface LeaderIMG {
   pilares: Pilar[];
 }
 
+// ── Utilitários de período ──────────────────────────────────────────────────────
+
+function formatMonthLabel(key: string): string {
+  const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  const [year, month] = key.split("-").map(Number);
+  if (!year || !month || month < 1 || month > 12) return key;
+  return `${months[month - 1]} ${year}`;
+}
+
+function nextMonth(mesStr: string): string {
+  const [year, month] = mesStr.split("-").map(Number);
+  if (month === 12) return `${year + 1}-01`;
+  return `${year}-${String(month + 1).padStart(2, "0")}`;
+}
+
 // ── Página ─────────────────────────────────────────────────────────────────────
 
 export default async function IMGPage({
   searchParams,
 }: {
-  searchParams: Promise<{ bp?: string; leader?: string }>;
+  searchParams: Promise<{ bp?: string; leader?: string; mes?: string }>;
 }) {
-  const { bp = "geral", leader = "" } = await searchParams;
+  const { bp = "geral", leader = "", mes = "" } = await searchParams;
   const supabase = await createClient();
   const bpAreas = await getBPAreas(supabase);
 
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];
 
-  const now = new Date();
-  const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  // ── Meses disponíveis para o filtro de período ──────────────────────────────
+  const { data: mesRows } = await supabase
+    .from("manual_img_indicadores")
+    .select("mes_referencia")
+    .not("mes_referencia", "is", null)
+    .order("mes_referencia", { ascending: false })
+    .limit(1000);
+
+  const mesSet = new Set<string>();
+  for (const row of mesRows ?? []) {
+    if (row.mes_referencia) mesSet.add(row.mes_referencia as string);
+  }
+  const periods = [...mesSet]
+    .sort((a, b) => b.localeCompare(a))
+    .map(key => ({ key, label: formatMonthLabel(key) }));
+  const activeMes = mes || (periods[0]?.key ?? "");
+
+  const mesStart = activeMes ? `${activeMes}-01` : "9999-01-01";
+  const mesEnd = activeMes ? nextMonth(activeMes) : "9999-01-02";
+
+  function periodUrl(key: string) {
+    const params = new URLSearchParams();
+    if (bp !== "geral") params.set("bp", bp);
+    if (leader) params.set("leader", leader);
+    params.set("mes", key);
+    return `/img?${params.toString()}`;
+  }
 
   // ── Users no escopo ──────────────────────────────────────────────────────────
   let usersQ = excludeAdmins(
@@ -120,31 +160,24 @@ export default async function IMGPage({
   const allUserIds = (users as Array<{ elofy_id: string }> ?? [])
     .map(u => u.elofy_id).filter(Boolean);
 
-  // ── Mês de referência mais recente dos indicadores manuais ───────────────────
-  const { data: latestMesRow } = await supabase
-    .from("manual_img_indicadores")
-    .select("mes_referencia")
-    .order("mes_referencia", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  const latestMes = latestMesRow?.mes_referencia ?? null;
-
   // ── Queries paralelas ────────────────────────────────────────────────────────
   let manualQ = supabase
     .from("manual_img_indicadores")
     .select("nome_gestor, indicador, valor_pct");
-  if (latestMes) manualQ = manualQ.eq("mes_referencia", latestMes);
+  if (activeMes) manualQ = manualQ.eq("mes_referencia", activeMes);
 
   let fbQ = supabase
     .from("elofy_feedbacks")
     .select("id_usuario_destinatario")
-    .gte("data_feedback", `${monthStr}-01`);
+    .gte("data_feedback", mesStart)
+    .lt("data_feedback", mesEnd);
   if (allUserIds.length > 0) fbQ = fbQ.in("id_usuario_destinatario", allUserIds);
 
   let ooQ = supabase
     .from("elofy_one_one")
     .select("id_usuario_convidado")
-    .gte("data", `${monthStr}-01`);
+    .gte("data", mesStart)
+    .lt("data", mesEnd);
   if (allUserIds.length > 0) ooQ = ooQ.in("id_usuario_convidado", allUserIds);
 
   let krQ = supabase
@@ -471,6 +504,34 @@ export default async function IMGPage({
           );
         })()}
       </div>
+
+      {/* ── Filtro de período ──────────────────────────────────────────────── */}
+      {periods.length > 1 && (
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
+          {periods.map((p) => {
+            const isActive = p.key === activeMes;
+            return (
+              <a
+                key={p.key}
+                href={periodUrl(p.key)}
+                style={{
+                  padding: "6px 16px",
+                  borderRadius: 20,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  textDecoration: "none",
+                  background: isActive ? "var(--brand)" : "var(--surface)",
+                  color: isActive ? "#fff" : "var(--text-500)",
+                  border: `1px solid ${isActive ? "var(--brand)" : "var(--border)"}`,
+                  transition: "all 0.15s",
+                }}
+              >
+                {p.label}
+              </a>
+            );
+          })}
+        </div>
+      )}
 
       {/* ── Lista de líderes ────────────────────────────────────────────────── */}
       {leaders.length === 0 ? (
