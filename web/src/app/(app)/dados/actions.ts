@@ -199,13 +199,29 @@ export async function bulkUpsertIMGIndicadores(
     throw new Error(`Nenhuma linha válida encontrada.${hint}`);
   }
 
-  // Upsert em lotes de 100 (last-write-wins via onConflict)
+  // Separa por regra de sobrescrita:
+  // valor > 0 → upsert (sobrescreve se já existir)
+  // valor = 0 → insert apenas se não existir (ignoreDuplicates: true)
+  const withValue  = parsed.filter(r => r.valor_pct > 0);
+  const zeroValue  = parsed.filter(r => r.valor_pct === 0);
+
   const CHUNK = 100;
-  for (let i = 0; i < parsed.length; i += CHUNK) {
+
+  for (let i = 0; i < withValue.length; i += CHUNK) {
     const { error } = await supabase
       .from("manual_img_indicadores")
-      .upsert(parsed.slice(i, i + CHUNK), { onConflict: "nome_gestor,mes_referencia,indicador" });
+      .upsert(withValue.slice(i, i + CHUNK), { onConflict: "nome_gestor,mes_referencia,indicador" });
     if (error) throw new Error(`Erro ao salvar lote: ${error.message}`);
+  }
+
+  for (let i = 0; i < zeroValue.length; i += CHUNK) {
+    const { error } = await supabase
+      .from("manual_img_indicadores")
+      .upsert(zeroValue.slice(i, i + CHUNK), {
+        onConflict: "nome_gestor,mes_referencia,indicador",
+        ignoreDuplicates: true,   // não sobrescreve valor existente com zero
+      });
+    if (error) throw new Error(`Erro ao salvar lote (zeros): ${error.message}`);
   }
 
   revalidatePath("/dados");
