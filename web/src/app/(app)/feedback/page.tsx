@@ -90,8 +90,8 @@ export default async function FeedbackPage({
 
   // Get all active users with their manager
   let usersQ = excludeAdmins(
-    supabase.from("elofy_users").select("nome_colaborador, id_gestor, nome_gestor, nome_time").eq("status", "Ativo"),
-    "nome_colaborador"
+    supabase.from("elofy_users").select("nome, id_gestor, nome_gestor, nome_time").eq("status", "Ativo"),
+    "nome"
   );
   if (areaFilter) usersQ = usersQ.in("nome_time", areaFilter);
   if (leader) usersQ = usersQ.eq("nome_gestor", leader);
@@ -123,7 +123,7 @@ export default async function FeedbackPage({
     const mgr = u.nome_gestor ?? "";
     if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
     if (!leaderMap[mgr]) leaderMap[mgr] = { area: u.nome_time ?? "", reports: [] };
-    leaderMap[mgr].reports.push(u.nome_colaborador ?? "");
+    leaderMap[mgr].reports.push(u.nome ?? "");
   }
 
   const leaders: LeaderFeedback[] = Object.entries(leaderMap).map(([name, data]) => {
@@ -231,17 +231,26 @@ export default async function FeedbackPage({
           {leaders.map((l) => {
             const color = coverageColor(l.coverage);
             return (
-              <div
+              <details
                 key={l.name}
                 style={{
                   background: "var(--surface)",
                   border: "1px solid var(--border)",
                   borderRadius: "var(--r)",
-                  padding: 20,
                   boxShadow: "var(--sh)",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" as const }}>
+                {/* Summary row — always visible */}
+                <summary style={{
+                  listStyle: "none",
+                  padding: 20,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 16,
+                  flexWrap: "wrap" as const,
+                  userSelect: "none" as const,
+                }}>
                   {/* Avatar */}
                   <div style={{
                     width: 40,
@@ -285,7 +294,7 @@ export default async function FeedbackPage({
                   <div style={{ display: "flex", gap: 16, flexShrink: 0 }}>
                     <div style={{ textAlign: "center" }}>
                       <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 800, color: "var(--green)" }}>{l.withFeedback.length}</div>
-                      <div style={{ fontSize: 9, color: "var(--text-300)", marginTop: 2 }}>Receberam</div>
+                      <div style={{ fontSize: 9, color: "var(--text-300)", marginTop: 2 }}>Acompanhados</div>
                     </div>
                     <div style={{ textAlign: "center" }}>
                       <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 800, color: "var(--red)" }}>{l.withoutFeedback.length}</div>
@@ -309,31 +318,77 @@ export default async function FeedbackPage({
                   }}>
                     {coverageLabel(l.coverage)}
                   </span>
-                </div>
 
-                {/* Pending people */}
-                {l.withoutFeedback.length > 0 && (
-                  <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-300)", marginBottom: 8, textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>
-                      Sem feedback
-                    </div>
-                    <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 6 }}>
-                      {l.withoutFeedback.map((name) => (
-                        <span key={name} style={{
-                          fontSize: 11,
-                          padding: "3px 10px",
-                          borderRadius: 10,
-                          background: "var(--red-bg)",
-                          color: "var(--red-text)",
-                          border: "1px solid #fecaca",
+                  {/* Expand chevron */}
+                  <span style={{ fontSize: 12, color: "var(--text-300)", flexShrink: 0 }}>▾</span>
+                </summary>
+
+                {/* Expanded: team detail */}
+                <div style={{ padding: "0 20px 20px 20px", borderTop: "1px solid var(--border)", marginTop: 0 }}>
+                  <div style={{ display: "flex", gap: 24, flexWrap: "wrap" as const, paddingTop: 16 }}>
+                    {/* Acompanhados */}
+                    {l.withFeedback.length > 0 && (
+                      <div style={{ flex: 1, minWidth: 220 }}>
+                        <div style={{
+                          fontSize: 10,
+                          fontWeight: 700,
+                          letterSpacing: "0.07em",
+                          textTransform: "uppercase" as const,
+                          color: "var(--green)",
+                          marginBottom: 8,
                         }}>
-                          {name}
-                        </span>
-                      ))}
-                    </div>
+                          ✓ Acompanhados ({l.withFeedback.length})
+                        </div>
+                        <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 6 }}>
+                          {l.withFeedback.map((name) => (
+                            <span key={name} style={{
+                              fontSize: 11,
+                              padding: "3px 10px",
+                              borderRadius: 10,
+                              background: "var(--green-bg)",
+                              color: "var(--green-text)",
+                              border: "1px solid #bbf7d0",
+                            }}>
+                              {shortName(name)}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Não acompanhados */}
+                    {l.withoutFeedback.length > 0 && (
+                      <div style={{ flex: 1, minWidth: 220 }}>
+                        <div style={{
+                          fontSize: 10,
+                          fontWeight: 700,
+                          letterSpacing: "0.07em",
+                          textTransform: "uppercase" as const,
+                          color: "var(--red)",
+                          marginBottom: 8,
+                        }}>
+                          ✗ Não acompanhados ({l.withoutFeedback.length})
+                        </div>
+                        <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 6 }}>
+                          {l.withoutFeedback.map((name) => (
+                            <span key={name} style={{
+                              fontSize: 11,
+                              padding: "3px 10px",
+                              borderRadius: 10,
+                              background: "var(--red-bg)",
+                              color: "var(--red-text)",
+                              border: "1px solid #fecaca",
+                            }}>
+                              {shortName(name)}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                   </div>
-                )}
-              </div>
+                </div>
+              </details>
             );
           })}
         </div>
