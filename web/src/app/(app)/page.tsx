@@ -368,7 +368,7 @@ export default async function HomePage({
   } else if (bp !== "geral" && bpAreas[bp as BPKey]) {
     // BP: todos os usuários das áreas desse BP por nome_time (conjuntos disjuntos → sem double-count)
     const { data: membros } = await excludeAdmins(
-      supabase.from("elofy_users").select("elofy_id").in("nome_time", bpAreas[bp as BPKey]).eq("status", "Ativo"),
+      supabase.from("elofy_users").select("elofy_id").in("nome_time", bpAreas[bp as BPKey]!).eq("status", "Ativo"),
       "nome"
     );
     acompanhadosUserIds = (membros ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean);
