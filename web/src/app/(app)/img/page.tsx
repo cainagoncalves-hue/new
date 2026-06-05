@@ -508,8 +508,8 @@ export default async function IMGPage({
         })()}
       </div>
 
-      {/* ── Filtro de período ──────────────────────────────────────────────── */}
-      {periods.length > 1 && (
+      {/* ── Filtro de período — aparece com >= 1 período ──────────────────── */}
+      {periods.length > 0 && (
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
           {periods.map((p) => {
             const isActive = p.key === activeMes;

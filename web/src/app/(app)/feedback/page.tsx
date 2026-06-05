@@ -195,7 +195,7 @@ export default async function FeedbackPage({
       </div>
 
       {/* Filtro de período */}
-      {periods.length > 1 && (
+      {periods.length > 0 && (
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
           {periods.map((p) => {
             const isActive = p.key === activeMes;
