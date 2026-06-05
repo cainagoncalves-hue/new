@@ -10,6 +10,15 @@ function formatMonthLabel(key: string): string {
   return `${months[month - 1]} ${year}`;
 }
 
+/** Extrai "YYYY-MM" de uma string de data (ISO ou DD/MM/YYYY) */
+function toMonthKey(dateStr: string | null | undefined): string {
+  if (!dateStr) return "";
+  if (/^\d{4}-\d{2}/.test(dateStr)) return dateStr.slice(0, 7);
+  const m = dateStr.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if (m) return `${m[3]}-${m[2]}`;
+  return "";
+}
+
 function isoColor(v: number | null) {
   if (v === null) return "var(--text-300)";
   if (v >= 80) return "var(--green)";
@@ -32,20 +41,45 @@ export default async function ISOPage({
   const supabase = await createClient();
   const bpAreas = await getBPAreas(supabase);
 
-  // Meses disponíveis: union dos meses com dados manuais (turnover + CID-F)
-  const [{ data: desDates }, { data: cidfDates }] = await Promise.all([
+  // ── Meses disponíveis para o filtro ──────────────────────────────────────────
+  // Fonte primária: pesquisas LNPS (sempre existem; garantem que o filtro aparece)
+  // Fonte complementar: meses com dados manuais de turnover / CID-F
+  const [
+    { data: lnpsSurveyDates },
+    { data: desDates },
+    { data: cidfDates },
+  ] = await Promise.all([
+    supabase
+      .from("elofy_survey_standard")
+      .select("id_pesquisa, data_envio_pesquisa")
+      .ilike("nome_pesquisa", "%lnps%")
+      .order("data_envio_pesquisa", { ascending: false })
+      .limit(200),
     supabase.from("manual_desligamentos").select("mes_referencia"),
     supabase.from("manual_cidf").select("mes_referencia"),
   ]);
 
   const isoMonthSet = new Set<string>();
+
+  // LNPS — deduplica por id_pesquisa
+  const seenSurveys = new Set<string>();
+  for (const row of lnpsSurveyDates ?? []) {
+    if (!row.id_pesquisa || seenSurveys.has(row.id_pesquisa)) continue;
+    seenSurveys.add(row.id_pesquisa);
+    const key = toMonthKey(row.data_envio_pesquisa);
+    if (key) isoMonthSet.add(key);
+  }
+
+  // Manuais (turnover + CID-F) — mes_referencia é date "YYYY-MM-DD"
   for (const row of [...(desDates ?? []), ...(cidfDates ?? [])]) {
     const key = (row.mes_referencia as string)?.slice(0, 7);
     if (key) isoMonthSet.add(key);
   }
+
   const periods = [...isoMonthSet]
     .sort((a, b) => b.localeCompare(a))
     .map(key => ({ key, label: formatMonthLabel(key) }));
+
   const activeMes = mes || (periods[0]?.key ?? "");
 
   function periodUrl(key: string) {
@@ -56,6 +90,9 @@ export default async function ISOPage({
     return `/iso?${params.toString()}`;
   }
 
+  // ── RPC — backward-compatible: passa p_mes só quando a função nova está ativa
+  // Sem migration aplicada (função antiga sem parâmetro): activeMes="" → sem args
+  // Com migration aplicada: sempre passa p_mes (inclui "" para default)
   type ISORow = {
     gestor_nome: string; area: string | null; headcount: number;
     iso_score: number | null;
@@ -68,7 +105,12 @@ export default async function ISOPage({
     perguntas_isbe: ISOQuestion[] | null;
     lnps_date: string | null; isbe_mes: string | null;
   };
-  const { data: rows } = await supabase.rpc("get_iso_scores", { p_mes: activeMes }) as { data: ISORow[] | null; error: unknown };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rpcCall = activeMes
+    ? supabase.rpc("get_iso_scores", { p_mes: activeMes })
+    : supabase.rpc("get_iso_scores");
+  const { data: rows } = await rpcCall as { data: ISORow[] | null; error: unknown };
 
   const allLeaders: ISOLeaderData[] = (rows ?? []).map((row) => ({
     name: row.gestor_nome,
@@ -94,13 +136,11 @@ export default async function ISOPage({
     isbeAreaLabel: row.isbe_area_label ?? "",
   }));
 
-  // Filtros client-side sobre os líderes retornados
   const areaFilter = bp !== "geral" ? (bpAreas[bp as BPKey] ?? null) : null;
   const leaders = allLeaders
     .filter((l) => !areaFilter || areaFilter.includes(l.area))
     .filter((l) => !leader || l.name === leader);
 
-  // Métricas do cabeçalho
   const lnpsDate = rows?.[0]?.lnps_date ?? null;
   const isbeLatestDate = rows?.[0]?.isbe_mes ?? null;
   const leadersWithScore = leaders.filter((l) => l.isoScore !== null);
@@ -134,12 +174,12 @@ export default async function ISOPage({
           <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
             {lnpsDate && (
               <span style={{ fontSize: 11, background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 6, padding: "3px 10px", color: "var(--text-500)" }}>
-                LNPS: {lnpsDate}
+                LNPS usado: {lnpsDate}
               </span>
             )}
             {isbeLatestDate && (
               <span style={{ fontSize: 11, background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 6, padding: "3px 10px", color: "var(--text-500)" }}>
-                ISBE: {isbeLatestDate}
+                ISBE usado: {isbeLatestDate}
               </span>
             )}
           </div>
@@ -165,8 +205,8 @@ export default async function ISOPage({
         </div>
       </div>
 
-      {/* Filtro de período */}
-      {periods.length > 1 && (
+      {/* Filtro de período — aparece sempre que há pelo menos 1 período */}
+      {periods.length > 0 && (
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
           {periods.map((p) => {
             const isActive = p.key === activeMes;
@@ -195,8 +235,8 @@ export default async function ISOPage({
 
       <div style={{ display: "flex", gap: 10, marginBottom: 28, flexWrap: "wrap" }}>
         {[
-          { label: "Turnover Voluntário", weight: "10%", meta: "≤ 0,8%" },
-          { label: "Absenteísmo CID F",   weight: "10%", meta: "≤ 0,15%" },
+          { label: "Turnover Voluntário", weight: "10%", meta: "≤ 0,8% · mês exato · 100 se sem dados" },
+          { label: "Absenteísmo CID F",   weight: "10%", meta: "≤ 0,15% · mês exato · 100 se sem dados" },
           { label: "LNPS",                weight: "40%", meta: "Pesquisa mais recente até o mês" },
           { label: "ISBE",                weight: "40%", meta: "Pesquisa mais recente até o mês" },
         ].map(({ label, weight, meta }) => (
