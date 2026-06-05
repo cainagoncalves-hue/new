@@ -121,3 +121,95 @@ export async function deleteIMGIndicador(id: string) {
   revalidatePath("/dados");
   revalidatePath("/img");
 }
+
+// ── Bulk upsert via CSV ──────────────────────────────────────
+
+function parseCSVLine(line: string): string[] {
+  const cols: string[] = [];
+  let current = "";
+  let inQuotes = false;
+  for (const ch of line) {
+    if (ch === '"') { inQuotes = !inQuotes; }
+    else if (ch === "," && !inQuotes) { cols.push(current); current = ""; }
+    else { current += ch; }
+  }
+  cols.push(current);
+  return cols;
+}
+
+export async function bulkUpsertIMGIndicadores(
+  formData: FormData,
+): Promise<{ inserted: number; errors: string[] }> {
+  const { supabase, userId } = await requireAdmin();
+
+  const file = formData.get("csv_file") as File | null;
+  if (!file || file.size === 0) throw new Error("Nenhum arquivo selecionado.");
+
+  const text = await file.text();
+  const lines = text.split(/\r?\n/);
+
+  const VALID = new Set([
+    "metas_registradas", "checkins_prazo", "reuniao_resultado",
+    "rdm_prazo", "headcount_previsto", "custo_folha_previsto", "atingimento_metas",
+  ]);
+
+  type Row = { nome_gestor: string; mes_referencia: string; indicador: string; valor_pct: number; created_by: string };
+  const parsed: Row[] = [];
+  const errors: string[] = [];
+  let headerSkipped = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i].trim();
+    if (!raw || raw.startsWith("#")) continue;
+
+    // Pula o cabeçalho (primeira linha não-comentário)
+    if (!headerSkipped) { headerSkipped = true; continue; }
+
+    const cols = parseCSVLine(raw).map(c => c.trim().replace(/^"|"$/g, ""));
+    if (cols.length < 4) {
+      errors.push(`Linha ${i + 1}: esperado 4 colunas, recebido ${cols.length}`);
+      continue;
+    }
+
+    const [nome_gestor, mes_referencia, indicador, valor_pct_str] = cols;
+
+    if (!nome_gestor) { errors.push(`Linha ${i + 1}: nome_gestor vazio`); continue; }
+
+    if (!/^\d{4}-\d{2}$/.test(mes_referencia)) {
+      errors.push(`Linha ${i + 1}: mes_referencia inválido "${mes_referencia}" (use AAAA-MM)`);
+      continue;
+    }
+
+    if (!VALID.has(indicador)) {
+      errors.push(`Linha ${i + 1}: indicador desconhecido "${indicador}"`);
+      continue;
+    }
+
+    const valor_pct = parseFloat(valor_pct_str);
+    if (isNaN(valor_pct) || valor_pct < 0 || valor_pct > 100) {
+      errors.push(`Linha ${i + 1}: valor_pct inválido "${valor_pct_str}" (deve ser 0–100)`);
+      continue;
+    }
+
+    parsed.push({ nome_gestor, mes_referencia: `${mes_referencia}-01`, indicador, valor_pct, created_by: userId });
+  }
+
+  if (parsed.length === 0) {
+    const hint = errors.length ? ` Erros: ${errors.slice(0, 3).join("; ")}` : "";
+    throw new Error(`Nenhuma linha válida encontrada.${hint}`);
+  }
+
+  // Upsert em lotes de 100 (last-write-wins via onConflict)
+  const CHUNK = 100;
+  for (let i = 0; i < parsed.length; i += CHUNK) {
+    const { error } = await supabase
+      .from("manual_img_indicadores")
+      .upsert(parsed.slice(i, i + CHUNK), { onConflict: "nome_gestor,mes_referencia,indicador" });
+    if (error) throw new Error(`Erro ao salvar lote: ${error.message}`);
+  }
+
+  revalidatePath("/dados");
+  revalidatePath("/img");
+
+  return { inserted: parsed.length, errors };
+}
