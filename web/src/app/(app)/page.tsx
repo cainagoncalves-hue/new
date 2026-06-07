@@ -421,7 +421,8 @@ export default async function HomePage({
   let ooQuery = supabase
     .from("elofy_one_one")
     .select("id_usuario_convidado")
-    .gte("data", `${monthStr}-01`);
+    .gte("data", `${monthStr}-01`)
+    .eq("situacao", "Realizada");   // só 1:1s efetivamente realizadas (alinha com módulo feedback)
   if (acompanhadosUserIds) ooQuery = ooQuery.in("id_usuario_convidado", acompanhadosUserIds);
   const { data: ooRows } = await ooQuery;
 

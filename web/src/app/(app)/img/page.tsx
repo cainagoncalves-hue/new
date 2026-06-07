@@ -180,7 +180,8 @@ export default async function IMGPage({
     .from("elofy_one_one")
     .select("id_usuario_convidado")
     .gte("data", mesStart)
-    .lt("data", mesEnd);
+    .lt("data", mesEnd)
+    .eq("situacao", "Realizada");   // só 1:1s efetivamente realizadas (alinha com módulo feedback)
   if (allUserIds.length > 0) ooQ = ooQ.in("id_usuario_convidado", allUserIds);
 
   let krQ = supabase
