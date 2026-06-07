@@ -1,66 +1,75 @@
 import { createClient } from "@/lib/supabase/server";
+import { excludeAdmins } from "@/lib/adminAccounts";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+function nextMonth(mesStr: string): string {
+  const [year, month] = mesStr.split("-").map(Number);
+  if (month === 12) return `${year + 1}-01`;
+  return `${year}-${String(month + 1).padStart(2, "0")}`;
+}
+
+export async function GET(req: Request) {
   const supabase = await createClient();
+  const url = new URL(req.url);
+  const mes = url.searchParams.get("mes") || "2026-06";
 
-  // 1. Raw feedbacks count
-  const { data: fbSample, error: fbErr } = await supabase
+  const monthStart = `${mes}-01`;
+  const monthEnd = nextMonth(mes);
+
+  // Step 1: get users (same query as feedback page)
+  const usersResult = await excludeAdmins(
+    supabase.from("elofy_users").select("nome, elofy_id, nome_gestor, nome_time").eq("status", "Ativo"),
+    "nome"
+  );
+  const users = usersResult.data;
+  const usersErr = usersResult.error;
+
+  const allUserIds = (users ?? []).map((u: any) => u.elofy_id).filter(Boolean);
+
+  // Step 2: query feedbacks (same as feedback page)
+  let fbQ = supabase
     .from("elofy_feedbacks")
-    .select("id_usuario_destinatario, usuario_destinatario, data_feedback, time_destinatario")
-    .order("data_feedback", { ascending: false })
-    .limit(10);
+    .select("id_usuario_destinatario, data_feedback")
+    .gte("data_feedback", monthStart)
+    .lt("data_feedback", monthEnd);
+  if (allUserIds.length > 0) fbQ = fbQ.in("id_usuario_destinatario", allUserIds);
+  const { data: feedbacks, error: fbErr } = await fbQ;
 
-  // 2. Distinct months
-  const { data: fbDates, error: datesErr } = await supabase
-    .from("elofy_feedbacks")
-    .select("data_feedback")
-    .not("data_feedback", "is", null)
-    .order("data_feedback", { ascending: false })
-    .limit(200);
+  const feedbackSet = new Set(
+    (feedbacks ?? []).map((f: any) => f.id_usuario_destinatario).filter(Boolean)
+  );
 
-  const monthSet = new Set((fbDates ?? []).map(r => (r.data_feedback as string)?.slice(0, 7)).filter(Boolean));
+  // Step 3: build leaderMap (same as feedback page)
+  const leaderMap: Record<string, { area: string; reports: Array<{ nome: string; elofy_id: string }> }> = {};
+  for (const u of (users ?? []) as any[]) {
+    const mgr = u.nome_gestor ?? "";
+    if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
+    if (!leaderMap[mgr]) leaderMap[mgr] = { area: u.nome_time ?? "", reports: [] };
+    leaderMap[mgr].reports.push({ nome: u.nome ?? "", elofy_id: u.elofy_id ?? "" });
+  }
 
-  // 3. Users sample
-  const { data: usersSample, error: usersErr } = await supabase
-    .from("elofy_users")
-    .select("nome, elofy_id, nome_gestor, nome_time, status")
-    .eq("status", "Ativo")
-    .limit(10);
-
-  // 4. Total counts
-  const { count: fbTotal } = await supabase
-    .from("elofy_feedbacks")
-    .select("*", { count: "exact", head: true });
-
-  const { count: usersTotal } = await supabase
-    .from("elofy_users")
-    .select("*", { count: "exact", head: true })
-    .eq("status", "Ativo");
-
-  // 5. One-one sample
-  const { data: ooSample, error: ooErr } = await supabase
-    .from("elofy_one_one")
-    .select("id_usuario_convidado, nome_convidado, data, nome_time_convidado")
-    .order("data", { ascending: false })
-    .limit(10);
+  // Step 4: compute coverage (same as feedback page)
+  const leaders = Object.entries(leaderMap).map(([name, data]) => ({
+    name,
+    total: data.reports.length,
+    withFeedback: data.reports.filter(r => feedbackSet.has(r.elofy_id)).length,
+    sampleReport: data.reports[0],
+    sampleReportInFeedbackSet: data.reports[0] ? feedbackSet.has(data.reports[0].elofy_id) : null,
+  })).sort((a, b) => b.withFeedback - a.withFeedback);
 
   return NextResponse.json({
-    feedbacks: {
-      totalVisible: fbTotal,
-      error: fbErr?.message,
-      datesError: datesErr?.message,
-      months: [...monthSet].sort().reverse().slice(0, 12),
-      sample: fbSample,
-    },
-    users: {
-      totalVisible: usersTotal,
-      error: usersErr?.message,
-      sample: usersSample,
-    },
-    oneOne: {
-      error: ooErr?.message,
-      sample: ooSample,
-    },
+    mes,
+    monthStart,
+    monthEnd,
+    usersCount: (users ?? []).length,
+    allUserIdsCount: allUserIds.length,
+    allUserIdsSample: allUserIds.slice(0, 5),
+    feedbacksCount: (feedbacks ?? []).length,
+    feedbackSetSize: feedbackSet.size,
+    feedbackSetSample: [...feedbackSet].slice(0, 5),
+    usersErr: usersErr?.message,
+    fbErr: fbErr?.message,
+    leadersTotal: leaders.length,
+    topLeaders: leaders.slice(0, 5),
   });
 }
