@@ -112,7 +112,7 @@ export default async function FeedbackPage({
   let ooQ = supabase
     .from("elofy_one_one")
     .select("id_usuario_convidado")
-    .eq("situacao", "Realizado")
+    .eq("situacao", "Realizada")
     .gte("data", monthStart)
     .lt("data", monthEnd);
   if (allUserIds.length > 0) ooQ = ooQ.in("id_usuario_convidado", allUserIds);
