@@ -12,8 +12,8 @@ function formatMonthLabel(key: string): string {
 
 function nextMonth(mesStr: string): string {
   const [year, month] = mesStr.split("-").map(Number);
-  if (month === 12) return `${year + 1}-01`;
-  return `${year}-${String(month + 1).padStart(2, "0")}`;
+  if (month === 12) return `${year + 1}-01-01`;
+  return `${year}-${String(month + 1).padStart(2, "0")}-01`;
 }
 
 function coverageColor(pct: number) {
