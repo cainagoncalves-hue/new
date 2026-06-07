@@ -11,65 +11,88 @@ function nextMonth(mesStr: string): string {
 export async function GET(req: Request) {
   const supabase = await createClient();
   const url = new URL(req.url);
-  const mes = url.searchParams.get("mes") || "2026-06";
+  const mes = url.searchParams.get("mes") || "2026-05";
 
   const monthStart = `${mes}-01`;
   const monthEnd = nextMonth(mes);
 
-  // Step 1: get users (same query as feedback page)
+  // 1. Usuários ativos
   const usersResult = await excludeAdmins(
     supabase.from("elofy_users").select("nome, elofy_id, nome_gestor, nome_time").eq("status", "Ativo"),
     "nome"
   );
-  const users = usersResult.data;
-  const usersErr = usersResult.error;
+  const users = usersResult.data ?? [];
+  const allUserIds = users.map((u: any) => u.elofy_id).filter(Boolean);
 
-  const allUserIds = (users ?? []).map((u: any) => u.elofy_id).filter(Boolean);
-
-  // Step 2: query feedbacks (same as feedback page)
+  // 2. Feedbacks no período
   let fbQ = supabase
     .from("elofy_feedbacks")
-    .select("id_usuario_destinatario, data_feedback")
+    .select("id_usuario_destinatario")
     .gte("data_feedback", monthStart)
     .lt("data_feedback", monthEnd);
   if (allUserIds.length > 0) fbQ = fbQ.in("id_usuario_destinatario", allUserIds);
   const { data: feedbacks, error: fbErr } = await fbQ;
 
-  const feedbackSet = new Set(
-    (feedbacks ?? []).map((f: any) => f.id_usuario_destinatario).filter(Boolean)
-  );
+  // 3. 1:1s — SEM filtro de situacao para ver todos os valores
+  let ooAllQ = supabase
+    .from("elofy_one_one")
+    .select("id_usuario_convidado, situacao")
+    .gte("data", monthStart)
+    .lt("data", monthEnd);
+  if (allUserIds.length > 0) ooAllQ = ooAllQ.in("id_usuario_convidado", allUserIds);
+  const { data: ooAll, error: ooAllErr } = await ooAllQ;
 
-  // Step 3: build leaderMap (same as feedback page)
-  const leaderMap: Record<string, { area: string; reports: Array<{ nome: string; elofy_id: string }> }> = {};
-  for (const u of (users ?? []) as any[]) {
+  // 4. 1:1s COM filtro Realizado
+  let ooQ = supabase
+    .from("elofy_one_one")
+    .select("id_usuario_convidado, situacao")
+    .eq("situacao", "Realizado")
+    .gte("data", monthStart)
+    .lt("data", monthEnd);
+  if (allUserIds.length > 0) ooQ = ooQ.in("id_usuario_convidado", allUserIds);
+  const { data: ooRealizado, error: ooRealizadoErr } = await ooQ;
+
+  // Situacoes distintas
+  const situacaoCount: Record<string, number> = {};
+  for (const r of ooAll ?? []) {
+    const s = (r as any).situacao ?? "(null)";
+    situacaoCount[s] = (situacaoCount[s] ?? 0) + 1;
+  }
+
+  // Unique IDs cobertos
+  const fbIds = new Set((feedbacks ?? []).map((f: any) => f.id_usuario_destinatario).filter(Boolean));
+  const ooIds = new Set((ooRealizado ?? []).map((o: any) => o.id_usuario_convidado).filter(Boolean));
+  const coveredSet = new Set([...fbIds, ...ooIds]);
+
+  // Cobertura por lider
+  const leaderMap: Record<string, { reports: Array<{ nome: string; elofy_id: string }> }> = {};
+  for (const u of users as any[]) {
     const mgr = u.nome_gestor ?? "";
     if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
-    if (!leaderMap[mgr]) leaderMap[mgr] = { area: u.nome_time ?? "", reports: [] };
+    if (!leaderMap[mgr]) leaderMap[mgr] = { reports: [] };
     leaderMap[mgr].reports.push({ nome: u.nome ?? "", elofy_id: u.elofy_id ?? "" });
   }
 
-  // Step 4: compute coverage (same as feedback page)
   const leaders = Object.entries(leaderMap).map(([name, data]) => ({
     name,
     total: data.reports.length,
-    withFeedback: data.reports.filter(r => feedbackSet.has(r.elofy_id)).length,
-    sampleReport: data.reports[0],
-    sampleReportInFeedbackSet: data.reports[0] ? feedbackSet.has(data.reports[0].elofy_id) : null,
-  })).sort((a, b) => b.withFeedback - a.withFeedback);
+    withFeedbackOnly: data.reports.filter(r => fbIds.has(r.elofy_id)).length,
+    withOneOneOnly: data.reports.filter(r => ooIds.has(r.elofy_id) && !fbIds.has(r.elofy_id)).length,
+    withBoth: data.reports.filter(r => fbIds.has(r.elofy_id) && ooIds.has(r.elofy_id)).length,
+    covered: data.reports.filter(r => coveredSet.has(r.elofy_id)).length,
+  })).sort((a, b) => b.covered - a.covered);
 
   return NextResponse.json({
-    mes,
-    monthStart,
-    monthEnd,
-    usersCount: (users ?? []).length,
-    allUserIdsCount: allUserIds.length,
-    allUserIdsSample: allUserIds.slice(0, 5),
+    mes, monthStart, monthEnd,
+    usersCount: users.length,
     feedbacksCount: (feedbacks ?? []).length,
-    feedbackSetSize: feedbackSet.size,
-    feedbackSetSample: [...feedbackSet].slice(0, 5),
-    usersErr: usersErr?.message,
-    fbErr: fbErr?.message,
-    leadersTotal: leaders.length,
+    feedbackUniqueIds: fbIds.size,
+    oneOneTotal: (ooAll ?? []).length,
+    oneOneSituacoes: situacaoCount,
+    oneOneRealizadoCount: (ooRealizado ?? []).length,
+    oneOneRealizadoUniqueIds: ooIds.size,
+    coveredSetSize: coveredSet.size,
+    errors: { fbErr: fbErr?.message, ooAllErr: ooAllErr?.message, ooRealizadoErr: ooRealizadoErr?.message },
     topLeaders: leaders.slice(0, 5),
   });
 }
