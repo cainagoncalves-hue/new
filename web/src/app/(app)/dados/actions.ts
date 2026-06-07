@@ -103,7 +103,7 @@ export async function deleteTalento(id: string) {
 export async function upsertIMGIndicador(formData: FormData) {
   const { supabase, userId } = await requireAdmin();
   const { error } = await supabase.from("manual_img_indicadores").upsert({
-    nome_gestor: formData.get("nome_gestor") as string,
+    nome_gestor: (formData.get("nome_gestor") as string).trim(),
     mes_referencia: `${formData.get("mes_referencia")}-01`,
     indicador: formData.get("indicador") as string,
     valor_pct: parseFloat(formData.get("valor_pct") as string),

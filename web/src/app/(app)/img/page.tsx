@@ -213,16 +213,19 @@ export default async function IMGPage({
     ...(ooRows ?? []).map(r => r.id_usuario_convidado),
   ].filter(Boolean));
 
+  // Lookups por líder — .trim() em todas as chaves para evitar mismatch
+  // por espaços vindos da API Elofy vs dados inseridos/normalizados pelo sistema
+
   // ISO por líder
   const isoByLeader: Record<string, number> = {};
   for (const r of (isoRows as Array<{ gestor_nome: string; iso_score: number | null }> ?? [])) {
-    if (r.iso_score !== null) isoByLeader[r.gestor_nome] = Number(r.iso_score);
+    if (r.iso_score !== null) isoByLeader[r.gestor_nome.trim()] = Number(r.iso_score);
   }
 
   // Talentos por líder
   const talByLeader: Record<string, { total: number; comPlano: number }> = {};
   for (const t of (talentos as Array<{ nome_gestor: string; status: string }> ?? [])) {
-    const mgr = t.nome_gestor ?? ""; if (!mgr) continue;
+    const mgr = (t.nome_gestor ?? "").trim(); if (!mgr) continue;
     if (!talByLeader[mgr]) talByLeader[mgr] = { total: 0, comPlano: 0 };
     talByLeader[mgr].total++;
     if (t.status !== "nao_iniciado") talByLeader[mgr].comPlano++;
@@ -231,7 +234,7 @@ export default async function IMGPage({
   // Indicadores manuais por líder
   const manualByLeader: Record<string, Record<string, number>> = {};
   for (const m of (manualIndicadores as Array<{ nome_gestor: string; indicador: string; valor_pct: number }> ?? [])) {
-    const mgr = m.nome_gestor ?? ""; if (!mgr) continue;
+    const mgr = (m.nome_gestor ?? "").trim(); if (!mgr) continue;
     if (!manualByLeader[mgr]) manualByLeader[mgr] = {};
     manualByLeader[mgr][m.indicador] = Number(m.valor_pct);
   }
@@ -244,11 +247,11 @@ export default async function IMGPage({
     if (!isNaN(p)) { (krByUser[uid] ??= []).push(p); }
   }
 
-  // mgrMap: líder → { area, reports[] }
+  // mgrMap: líder → { area, reports[] } — chave trimada
   type Report = { nome: string; elofy_id: string };
   const mgrMap: Record<string, { area: string; reports: Report[] }> = {};
   for (const u of (users as Array<{ nome: string; nome_gestor: string; nome_time: string; elofy_id: string }> ?? [])) {
-    const mgr = u.nome_gestor ?? "";
+    const mgr = (u.nome_gestor ?? "").trim();
     if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
     if (!mgrMap[mgr]) mgrMap[mgr] = { area: u.nome_time ?? "", reports: [] };
     mgrMap[mgr].reports.push({ nome: u.nome ?? "", elofy_id: u.elofy_id ?? "" });

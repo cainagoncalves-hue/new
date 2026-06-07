@@ -40,7 +40,7 @@ export default async function DadosPage({
 
   const gestores = [...new Set(
     (gestoresRows ?? [])
-      .map(r => r.nome_gestor ?? "")
+      .map(r => (r.nome_gestor ?? "").trim())
       .filter(g => g && !g.toLowerCase().includes("elofy"))
   )].sort();
 
