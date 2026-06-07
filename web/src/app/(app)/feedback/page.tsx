@@ -97,19 +97,33 @@ export default async function FeedbackPage({
   if (leader) usersQ = usersQ.eq("nome_gestor", leader);
   const { data: users } = await usersQ;
 
-  // Get feedback recipients for the selected month — filter by elofy_id (same pattern as img/page)
-  // This is required for the RLS policy on elofy_feedbacks to return data correctly
+  // IDs de todos os usuários ativos no escopo (necessário para o RLS de elofy_feedbacks e elofy_one_one)
   const allUserIds = (users ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean);
 
+  // Feedbacks recebidos no período
   let fbQ = supabase
     .from("elofy_feedbacks")
     .select("id_usuario_destinatario")
     .gte("data_feedback", monthStart)
     .lt("data_feedback", monthEnd);
   if (allUserIds.length > 0) fbQ = fbQ.in("id_usuario_destinatario", allUserIds);
-  const { data: feedbacks } = await fbQ;
 
-  const feedbackSet = new Set((feedbacks ?? []).map((f: { id_usuario_destinatario: string }) => f.id_usuario_destinatario).filter(Boolean));
+  // 1:1s realizados no período
+  let ooQ = supabase
+    .from("elofy_one_one")
+    .select("id_usuario_convidado")
+    .eq("situacao", "Realizado")
+    .gte("data", monthStart)
+    .lt("data", monthEnd);
+  if (allUserIds.length > 0) ooQ = ooQ.in("id_usuario_convidado", allUserIds);
+
+  const [{ data: feedbacks }, { data: oneOnes }] = await Promise.all([fbQ, ooQ]);
+
+  // Um colaborador é "acompanhado" se recebeu feedback OU teve 1:1 realizado
+  const coveredSet = new Set([
+    ...(feedbacks ?? []).map((f: { id_usuario_destinatario: string }) => f.id_usuario_destinatario),
+    ...(oneOnes ?? []).map((o: { id_usuario_convidado: string }) => o.id_usuario_convidado),
+  ].filter(Boolean));
 
   // Group by manager
   const leaderMap: Record<string, {
@@ -125,8 +139,8 @@ export default async function FeedbackPage({
   }
 
   const leaders: LeaderFeedback[] = Object.entries(leaderMap).map(([name, data]) => {
-    const withFeedback = data.reports.filter(r => feedbackSet.has(r.elofy_id)).map(r => r.nome);
-    const withoutFeedback = data.reports.filter(r => !feedbackSet.has(r.elofy_id)).map(r => r.nome);
+    const withFeedback = data.reports.filter(r => coveredSet.has(r.elofy_id)).map(r => r.nome);
+    const withoutFeedback = data.reports.filter(r => !coveredSet.has(r.elofy_id)).map(r => r.nome);
     const coverage = data.reports.length > 0 ? Math.round((withFeedback.length / data.reports.length) * 100) : 0;
     return {
       name,
