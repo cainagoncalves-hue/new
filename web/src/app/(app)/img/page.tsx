@@ -199,7 +199,9 @@ export default async function IMGPage({
   ] = await Promise.all([
     fbQ,
     ooQ,
-    supabase.rpc("get_iso_scores"),
+    // Passa o mês de referência ao RPC para que LNPS, ISBE, Turnover e CID F
+    // sejam calculados em relação ao período selecionado, não ao mais recente.
+    supabase.rpc("get_iso_scores", { p_mes: activeMes || null }),
     supabase.from("manual_talentos_chave").select("nome_gestor, status"),
     manualQ,
     krQ,
