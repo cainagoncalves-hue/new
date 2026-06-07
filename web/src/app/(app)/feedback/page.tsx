@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { excludeAdmins } from "@/lib/adminAccounts";
 import { getBPAreas, type BPKey } from "@/lib/bp";
+import PeriodSelect from "@/components/PeriodSelect";
 
 function formatMonthLabel(key: string): string {
   const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
@@ -82,13 +83,6 @@ export default async function FeedbackPage({
   const monthStart = activeMes ? `${activeMes}-01` : "9999-01-01";
   const monthEnd = activeMes ? nextMonth(activeMes) : "9999-01-02";
 
-  function periodUrl(key: string) {
-    const params = new URLSearchParams();
-    if (bp !== "geral") params.set("bp", bp);
-    if (leader) params.set("leader", leader);
-    params.set("mes", key);
-    return `/feedback?${params.toString()}`;
-  }
 
   // Get all active users with their manager (include elofy_id for reliable matching)
   let usersQ = excludeAdmins(
@@ -208,33 +202,7 @@ export default async function FeedbackPage({
         </div>
       </div>
 
-      {/* Filtro de período */}
-      {periods.length > 0 && (
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
-          {periods.map((p) => {
-            const isActive = p.key === activeMes;
-            return (
-              <a
-                key={p.key}
-                href={periodUrl(p.key)}
-                style={{
-                  padding: "6px 16px",
-                  borderRadius: 20,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  textDecoration: "none",
-                  background: isActive ? "var(--brand)" : "var(--surface)",
-                  color: isActive ? "#fff" : "var(--text-500)",
-                  border: `1px solid ${isActive ? "var(--brand)" : "var(--border)"}`,
-                  transition: "all 0.15s",
-                }}
-              >
-                {p.label}
-              </a>
-            );
-          })}
-        </div>
-      )}
+      <PeriodSelect periods={periods} activeMes={activeMes} />
 
       {leaders.length === 0 ? (
         <div style={{ textAlign: "center", padding: "60px 0", color: "var(--text-300)" }}>

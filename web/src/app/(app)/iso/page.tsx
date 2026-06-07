@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import ISOLeaderList, { type ISOLeaderData, type ISOQuestion } from "./ISOLeaderList";
-import { getBPAreas, type BPKey } from "@/lib/bp";
+import { getBPLeaders } from "@/lib/bp";
+import PeriodSelect from "@/components/PeriodSelect";
 
 function formatMonthLabel(key: string): string {
   const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
@@ -39,7 +40,7 @@ export default async function ISOPage({
 }) {
   const { bp = "geral", leader = "", mes = "" } = await searchParams;
   const supabase = await createClient();
-  const bpAreas = await getBPAreas(supabase);
+  const bpLeadersAll = await getBPLeaders(supabase);
 
   // ── Meses disponíveis para o filtro ──────────────────────────────────────────
   // Fonte primária: pesquisas LNPS (sempre existem; garantem que o filtro aparece)
@@ -82,13 +83,6 @@ export default async function ISOPage({
 
   const activeMes = mes || (periods[0]?.key ?? "");
 
-  function periodUrl(key: string) {
-    const params = new URLSearchParams();
-    if (bp !== "geral") params.set("bp", bp);
-    if (leader) params.set("leader", leader);
-    params.set("mes", key);
-    return `/iso?${params.toString()}`;
-  }
 
   // ── RPC — backward-compatible: passa p_mes só quando a função nova está ativa
   // Sem migration aplicada (função antiga sem parâmetro): activeMes="" → sem args
@@ -136,9 +130,13 @@ export default async function ISOPage({
     isbeAreaLabel: row.isbe_area_label ?? "",
   }));
 
-  const areaFilter = bp !== "geral" ? (bpAreas[bp as BPKey] ?? null) : null;
+  // Filtra por gestor (bp_gestor_map) em vez de por area (MIN do time),
+  // evitando exclusão incorreta de líderes multi-time.
+  const bpGestorSet = bp !== "geral"
+    ? new Set(bpLeadersAll.filter(l => l.bp === bp).map(l => l.nome_gestor.trim()))
+    : null;
   const leaders = allLeaders
-    .filter((l) => !areaFilter || areaFilter.includes(l.area))
+    .filter((l) => !bpGestorSet || bpGestorSet.has(l.name.trim()))
     .filter((l) => !leader || l.name === leader);
 
   const lnpsDate = rows?.[0]?.lnps_date ?? null;
@@ -205,33 +203,7 @@ export default async function ISOPage({
         </div>
       </div>
 
-      {/* Filtro de período — aparece sempre que há pelo menos 1 período */}
-      {periods.length > 0 && (
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
-          {periods.map((p) => {
-            const isActive = p.key === activeMes;
-            return (
-              <a
-                key={p.key}
-                href={periodUrl(p.key)}
-                style={{
-                  padding: "6px 16px",
-                  borderRadius: 20,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  textDecoration: "none",
-                  background: isActive ? "var(--brand)" : "var(--surface)",
-                  color: isActive ? "#fff" : "var(--text-500)",
-                  border: `1px solid ${isActive ? "var(--brand)" : "var(--border)"}`,
-                  transition: "all 0.15s",
-                }}
-              >
-                {p.label}
-              </a>
-            );
-          })}
-        </div>
-      )}
+      <PeriodSelect periods={periods} activeMes={activeMes} />
 
       <div style={{ display: "flex", gap: 10, marginBottom: 28, flexWrap: "wrap" }}>
         {[

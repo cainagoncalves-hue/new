@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { excludeAdmins } from "@/lib/adminAccounts";
 import { getBPAreas, type BPKey } from "@/lib/bp";
+import PeriodSelect from "@/components/PeriodSelect";
 
 // ── Utilitários visuais ────────────────────────────────────────────────────────
 
@@ -140,13 +141,6 @@ export default async function IMGPage({
   const mesStart = activeMes ? `${activeMes}-01` : "9999-01-01";
   const mesEnd = activeMes ? nextMonth(activeMes) : "9999-01-02";
 
-  function periodUrl(key: string) {
-    const params = new URLSearchParams();
-    if (bp !== "geral") params.set("bp", bp);
-    if (leader) params.set("leader", leader);
-    params.set("mes", key);
-    return `/img?${params.toString()}`;
-  }
 
   // ── Users no escopo ──────────────────────────────────────────────────────────
   let usersQ = excludeAdmins(
@@ -514,33 +508,7 @@ export default async function IMGPage({
         })()}
       </div>
 
-      {/* ── Filtro de período — aparece com >= 1 período ──────────────────── */}
-      {periods.length > 0 && (
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
-          {periods.map((p) => {
-            const isActive = p.key === activeMes;
-            return (
-              <a
-                key={p.key}
-                href={periodUrl(p.key)}
-                style={{
-                  padding: "6px 16px",
-                  borderRadius: 20,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  textDecoration: "none",
-                  background: isActive ? "var(--brand)" : "var(--surface)",
-                  color: isActive ? "#fff" : "var(--text-500)",
-                  border: `1px solid ${isActive ? "var(--brand)" : "var(--border)"}`,
-                  transition: "all 0.15s",
-                }}
-              >
-                {p.label}
-              </a>
-            );
-          })}
-        </div>
-      )}
+      <PeriodSelect periods={periods} activeMes={activeMes} />
 
       {/* ── Lista de líderes ────────────────────────────────────────────────── */}
       {leaders.length === 0 ? (

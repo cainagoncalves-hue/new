@@ -2,46 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { excludeAdmins } from "@/lib/adminAccounts";
 import { getBPAreas, type BPKey } from "@/lib/bp";
 
-const LEADER_AREAS: Record<string, string[]> = {
-  "Henrique Carmellino Filho": ["DIRETORIA  GERAL","DIRETORIA COMERCIAL","DIRETORIA FINANCEIRA","DIRETORIA MARKETING","DIRETORIA OPERAÇÕES","MARKETING -  DIGITAL"],
-  "Walquiria Santos Correia": ["ADMINISTRATIVO/FINANCEIRO REC","ADMINISTRATIVO/FINANCEIRO SP","SERVIÇOS GERAIS REC","SERVIÇOS GERAIS SP"],
-  "Gustavo Carmellino": ["DEV - Time Leandro","DIRETORIA TECNOLOGIA","NIX","PESQUISA & PRODUTO"],
-  "Jorge Do Nascimento Junior": ["REGIONAL ES","REGIONAL RJ","REGIONAL SP"],
-  "Leonardo De Oliveira Gama": ["VENDAS INTERNAS"],
-  "Leandro dos Santos Machado": ["DEV - Time Leandro"],
-  "Gabriela Maria Araujo Peres": ["SUPORTE - Time Gabriela"],
-  "Danilo Jorge da Silva Novais": ["MARKETING -  DIGITAL","PRÉ-VENDAS"],
-  "Jose Edmilson Da Silva": ["SUPORTE - Time Edmilson"],
-  "Enock De Oliveira E Silva Neto": ["SUPORTE - Time Enock"],
-  "Jonialysson Bezerra De Oliveira": ["DEV - Time Jony"],
-  "Jefte de Assumpcao Macedo": ["PESQUISA & PRODUTO"],
-  "Nathalia Vasconcelos Trajano Da Silva": ["SUPORTE - Time Nathalia"],
-  "Joao Henrique Da Silva": ["TI - INFRAESTRUTURA"],
-  "Thiago Souza Silva": ["REGIONAL BA","REGIONAL NE"],
-  "Gabriel Fidelis Gonzaga Dos Santos": ["CX - Time Gabriel"],
-  "Rafael Nascimento Ribeiro": ["DIRETORIA COMERCIAL","REGIONAL RJ","REGIONAL SP","VENDAS INTERNAS"],
-  "Rodrigo Jose Anderson do Nascimento Goncalves da Silva": ["CS","CX"],
-  "Marcos Flavio De Paiva Reis": ["REGIONAL GO","REGIONAL MG","REGIONAL MS","REGIONAL MT"],
-  "Publio Maswell Matos Cavalcanti": ["SUPORTE","SUPORTE - Time Gabriela"],
-  "Anderson Frederick Bernardes De Oliveira": ["NIX"],
-  "Camila Alves Da Silva": ["PESQUISA & PRODUTO"],
-  "Anderson Luis Lima da Silva": ["ADMINISTRATIVO/FINANCEIRO REC","ADMINISTRATIVO/FINANCEIRO SP","DIRETORIA FINANCEIRA","OSM"],
-  "Gabrielle Vitoria Fernandes Tavares": ["MARKETING -  EVENTOS"],
-  "Tomas Signorelli Navarro Lima": ["REGIONAL SP","VENDAS INTERNAS"],
-  "Aline Alves de Oliveira": ["CS - Time Aline"],
-  "Felipe Ayres Lins": ["DEV - Time Felipe"],
-  "Arthur Alexandre Fracalossi Carvalho": ["PRÉ-VENDAS"],
-  "Renata Oliveira De Moura Duarte": ["DIRETORIA GENTE & CULTURA","Desenvolvimento Humano Organizacional"],
-  "Luana Dos Santos Silva": ["CS","CS - Time Aline","CS - Time Luana"],
-  "Flavio Simao De Lima": ["REGIONAL PR","REGIONAL RS/SC"],
-  "Walisson Deyvson Barbosa Pernambuco": ["CX - Reversão"],
-  "Victor Fernando Soares de Barros": ["ADMINISTRATIVO/FINANCEIRO SP"],
-  "Gilmar Oliveira E Silva Junior": ["DEV - Time Gilmar"],
-  "Paula Mikaelly Pimentel Silva Vieira": ["Recrutamento e Seleção"],
-  "Deoclecio Tadeu Jorge de Campos Filho": ["MARKETING -  DIGITAL"],
-  "Elza Maria Eluana Da Silva Dias": ["Departamento Pessoal"],
-  "Douglas Dos Santos Soares": ["REGIONAL PR"],
-};
 
 function calcNPS(scores: number[]): number | null {
   if (!scores.length) return null;
@@ -288,20 +248,17 @@ export default async function HomePage({
   const supabase = await createClient();
   const bpAreas = await getBPAreas(supabase);
 
-  // Determine which teams to filter by
+  // areaFilter: scope de times do BP selecionado (sem usar mapeamento hardcoded por líder)
   let areaFilter: string[] | null = null;
-  if (leader && LEADER_AREAS[leader]) {
-    areaFilter = LEADER_AREAS[leader];
-  } else if (bp !== "geral" && bpAreas[bp as BPKey]) {
-    areaFilter = bpAreas[bp as BPKey];
-  }
+  if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];
 
-  // Headcount
+  // Headcount — filtra por times do BP ou por liderados diretos do gestor
   let hcQuery = excludeAdmins(
     supabase.from("elofy_users").select("elofy_id", { count: "exact", head: true }).eq("status", "Ativo"),
     "nome"
   );
   if (areaFilter) hcQuery = hcQuery.in("nome_time", areaFilter);
+  if (leader)     hcQuery = hcQuery.eq("nome_gestor", leader);
   const { count: hc } = await hcQuery;
 
   // eNPS from survey_standard: busca a pesquisa "ENPS" mais recente e calcula a média das respostas
@@ -338,7 +295,7 @@ export default async function HomePage({
       .select("resposta")
       .eq("id_pesquisa", latestEnpsMeta.id_pesquisa);
 
-    if (leader && LEADER_AREAS[leader]) {
+    if (leader) {
       enpsRespostasQuery = enpsRespostasQuery.eq("nome_gestor", leader);
     } else if (scopedTeamIds && scopedTeamIds.length > 0) {
       enpsRespostasQuery = enpsRespostasQuery.in("id_time", scopedTeamIds);
@@ -373,7 +330,7 @@ export default async function HomePage({
       .select("resposta")
       .eq("id_pesquisa", latestLnpsMeta.id_pesquisa);
 
-    if (leader && LEADER_AREAS[leader]) {
+    if (leader) {
       lnpsRespostasQuery = lnpsRespostasQuery.eq("nome_gestor", leader);
     } else if (scopedTeamIds && scopedTeamIds.length > 0) {
       lnpsRespostasQuery = lnpsRespostasQuery.in("id_time", scopedTeamIds);
@@ -444,9 +401,9 @@ export default async function HomePage({
   // Users no escopo — necessário para montar o mgrMap por liderados
   let imgUsersQ = excludeAdmins(
     supabase.from("elofy_users")
-      .select("nome_colaborador, nome_gestor, elofy_id")
+      .select("nome, nome_gestor, elofy_id")
       .eq("status", "Ativo"),
-    "nome_colaborador"
+    "nome"
   );
   if (areaFilter) imgUsersQ = imgUsersQ.in("nome_time", areaFilter);
   if (leader)     imgUsersQ = imgUsersQ.eq("nome_gestor", leader);
@@ -465,7 +422,7 @@ export default async function HomePage({
     { data: manualIndicadores },
   ] = await Promise.all([
     imgUsersQ,
-    supabase.rpc("get_iso_scores"),
+    supabase.rpc("get_iso_scores", { p_mes: latestMes?.slice(0, 7) ?? null }),
     supabase.from("manual_talentos_chave").select("nome_gestor, status"),
     manualQ,
   ]);
@@ -478,7 +435,31 @@ export default async function HomePage({
     .select("id_responsavel, progresso")
     .eq("ativo", "true");
   if (allSubordinateIds.length > 0) krQ = krQ.in("id_responsavel", allSubordinateIds);
-  const { data: keyResults } = await krQ;
+
+  // Feedbacks e 1:1s do mês de referência do IMG (latestMes), não do mês corrente
+  const imgMesKey = latestMes?.slice(0, 7) ?? "";
+  const imgMesStart = imgMesKey ? `${imgMesKey}-01` : "9999-01-01";
+  const imgMesEndDate = imgMesKey ? (() => {
+    const [y, m] = imgMesKey.split("-").map(Number);
+    return m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, "0")}-01`;
+  })() : "9999-01-02";
+  let imgFbQ = supabase
+    .from("elofy_feedbacks")
+    .select("id_usuario_destinatario")
+    .gte("data_feedback", imgMesStart)
+    .lt("data_feedback", imgMesEndDate);
+  if (allSubordinateIds.length > 0) imgFbQ = imgFbQ.in("id_usuario_destinatario", allSubordinateIds);
+  let imgOoQ = supabase
+    .from("elofy_one_one")
+    .select("id_usuario_convidado")
+    .gte("data", imgMesStart)
+    .lt("data", imgMesEndDate)
+    .eq("situacao", "Realizada");
+  if (allSubordinateIds.length > 0) imgOoQ = imgOoQ.in("id_usuario_convidado", allSubordinateIds);
+
+  const [{ data: keyResults }, { data: imgFbRows }, { data: imgOoRows }] = await Promise.all([
+    krQ, imgFbQ, imgOoQ,
+  ]);
 
   // Lookups por líder — .trim() em todas as chaves para evitar mismatch
   // por espaços vindos da API Elofy vs dados inseridos/normalizados pelo sistema
@@ -512,16 +493,16 @@ export default async function HomePage({
   // mgrMap: leader → liderados diretos (chave trimada)
   type ImgReport = { nome: string; elofy_id: string };
   const imgMgrMap: Record<string, ImgReport[]> = {};
-  for (const u of (imgUsers as Array<{ nome_colaborador: string; nome_gestor: string; elofy_id: string }> ?? [])) {
+  for (const u of (imgUsers as Array<{ nome: string; nome_gestor: string; elofy_id: string }> ?? [])) {
     const mgr = (u.nome_gestor ?? "").trim();
     if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
-    (imgMgrMap[mgr] ??= []).push({ nome: u.nome_colaborador ?? "", elofy_id: u.elofy_id ?? "" });
+    (imgMgrMap[mgr] ??= []).push({ nome: u.nome ?? "", elofy_id: u.elofy_id ?? "" });
   }
 
-  // Set de elofy_ids acompanhados no mês (reutiliza fbRows/ooRows já calculados para o KPI Acompanhados)
+  // Set de elofy_ids acompanhados no mês de referência do IMG (período separado do KPI Acompanhados)
   const accompSet = new Set([
-    ...(fbRows ?? []).map(r => r.id_usuario_destinatario),
-    ...(ooRows ?? []).map(r => r.id_usuario_convidado),
+    ...(imgFbRows ?? []).map(r => r.id_usuario_destinatario),
+    ...(imgOoRows ?? []).map(r => r.id_usuario_convidado),
   ].filter(Boolean));
 
   // Pontuação por líder → IMG individual → média global

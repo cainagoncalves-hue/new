@@ -237,6 +237,7 @@ export default function ISOLeaderList({ leaders }: Props) {
                 </div>
                 <div style={{ fontSize: 11, color: "var(--text-300)", marginTop: 2 }}>
                   {l.area} · {l.headcount} pessoas
+                  <span title="Conta todos os liderados diretos do gestor, independente do filtro de BP." style={{ marginLeft: 4, cursor: "help", opacity: 0.6 }}>ⓘ</span>
                 </div>
               </div>
 
