@@ -59,17 +59,19 @@ export default async function FeedbackPage({
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];
 
-  // Fetch distinct months for period filter
-  const { data: fbDateRows } = await supabase
-    .from("elofy_feedbacks")
-    .select("data_feedback")
-    .not("data_feedback", "is", null)
-    .order("data_feedback", { ascending: false })
-    .limit(5000);
+  // Meses disponíveis derivados da mesma fonte do IMG (manual_img_indicadores)
+  // para garantir consistência entre os dois módulos
+  const { data: mesRows } = await supabase
+    .from("manual_img_indicadores")
+    .select("mes_referencia")
+    .not("mes_referencia", "is", null)
+    .order("mes_referencia", { ascending: false })
+    .limit(1000);
 
   const monthKeySet = new Set<string>();
-  for (const row of fbDateRows ?? []) {
-    const key = (row.data_feedback as string)?.slice(0, 7);
+  for (const row of mesRows ?? []) {
+    // mes_referencia é date → "YYYY-MM-DD"; normaliza para "YYYY-MM"
+    const key = (row.mes_referencia as string)?.slice(0, 7);
     if (key) monthKeySet.add(key);
   }
   const periods = [...monthKeySet]
