@@ -33,8 +33,14 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Only run middleware on protected app routes.
-  // /login, /auth/*, /api/* bypass middleware entirely via the matcher.
+  // IMPORTANTE — SEGURANÇA: rotas /api/* estão FORA deste matcher.
+  // Isso significa que /api/auth/session pode ser chamado sem sessão (necessário para login).
+  //
+  // ⚠️  Toda nova rota criada em /api/** DEVE incluir verificação de autenticação
+  //     internamente, usando createClient() + supabase.auth.getSession().
+  //     Não confie que o middleware protegerá rotas de API automaticamente.
+  //
+  // Rotas liberadas intencionalmente: /login, /auth/*, /api/*
   matcher: [
     "/((?!_next/static|_next/image|favicon.ico|login|auth|api).*)",
   ],

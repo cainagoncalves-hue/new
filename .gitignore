@@ -1,1 +1,24 @@
+# Ambiente / Secrets
+.env
+.env.local
+.env.*.local
+.env.production
+*.pem
+
+# Next.js build
+web/.next/
+web/out/
+web/build/
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
+
+# Node
+node_modules/
+web/node_modules/
+
+# Sistema
+.DS_Store
+*.log
 .claude/

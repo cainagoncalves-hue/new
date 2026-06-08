@@ -2,7 +2,17 @@ import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const { access_token, refresh_token } = await request.json();
+  // Validação de input: tokens são obrigatórios
+  // Tokens malformados ou ausentes retornam 400 sem expor detalhes internos
+  const body = await request.json().catch(() => null);
+  if (!body?.access_token || !body?.refresh_token) {
+    return NextResponse.json({ error: "Tokens obrigatórios" }, { status: 400 });
+  }
+
+  const { access_token, refresh_token } = body as {
+    access_token: string;
+    refresh_token: string;
+  };
 
   const cookiesToSet: Array<{ name: string; value: string; options: Record<string, unknown> }> = [];
 
@@ -24,7 +34,7 @@ export async function POST(request: NextRequest) {
   const { error } = await supabase.auth.setSession({ access_token, refresh_token });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 401 });
+    return NextResponse.json({ error: "Token inválido" }, { status: 401 });
   }
 
   const response = NextResponse.json({ ok: true });

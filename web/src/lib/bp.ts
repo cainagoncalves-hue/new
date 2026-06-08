@@ -24,7 +24,7 @@ export async function getBPAreas(
     .from("bp_area_map")
     .select("nome_time, bp");
 
-  if (error) console.error("[getBPAreas] erro:", error.message);
+  if (error && process.env.NODE_ENV === "development") console.error("[getBPAreas] erro:", error.message);
 
   const acc: Record<BPKey, string[]> = {
     caina: [],
@@ -59,7 +59,7 @@ export async function getBPLeaders(
     .select("nome_gestor, bp")
     .order("nome_gestor");
 
-  if (error) console.error("[getBPLeaders] erro:", error.message);
+  if (error && process.env.NODE_ENV === "development") console.error("[getBPLeaders] erro:", error.message);
 
   return (data ?? []) as { nome_gestor: string; bp: BPKey }[];
 }
