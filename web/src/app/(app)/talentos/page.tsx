@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { excludeAdmins } from "@/lib/adminAccounts";
-import { getBPAreas, type BPKey } from "@/lib/bp";
+import { getCachedBPAreas, type BPKey } from "@/lib/bp";
 
 // 9-box quadrant labels
 const NINEBOX_LABELS: Record<string, string> = {
@@ -53,7 +53,7 @@ export default async function TalentosPage({
 }) {
   const { bp = "geral", leader = "" } = await searchParams;
   const supabase = await createClient();
-  const bpAreas = await getBPAreas(supabase);
+  const bpAreas = await getCachedBPAreas();
 
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];
@@ -65,13 +65,14 @@ export default async function TalentosPage({
   );
   if (areaFilter) nineQ = nineQ.in("nome_time", areaFilter);
   if (leader) nineQ = nineQ.eq("nome_gestor", leader);
-  const { data: nineRows } = await nineQ;
 
-  // PDI per person
-  let pdiQ = supabase
-    .from("elofy_iniciativas_pdi")
-    .select("nome_responsavel, progresso_iniciativa");
-  const { data: pdiRows } = await pdiQ;
+  // Executa 9-box e PDI em paralelo (queries independentes)
+  const [{ data: nineRows }, { data: pdiRows }] = await Promise.all([
+    nineQ,
+    supabase
+      .from("elofy_iniciativas_pdi")
+      .select("nome_responsavel, progresso_iniciativa"),
+  ]);
   const pdiByPerson: Record<string, number[]> = {};
   for (const pdi of pdiRows ?? []) {
     const name = pdi.nome_responsavel ?? "";

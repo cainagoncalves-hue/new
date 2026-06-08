@@ -10,8 +10,6 @@ export const ADMIN_ACCOUNTS = ["Z Elofy", "Gente Cultura"];
  * @param column Nome da coluna que contém o nome da pessoa (ex: "nome", "nome_colaborador")
  */
 export function excludeAdmins<T>(query: T, column: string): T {
-  return ADMIN_ACCOUNTS.reduce(
-    (q: any, name) => q.neq(column, name),
-    query
-  ) as T;
+  const list = ADMIN_ACCOUNTS.map(n => `"${n}"`).join(",");
+  return (query as any).not(column, "in", `(${list})`) as T;
 }

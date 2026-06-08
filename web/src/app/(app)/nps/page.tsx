@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { getBPAreas, type BPKey } from "@/lib/bp";
+import { getCachedBPAreas, type BPKey } from "@/lib/bp";
 
 function calcNPS(scores: number[]) {
   if (!scores.length) return null;
@@ -189,7 +189,7 @@ export default async function NPSPage({
 }) {
   const { bp = "geral", leader = "", mes = "" } = await searchParams;
   const supabase = await createClient();
-  const bpAreas = await getBPAreas(supabase);
+  const bpAreas = await getCachedBPAreas();
 
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];

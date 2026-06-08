@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { excludeAdmins } from "@/lib/adminAccounts";
-import { getBPAreas, type BPKey } from "@/lib/bp";
+import { getCachedBPAreas, type BPKey } from "@/lib/bp";
 
 
 function calcNPS(scores: number[]): number | null {
@@ -246,7 +246,7 @@ export default async function HomePage({
 }) {
   const { bp = "geral", leader = "" } = await searchParams;
   const supabase = await createClient();
-  const bpAreas = await getBPAreas(supabase);
+  const bpAreas = await getCachedBPAreas();
 
   // areaFilter: scope de times do BP selecionado (sem usar mapeamento hardcoded por líder)
   let areaFilter: string[] | null = null;
@@ -259,113 +259,80 @@ export default async function HomePage({
   );
   if (areaFilter) hcQuery = hcQuery.in("nome_time", areaFilter);
   if (leader)     hcQuery = hcQuery.eq("nome_gestor", leader);
-  const { count: hc } = await hcQuery;
 
-  // eNPS from survey_standard: busca a pesquisa "ENPS" mais recente e calcula a média das respostas
-  // Passo 1: descobre o id_pesquisa mais recente com nome_pesquisa = "ENPS" (case-insensitive)
-  const { data: latestEnpsMeta } = await supabase
-    .from("elofy_survey_standard")
-    .select("id_pesquisa, data_envio_pesquisa")
-    .ilike("nome_pesquisa", "%enps%")
-    .order("data_envio_pesquisa", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  // ── Round 1: queries independentes — disparam em paralelo ──────────────────
+  // Queries condicionais para teams (scope eNPS/LNPS) e para o KPI Acompanhados
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const scopedTeamsQ: any = areaFilter
+    ? supabase.from("elofy_teams").select("elofy_id").in("nome", areaFilter)
+    : Promise.resolve({ data: null });
 
-  // Pré-busca os id_time dos times no escopo via elofy_teams (IDs curtos, sem risco de URL longa)
-  // elofy_teams.elofy_id = id numérico do time; .nome = nome do time (mesma origem que areaFilter)
-  let scopedTeamIds: string[] | null = null;
-  if (areaFilter) {
-    const { data: teams } = await supabase
-      .from("elofy_teams")
-      .select("elofy_id")
-      .in("nome", areaFilter);
-    scopedTeamIds = (teams ?? []).map((t: { elofy_id: string }) => t.elofy_id).filter(Boolean);
-  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const acompanhadosQ: any = leader
+    ? excludeAdmins(
+        supabase.from("elofy_users").select("elofy_id").eq("nome_gestor", leader).eq("status", "Ativo"),
+        "nome"
+      )
+    : bp !== "geral" && bpAreas[bp as BPKey]
+      ? excludeAdmins(
+          supabase.from("elofy_users").select("elofy_id").in("nome_time", bpAreas[bp as BPKey]!).eq("status", "Ativo"),
+          "nome"
+        )
+      : Promise.resolve({ data: null });
 
-  let enps: number | null = null;
-  let enpsRespondentes = 0;
-  if (latestEnpsMeta?.id_pesquisa) {
-    // Passo 2: busca as respostas da pesquisa mais recente com o escopo correto.
-    // • Líder específico → filtra por nome_gestor (a pesquisa associa cada resposta ao gestor
-    //   no momento do preenchimento, que é a mesma forma que o Elofy calcula o eNPS por líder).
-    // • BP → filtra por id_time (conjunto de times da BP).
-    // • Geral → sem filtro.
-    let enpsRespostasQuery = supabase
+  const [
+    { count: hc },
+    { data: latestEnpsMeta },
+    { data: latestLnpsMeta },
+    { data: scopedTeamsList },
+    { data: acompanhadosData },
+    { data: latestMesRow },
+  ] = await Promise.all([
+    hcQuery,
+    supabase
       .from("elofy_survey_standard")
-      .select("resposta")
-      .eq("id_pesquisa", latestEnpsMeta.id_pesquisa);
-
-    if (leader) {
-      enpsRespostasQuery = enpsRespostasQuery.eq("nome_gestor", leader);
-    } else if (scopedTeamIds && scopedTeamIds.length > 0) {
-      enpsRespostasQuery = enpsRespostasQuery.in("id_time", scopedTeamIds);
-    }
-
-    const { data: enpsRespostas } = await enpsRespostasQuery;
-
-    if (enpsRespostas && enpsRespostas.length > 0) {
-      const scores = enpsRespostas
-        .map((r) => parseFloat(r.resposta ?? ""))
-        .filter((n) => !isNaN(n));
-      if (scores.length > 0) {
-        enps = calcNPS(scores);
-        enpsRespondentes = scores.length;
-      }
-    }
-  }
-
-  // LNPS from survey_standard: mesma lógica do eNPS, pesquisa mais recente com "lnps" no nome
-  const { data: latestLnpsMeta } = await supabase
-    .from("elofy_survey_standard")
-    .select("id_pesquisa")
-    .ilike("nome_pesquisa", "%lnps%")
-    .order("data_envio_pesquisa", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  let lnps: number | null = null;
-  if (latestLnpsMeta?.id_pesquisa) {
-    let lnpsRespostasQuery = supabase
+      .select("id_pesquisa, data_envio_pesquisa")
+      .ilike("nome_pesquisa", "%enps%")
+      .order("data_envio_pesquisa", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
       .from("elofy_survey_standard")
-      .select("resposta")
-      .eq("id_pesquisa", latestLnpsMeta.id_pesquisa);
+      .select("id_pesquisa")
+      .ilike("nome_pesquisa", "%lnps%")
+      .order("data_envio_pesquisa", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    scopedTeamsQ,
+    acompanhadosQ,
+    supabase
+      .from("manual_img_indicadores")
+      .select("mes_referencia")
+      .order("mes_referencia", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
 
-    if (leader) {
-      lnpsRespostasQuery = lnpsRespostasQuery.eq("nome_gestor", leader);
-    } else if (scopedTeamIds && scopedTeamIds.length > 0) {
-      lnpsRespostasQuery = lnpsRespostasQuery.in("id_time", scopedTeamIds);
-    }
+  // Deriva valores intermediários do Round 1
+  const scopedTeamIds: string[] | null = areaFilter
+    ? (scopedTeamsList ?? []).map((t: { elofy_id: string }) => t.elofy_id).filter(Boolean)
+    : null;
+  const acompanhadosUserIds: string[] | null = (leader || (bp !== "geral" && bpAreas[bp as BPKey]))
+    ? (acompanhadosData ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean)
+    : null;
+  const latestMes = latestMesRow?.mes_referencia ?? null;
 
-    const { data: lnpsRespostas } = await lnpsRespostasQuery;
-
-    if (lnpsRespostas && lnpsRespostas.length > 0) {
-      const scores = lnpsRespostas
-        .map((r) => parseFloat(r.resposta ?? ""))
-        .filter((n) => !isNaN(n));
-      if (scores.length > 0) lnps = calcNPS(scores);
-    }
-  }
-
-  // Colaboradores acompanhados no mês (feedback OU 1:1)
+  // ── Round 2: queries que dependem dos resultados do Round 1 ────────────────
   const now = new Date();
   const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
-  // Determina os elofy_ids no escopo do filtro ativo
-  let acompanhadosUserIds: string[] | null = null;
-  if (leader) {
-    // Líder: liderados diretos por nome_gestor
-    const { data: liderados } = await excludeAdmins(
-      supabase.from("elofy_users").select("elofy_id").eq("nome_gestor", leader).eq("status", "Ativo"),
-      "nome"
-    );
-    acompanhadosUserIds = (liderados ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean);
-  } else if (bp !== "geral" && bpAreas[bp as BPKey]) {
-    // BP: todos os usuários das áreas desse BP por nome_time (conjuntos disjuntos → sem double-count)
-    const { data: membros } = await excludeAdmins(
-      supabase.from("elofy_users").select("elofy_id").in("nome_time", bpAreas[bp as BPKey]!).eq("status", "Ativo"),
-      "nome"
-    );
-    acompanhadosUserIds = (membros ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean);
+  // Helper: aplica scope de líder ou BP nas respostas de survey (eNPS / LNPS)
+  // • Líder → filtra por nome_gestor; • BP → filtra por id_time; • Geral → sem filtro
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function applySurveyScope(q: any): any {
+    if (leader) return q.eq("nome_gestor", leader);
+    if (scopedTeamIds && scopedTeamIds.length > 0) return q.in("id_time", scopedTeamIds);
+    return q;
   }
 
   let fbQuery = supabase
@@ -373,7 +340,6 @@ export default async function HomePage({
     .select("id_usuario_destinatario")
     .gte("data_feedback", `${monthStr}-01`);
   if (acompanhadosUserIds) fbQuery = fbQuery.in("id_usuario_destinatario", acompanhadosUserIds);
-  const { data: fbRows } = await fbQuery;
 
   let ooQuery = supabase
     .from("elofy_one_one")
@@ -381,7 +347,47 @@ export default async function HomePage({
     .gte("data", `${monthStr}-01`)
     .eq("situacao", "Realizada");   // só 1:1s efetivamente realizadas (alinha com módulo feedback)
   if (acompanhadosUserIds) ooQuery = ooQuery.in("id_usuario_convidado", acompanhadosUserIds);
-  const { data: ooRows } = await ooQuery;
+
+  const [
+    { data: enpsRespostas },
+    { data: lnpsRespostas },
+    { data: fbRows },
+    { data: ooRows },
+  ] = await Promise.all([
+    latestEnpsMeta?.id_pesquisa
+      ? applySurveyScope(
+          supabase.from("elofy_survey_standard").select("resposta").eq("id_pesquisa", latestEnpsMeta.id_pesquisa)
+        )
+      : Promise.resolve({ data: [] as { resposta: string }[] }),
+    latestLnpsMeta?.id_pesquisa
+      ? applySurveyScope(
+          supabase.from("elofy_survey_standard").select("resposta").eq("id_pesquisa", latestLnpsMeta.id_pesquisa)
+        )
+      : Promise.resolve({ data: [] as { resposta: string }[] }),
+    fbQuery,
+    ooQuery,
+  ]);
+
+  // Calcula eNPS, LNPS e acompanhados a partir dos resultados
+  let enps: number | null = null;
+  let enpsRespondentes = 0;
+  if (enpsRespostas && enpsRespostas.length > 0) {
+    const scores = (enpsRespostas as { resposta: string }[])
+      .map((r) => parseFloat(r.resposta ?? ""))
+      .filter((n) => !isNaN(n));
+    if (scores.length > 0) {
+      enps = calcNPS(scores);
+      enpsRespondentes = scores.length;
+    }
+  }
+
+  let lnps: number | null = null;
+  if (lnpsRespostas && lnpsRespostas.length > 0) {
+    const scores = (lnpsRespostas as { resposta: string }[])
+      .map((r) => parseFloat(r.resposta ?? ""))
+      .filter((n) => !isNaN(n));
+    if (scores.length > 0) lnps = calcNPS(scores);
+  }
 
   const acompanhados = new Set([
     ...(fbRows ?? []).map((r) => r.id_usuario_destinatario),
@@ -389,14 +395,7 @@ export default async function HomePage({
   ].filter(Boolean)).size;
 
   // ── IMG — Índice de Maturidade de Gestão ─────────────────────────────────
-  // Mês de referência mais recente dos indicadores manuais
-  const { data: latestMesRow } = await supabase
-    .from("manual_img_indicadores")
-    .select("mes_referencia")
-    .order("mes_referencia", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  const latestMes = latestMesRow?.mes_referencia ?? null;
+  // latestMes já disponível do Round 1 (latestMesRow acima)
 
   // Users no escopo — necessário para montar o mgrMap por liderados
   let imgUsersQ = excludeAdmins(

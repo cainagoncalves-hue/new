@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import ISOLeaderList, { type ISOLeaderData, type ISOQuestion } from "./ISOLeaderList";
-import { getBPLeaders } from "@/lib/bp";
+import { getCachedBPLeaders } from "@/lib/bp";
 import PeriodSelect from "@/components/PeriodSelect";
 
 function formatMonthLabel(key: string): string {
@@ -40,7 +40,7 @@ export default async function ISOPage({
 }) {
   const { bp = "geral", leader = "", mes = "" } = await searchParams;
   const supabase = await createClient();
-  const bpLeadersAll = await getBPLeaders(supabase);
+  const bpLeadersAll = await getCachedBPLeaders();
 
   // ── Meses disponíveis para o filtro ──────────────────────────────────────────
   // Fonte primária: pesquisas LNPS (sempre existem; garantem que o filtro aparece)
