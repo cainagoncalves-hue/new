@@ -3,7 +3,7 @@
  * Substitui as constantes BP_AREAS e LEADER_DATA hardcoded nas páginas.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { unstable_cache } from "next/cache";
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
 export type BPKey = "caina" | "izabela" | "renata_paula";
@@ -64,24 +64,21 @@ export async function getBPLeaders(
   return (data ?? []) as { nome_gestor: string; bp: BPKey }[];
 }
 
-// ── Versões com cache cross-request (TTL 5 min) ─────────────────────────────
-// Seguro cachear globalmente: RLS em bp_area_map e bp_gestor_map é USING (true)
-// — todos os usuários autenticados veem os mesmos dados.
+// ── Versões com deduplicação dentro de um mesmo request ─────────────────────
+// React cache() deduplicates calls within a single server render tree.
+// Garante que layout + página não disparem dois roundtrips separados para
+// os mesmos dados de bp_area_map / bp_gestor_map.
 
-export const getCachedBPAreas = unstable_cache(
+export const getCachedBPAreas = cache(
   async (): Promise<Record<BPKey, string[] | null>> => {
     const supabase = await createClient();
     return getBPAreas(supabase);
-  },
-  ["bp-areas"],
-  { revalidate: 300 },
+  }
 );
 
-export const getCachedBPLeaders = unstable_cache(
+export const getCachedBPLeaders = cache(
   async (): Promise<{ nome_gestor: string; bp: BPKey }[]> => {
     const supabase = await createClient();
     return getBPLeaders(supabase);
-  },
-  ["bp-leaders"],
-  { revalidate: 300 },
+  }
 );
