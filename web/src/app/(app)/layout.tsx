@@ -27,7 +27,7 @@ async function Topbar() {
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
         {/* Logo SIEG */}
         <img
-          src="/logo-sieg.svg"
+          src="/logo-sieg.png"
           alt="SIEG"
           style={{ height: 36, width: "auto", display: "block" }}
         />
@@ -139,7 +139,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <img
-              src="/logo-sieg.svg"
+              src="/logo-sieg.png"
               alt="SIEG"
               style={{ height: 24, width: "auto", display: "block", opacity: 0.7 }}
             />
