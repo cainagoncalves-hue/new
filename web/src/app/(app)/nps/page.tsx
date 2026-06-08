@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { getCachedBPAreas, type BPKey } from "@/lib/bp";
+import { getLeaderSubtree } from "@/lib/hierarchy";
 
 function calcNPS(scores: number[]) {
   if (!scores.length) return null;
@@ -194,6 +195,9 @@ export default async function NPSPage({
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];
 
+  // Expande o filtro de líder para toda a hierarquia abaixo dele
+  const subtreeLeaders = leader ? await getLeaderSubtree(supabase, leader) : null;
+
   // Lookup team IDs for BP-scoped filtering
   let scopedTeamIds: string[] | null = null;
   if (areaFilter) {
@@ -262,7 +266,11 @@ export default async function NPSPage({
   // Busca respostas com escopo (líder → nome_gestor / BP → id_time / geral → sem filtro)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function applyScope(q: any): any {
-    if (leader) return q.eq("nome_gestor", leader);
+    if (subtreeLeaders) {
+      return subtreeLeaders.length === 1
+        ? q.eq("nome_gestor", subtreeLeaders[0])
+        : q.in("nome_gestor", subtreeLeaders);
+    }
     if (scopedTeamIds && scopedTeamIds.length > 0) return q.in("id_time", scopedTeamIds);
     return q;
   }

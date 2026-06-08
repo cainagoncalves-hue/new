@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { excludeAdmins } from "@/lib/adminAccounts";
 import { getCachedBPAreas, type BPKey } from "@/lib/bp";
+import { getLeaderSubtree } from "@/lib/hierarchy";
 import PeriodSelect from "@/components/PeriodSelect";
 
 // ── Utilitários visuais ────────────────────────────────────────────────────────
@@ -39,12 +40,6 @@ function imgBadge(pct: number): { bg: string; color: string } {
   if (pct >= 100) return { bg: "var(--green-bg)", color: "var(--green-text)" };
   if (pct >= 70) return { bg: "var(--amber-bg)", color: "var(--amber-text)" };
   return { bg: "var(--red-bg)", color: "var(--red-text)" };
-}
-
-function shortName(name: string) {
-  const parts = name.split(" ");
-  if (parts.length <= 2) return name;
-  return `${parts[0]} ${parts[parts.length - 1]}`;
 }
 
 function initials(name: string) {
@@ -119,6 +114,9 @@ export default async function IMGPage({
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];
 
+  // Expande o filtro de líder para toda a hierarquia abaixo dele
+  const subtreeLeaders = leader ? await getLeaderSubtree(supabase, leader) : null;
+
   // ── Meses disponíveis para o filtro de período ──────────────────────────────
   const { data: mesRows } = await supabase
     .from("manual_img_indicadores")
@@ -150,7 +148,11 @@ export default async function IMGPage({
     "nome"
   );
   if (areaFilter) usersQ = usersQ.in("nome_time", areaFilter);
-  if (leader)     usersQ = usersQ.eq("nome_gestor", leader);
+  if (subtreeLeaders) {
+    usersQ = subtreeLeaders.length === 1
+      ? usersQ.eq("nome_gestor", subtreeLeaders[0])
+      : usersQ.in("nome_gestor", subtreeLeaders);
+  }
   const { data: users } = await usersQ;
 
   const allUserIds = (users as Array<{ elofy_id: string }> ?? [])
@@ -547,7 +549,7 @@ export default async function IMGPage({
                     {/* Nome + área */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-900)" }}>
-                        {shortName(l.name)}
+                        {l.name}
                       </div>
                       <div style={{ fontSize: 11, color: "var(--text-300)", marginTop: 2 }}>
                         {l.area} · {l.headcount} pessoa{l.headcount !== 1 ? "s" : ""}

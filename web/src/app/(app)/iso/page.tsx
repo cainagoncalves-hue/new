@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import ISOLeaderList, { type ISOLeaderData, type ISOQuestion } from "./ISOLeaderList";
 import { getCachedBPLeaders } from "@/lib/bp";
+import { getLeaderSubtree } from "@/lib/hierarchy";
 import PeriodSelect from "@/components/PeriodSelect";
 
 function formatMonthLabel(key: string): string {
@@ -41,6 +42,10 @@ export default async function ISOPage({
   const { bp = "geral", leader = "", mes = "" } = await searchParams;
   const supabase = await createClient();
   const bpLeadersAll = await getCachedBPLeaders();
+
+  // Expande o filtro de líder para toda a hierarquia abaixo dele
+  const subtreeLeaders = leader ? await getLeaderSubtree(supabase, leader) : null;
+  const subtreeSet = subtreeLeaders ? new Set(subtreeLeaders.map(s => s.trim())) : null;
 
   // ── Meses disponíveis para o filtro ──────────────────────────────────────────
   // Fonte primária: pesquisas LNPS (sempre existem; garantem que o filtro aparece)
@@ -137,7 +142,7 @@ export default async function ISOPage({
     : null;
   const leaders = allLeaders
     .filter((l) => !bpGestorSet || bpGestorSet.has(l.name.trim()))
-    .filter((l) => !leader || l.name === leader);
+    .filter((l) => !subtreeSet || subtreeSet.has(l.name.trim()));
 
   const lnpsDate = rows?.[0]?.lnps_date ?? null;
   const isbeLatestDate = rows?.[0]?.isbe_mes ?? null;

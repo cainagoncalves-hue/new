@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { excludeAdmins } from "@/lib/adminAccounts";
 import { getCachedBPAreas, type BPKey } from "@/lib/bp";
+import { getLeaderSubtree } from "@/lib/hierarchy";
 
 
 function calcNPS(scores: number[]): number | null {
@@ -252,13 +253,20 @@ export default async function HomePage({
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];
 
-  // Headcount — filtra por times do BP ou por liderados diretos do gestor
+  // Expande o filtro de líder para toda a hierarquia abaixo dele
+  const subtreeLeaders = leader ? await getLeaderSubtree(supabase, leader) : null;
+
+  // Headcount — filtra por times do BP ou pela hierarquia do gestor
   let hcQuery = excludeAdmins(
     supabase.from("elofy_users").select("elofy_id", { count: "exact", head: true }).eq("status", "Ativo"),
     "nome"
   );
   if (areaFilter) hcQuery = hcQuery.in("nome_time", areaFilter);
-  if (leader)     hcQuery = hcQuery.eq("nome_gestor", leader);
+  if (subtreeLeaders) {
+    hcQuery = subtreeLeaders.length === 1
+      ? hcQuery.eq("nome_gestor", subtreeLeaders[0])
+      : hcQuery.in("nome_gestor", subtreeLeaders);
+  }
 
   // ── Round 1: queries independentes — disparam em paralelo ──────────────────
   // Queries condicionais para teams (scope eNPS/LNPS) e para o KPI Acompanhados
@@ -268,17 +276,24 @@ export default async function HomePage({
     : Promise.resolve({ data: null });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const acompanhadosQ: any = leader
-    ? excludeAdmins(
-        supabase.from("elofy_users").select("elofy_id").eq("nome_gestor", leader).eq("status", "Ativo"),
-        "nome"
-      )
-    : bp !== "geral" && bpAreas[bp as BPKey]
-      ? excludeAdmins(
-          supabase.from("elofy_users").select("elofy_id").in("nome_time", bpAreas[bp as BPKey]!).eq("status", "Ativo"),
-          "nome"
-        )
-      : Promise.resolve({ data: null });
+  let acompanhadosQ: any;
+  if (subtreeLeaders) {
+    let q = excludeAdmins(
+      supabase.from("elofy_users").select("elofy_id").eq("status", "Ativo"),
+      "nome"
+    );
+    q = subtreeLeaders.length === 1
+      ? q.eq("nome_gestor", subtreeLeaders[0])
+      : q.in("nome_gestor", subtreeLeaders);
+    acompanhadosQ = q;
+  } else if (bp !== "geral" && bpAreas[bp as BPKey]) {
+    acompanhadosQ = excludeAdmins(
+      supabase.from("elofy_users").select("elofy_id").in("nome_time", bpAreas[bp as BPKey]!).eq("status", "Ativo"),
+      "nome"
+    );
+  } else {
+    acompanhadosQ = Promise.resolve({ data: null });
+  }
 
   const [
     { count: hc },
@@ -317,7 +332,7 @@ export default async function HomePage({
   const scopedTeamIds: string[] | null = areaFilter
     ? (scopedTeamsList ?? []).map((t: { elofy_id: string }) => t.elofy_id).filter(Boolean)
     : null;
-  const acompanhadosUserIds: string[] | null = (leader || (bp !== "geral" && bpAreas[bp as BPKey]))
+  const acompanhadosUserIds: string[] | null = (subtreeLeaders || (bp !== "geral" && bpAreas[bp as BPKey]))
     ? (acompanhadosData ?? []).map((u: { elofy_id: string }) => u.elofy_id).filter(Boolean)
     : null;
   const latestMes = latestMesRow?.mes_referencia ?? null;
@@ -326,11 +341,15 @@ export default async function HomePage({
   const now = new Date();
   const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
-  // Helper: aplica scope de líder ou BP nas respostas de survey (eNPS / LNPS)
-  // • Líder → filtra por nome_gestor; • BP → filtra por id_time; • Geral → sem filtro
+  // Helper: aplica scope de líder (subtree) ou BP nas respostas de survey (eNPS / LNPS)
+  // • Líder → filtra por nome_gestor em todo o subtree; • BP → filtra por id_time; • Geral → sem filtro
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function applySurveyScope(q: any): any {
-    if (leader) return q.eq("nome_gestor", leader);
+    if (subtreeLeaders) {
+      return subtreeLeaders.length === 1
+        ? q.eq("nome_gestor", subtreeLeaders[0])
+        : q.in("nome_gestor", subtreeLeaders);
+    }
     if (scopedTeamIds && scopedTeamIds.length > 0) return q.in("id_time", scopedTeamIds);
     return q;
   }
@@ -405,7 +424,11 @@ export default async function HomePage({
     "nome"
   );
   if (areaFilter) imgUsersQ = imgUsersQ.in("nome_time", areaFilter);
-  if (leader)     imgUsersQ = imgUsersQ.eq("nome_gestor", leader);
+  if (subtreeLeaders) {
+    imgUsersQ = subtreeLeaders.length === 1
+      ? imgUsersQ.eq("nome_gestor", subtreeLeaders[0])
+      : imgUsersQ.in("nome_gestor", subtreeLeaders);
+  }
 
   // Indicadores manuais do mês mais recente
   let manualQ = supabase

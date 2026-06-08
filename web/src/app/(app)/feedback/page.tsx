@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { excludeAdmins } from "@/lib/adminAccounts";
 import { getCachedBPAreas, type BPKey } from "@/lib/bp";
+import { getLeaderSubtree } from "@/lib/hierarchy";
 import PeriodSelect from "@/components/PeriodSelect";
 
 function formatMonthLabel(key: string): string {
@@ -60,6 +61,9 @@ export default async function FeedbackPage({
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];
 
+  // Expande o filtro de líder para toda a hierarquia abaixo dele
+  const subtreeLeaders = leader ? await getLeaderSubtree(supabase, leader) : null;
+
   // Meses disponíveis derivados da mesma fonte do IMG (manual_img_indicadores)
   // para garantir consistência entre os dois módulos
   const { data: mesRows } = await supabase
@@ -90,7 +94,11 @@ export default async function FeedbackPage({
     "nome"
   );
   if (areaFilter) usersQ = usersQ.in("nome_time", areaFilter);
-  if (leader) usersQ = usersQ.eq("nome_gestor", leader);
+  if (subtreeLeaders) {
+    usersQ = subtreeLeaders.length === 1
+      ? usersQ.eq("nome_gestor", subtreeLeaders[0])
+      : usersQ.in("nome_gestor", subtreeLeaders);
+  }
   const { data: users } = await usersQ;
 
   // IDs de todos os usuários ativos no escopo (necessário para o RLS de elofy_feedbacks e elofy_one_one)

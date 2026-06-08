@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { excludeAdmins } from "@/lib/adminAccounts";
 import { getCachedBPAreas, type BPKey } from "@/lib/bp";
+import { getLeaderSubtree } from "@/lib/hierarchy";
 
 // 9-box quadrant labels
 const NINEBOX_LABELS: Record<string, string> = {
@@ -58,13 +59,20 @@ export default async function TalentosPage({
   let areaFilter: string[] | null = null;
   if (bp !== "geral" && bpAreas[bp as BPKey]) areaFilter = bpAreas[bp as BPKey];
 
+  // Expande o filtro de líder para toda a hierarquia abaixo dele
+  const subtreeLeaders = leader ? await getLeaderSubtree(supabase, leader) : null;
+
   // Fetch 9-box data from succession planning (elofy_sucessao)
   let nineQ = excludeAdmins(
     supabase.from("elofy_sucessao").select("nome_colaborador, nome_time, nome_cargo, resultado_desempenho, resultado_potencial, tipo_mapeamento"),
     "nome_colaborador"
   );
   if (areaFilter) nineQ = nineQ.in("nome_time", areaFilter);
-  if (leader) nineQ = nineQ.eq("nome_gestor", leader);
+  if (subtreeLeaders) {
+    nineQ = subtreeLeaders.length === 1
+      ? nineQ.eq("nome_gestor", subtreeLeaders[0])
+      : nineQ.in("nome_gestor", subtreeLeaders);
+  }
 
   // Executa 9-box e PDI em paralelo (queries independentes)
   const [{ data: nineRows }, { data: pdiRows }] = await Promise.all([
