@@ -25,18 +25,12 @@ async function Topbar() {
       boxShadow: "var(--sh)",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-        <div style={{
-          background: "var(--brand)",
-          color: "#fff",
-          fontFamily: "'Syne', sans-serif",
-          fontWeight: 800,
-          fontSize: 14,
-          letterSpacing: "0.12em",
-          padding: "5px 12px",
-          borderRadius: 6,
-        }}>
-          SIEG
-        </div>
+        {/* Logo SIEG */}
+        <img
+          src="/logo-sieg.png"
+          alt="SIEG"
+          style={{ height: 36, width: "auto", display: "block" }}
+        />
         <div>
           <div style={{
             fontFamily: "'Syne', sans-serif",
@@ -44,7 +38,7 @@ async function Topbar() {
             fontWeight: 700,
             color: "var(--text-900)",
           }}>
-            Sistema BP · Gente &amp; Cultura
+            People Plan · Gente &amp; Cultura
           </div>
           <div style={{ fontSize: 11, color: "var(--text-300)", marginTop: 1, letterSpacing: "0.04em" }}>
             Check-in de Metas · Business Partners
@@ -144,18 +138,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           marginTop: 60,
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{
-              background: "var(--brand)",
-              color: "#fff",
-              fontFamily: "'Syne', sans-serif",
-              fontWeight: 800,
-              fontSize: 11,
-              letterSpacing: "0.1em",
-              padding: "3px 8px",
-              borderRadius: 4,
-            }}>SIEG</span>
+            <img
+              src="/logo-sieg.png"
+              alt="SIEG"
+              style={{ height: 24, width: "auto", display: "block", opacity: 0.7 }}
+            />
             <span style={{ fontSize: 12, color: "var(--text-300)" }}>
-              Gente &amp; Cultura · Sistema BP · Dados via Elofy
+              Gente &amp; Cultura · People Plan · Dados via Elofy
             </span>
           </div>
           <span style={{ fontSize: 12, color: "var(--text-300)" }}>

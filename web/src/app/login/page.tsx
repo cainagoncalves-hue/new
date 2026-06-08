@@ -72,7 +72,7 @@ export default function LoginPage() {
             color: "var(--text-900)",
             marginBottom: 4,
           }}>
-            Sistema BP
+            People Plan
           </h1>
           <p style={{ color: "var(--text-500)", fontSize: 13 }}>SIEG Gente &amp; Cultura</p>
         </div>
