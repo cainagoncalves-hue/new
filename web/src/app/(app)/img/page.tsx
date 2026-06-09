@@ -180,19 +180,12 @@ export default async function IMGPage({
     .eq("situacao", "Realizada");   // só 1:1s efetivamente realizadas (alinha com módulo feedback)
   if (allUserIds.length > 0) ooQ = ooQ.in("id_usuario_convidado", allUserIds);
 
-  let krQ = supabase
-    .from("elofy_key_results")
-    .select("id_responsavel, progresso")
-    .eq("ativo", "true");
-  if (allUserIds.length > 0) krQ = krQ.in("id_responsavel", allUserIds);
-
   const [
     { data: fbRows },
     { data: ooRows },
     { data: isoRows },
     { data: talentos },
     { data: manualIndicadores },
-    { data: keyResults },
   ] = await Promise.all([
     fbQ,
     ooQ,
@@ -201,7 +194,6 @@ export default async function IMGPage({
     supabase.rpc("get_iso_scores", { p_mes: activeMes || null }),
     supabase.from("manual_talentos_chave").select("nome_gestor, status"),
     manualQ,
-    krQ,
   ]);
 
   // ── Lookups auxiliares ───────────────────────────────────────────────────────
@@ -236,14 +228,6 @@ export default async function IMGPage({
     const mgr = (m.nome_gestor ?? "").trim(); if (!mgr) continue;
     if (!manualByLeader[mgr]) manualByLeader[mgr] = {};
     manualByLeader[mgr][m.indicador] = Number(m.valor_pct);
-  }
-
-  // KRs por colaborador (elofy_id → progressos)
-  const krByUser: Record<string, number[]> = {};
-  for (const kr of (keyResults as Array<{ id_responsavel: string; progresso: string }> ?? [])) {
-    const uid = kr.id_responsavel ?? ""; if (!uid) continue;
-    const p = parseFloat(kr.progresso ?? "");
-    if (!isNaN(p)) { (krByUser[uid] ??= []).push(p); }
   }
 
   // mgrMap: líder → { area, reports[] } — chave trimada
@@ -303,17 +287,9 @@ export default async function IMGPage({
     const finScore = finMax > 0 ? Math.round((finPts / finMax) * 100) : 0;
 
     // ── Pilar Resultados (30%) ───────────────────────────────────────────────
-    const reportsWithKRs = reports.filter(r => (krByUser[r.elofy_id]?.length ?? 0) > 0);
-    let atingPct: number | null = null;
-    let atingPts: number | null = null;
-    if (reportsWithKRs.length > 0) {
-      const atingiram = reportsWithKRs.filter(r => {
-        const krs = krByUser[r.elofy_id] ?? [];
-        return krs.reduce((a, b) => a + b, 0) / krs.length >= 100;
-      }).length;
-      atingPct = Math.round((atingiram / reportsWithKRs.length) * 100);
-      atingPts = scoreAtingimento(atingPct);
-    }
+    // Atingimento de Metas vem do preenchimento manual (manual_img_indicadores)
+    const atingPct = "atingimento_metas" in man ? man.atingimento_metas : null;
+    const atingPts = atingPct !== null ? scoreAtingimento(atingPct) : null;
     const resScore = atingPts !== null ? Math.round((atingPts / 12) * 100) : 0;
 
     // ── IMG Final ────────────────────────────────────────────────────────────
@@ -420,11 +396,11 @@ export default async function IMGPage({
         score: resScore,
         indicators: [
           {
-            label: "Atingimento de Metas (≥80% do time)",
+            label: "Atingimento de Metas",
             value: atingPct,
             displayValue: atingPct !== null ? `${atingPct}%` : "—",
             pts: atingPts,
-            source: "Elofy",
+            source: "Manual",
           },
         ],
       },

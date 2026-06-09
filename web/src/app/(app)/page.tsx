@@ -449,14 +449,9 @@ export default async function HomePage({
     manualQ,
   ]);
 
-  // Key results dos liderados (atingimento de metas)
+  // IDs dos liderados no escopo — usados para filtrar feedbacks e 1:1s do IMG
   const allSubordinateIds = (imgUsers as Array<{ elofy_id: string }> ?? [])
     .map(u => u.elofy_id).filter(Boolean);
-  let krQ = supabase
-    .from("elofy_key_results")
-    .select("id_responsavel, progresso")
-    .eq("ativo", "true");
-  if (allSubordinateIds.length > 0) krQ = krQ.in("id_responsavel", allSubordinateIds);
 
   // Feedbacks e 1:1s do mês de referência do IMG (latestMes), não do mês corrente
   const imgMesKey = latestMes?.slice(0, 7) ?? "";
@@ -479,8 +474,8 @@ export default async function HomePage({
     .eq("situacao", "Realizada");
   if (allSubordinateIds.length > 0) imgOoQ = imgOoQ.in("id_usuario_convidado", allSubordinateIds);
 
-  const [{ data: keyResults }, { data: imgFbRows }, { data: imgOoRows }] = await Promise.all([
-    krQ, imgFbQ, imgOoQ,
+  const [{ data: imgFbRows }, { data: imgOoRows }] = await Promise.all([
+    imgFbQ, imgOoQ,
   ]);
 
   // Lookups por líder — .trim() em todas as chaves para evitar mismatch
@@ -503,13 +498,6 @@ export default async function HomePage({
     const mgr = (m.nome_gestor ?? "").trim(); if (!mgr) continue;
     if (!manualByLeader[mgr]) manualByLeader[mgr] = {};
     manualByLeader[mgr][m.indicador] = Number(m.valor_pct);
-  }
-
-  const krByUser: Record<string, number[]> = {};
-  for (const kr of (keyResults as Array<{ id_responsavel: string; progresso: string }> ?? [])) {
-    const uid = kr.id_responsavel ?? ""; if (!uid) continue;
-    const p = parseFloat(kr.progresso ?? "");
-    if (!isNaN(p)) { (krByUser[uid] ??= []).push(p); }
   }
 
   // mgrMap: leader → liderados diretos (chave trimada)
@@ -562,16 +550,10 @@ export default async function HomePage({
     const finMax = [hcPts, custoPts].filter(v => v !== null).length * 12;
     const financeiro = finMax > 0 ? finPts / finMax : 0;
 
-    // Resultados (30%): Atingimento de metas via elofy_key_results
-    const reportsWithKRs = reports.filter(r => (krByUser[r.elofy_id]?.length ?? 0) > 0);
-    let atingPts: number | null = null;
-    if (reportsWithKRs.length > 0) {
-      const atingiram = reportsWithKRs.filter(r => {
-        const krs = krByUser[r.elofy_id] ?? [];
-        return krs.reduce((a, b) => a + b, 0) / krs.length >= 100;
-      }).length;
-      atingPts = scoreAtingimento(Math.round((atingiram / reportsWithKRs.length) * 100));
-    }
+    // Resultados (30%): Atingimento de metas via preenchimento manual
+    const atingPts = "atingimento_metas" in man
+      ? scoreAtingimento(man.atingimento_metas)
+      : null;
     const resultados = atingPts !== null ? atingPts / 12 : 0;
 
     // Todos os líderes com liderados entram na média — dados parciais geram score parcial
