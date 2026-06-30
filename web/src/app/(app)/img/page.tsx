@@ -414,6 +414,14 @@ export default async function IMGPage({
     ? Math.round(leaders.reduce((s, l) => s + l.imgScore, 0) / leaders.length)
     : null;
 
+  const total = leaders.length;
+  const basicoCount        = leaders.filter(l => l.imgScore < 70).length;
+  const intermediarioCount = leaders.filter(l => l.imgScore >= 70 && l.imgScore < 100).length;
+  const excelenciaCount    = leaders.filter(l => l.imgScore >= 100).length;
+  const basicoPct        = total ? Math.round((basicoCount        / total) * 100) : 0;
+  const intermediarioPct = total ? Math.round((intermediarioCount / total) * 100) : 0;
+  const excelenciaPct    = total ? Math.round((excelenciaCount    / total) * 100) : 0;
+
   const bpLabels: Record<string, string> = {
     caina: "Cainã · Comercial & Marketing",
     izabela: "Izabela · CX/CS & Financeiro",
@@ -488,6 +496,55 @@ export default async function IMGPage({
       </div>
 
       <PeriodSelect periods={periods} activeMes={activeMes} />
+
+      {/* ── Distribuição de níveis ──────────────────────────────────────────── */}
+      {total > 0 && (
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 12,
+          marginBottom: 24,
+        }}>
+          {([
+            { label: "Básico",        pct: basicoPct,        count: basicoCount,        bg: "var(--red-bg)",    color: "var(--red-text)",    bar: "var(--red)"    },
+            { label: "Intermediário", pct: intermediarioPct, count: intermediarioCount, bg: "var(--amber-bg)", color: "var(--amber-text)", bar: "var(--amber)" },
+            { label: "Excelência",    pct: excelenciaPct,    count: excelenciaCount,    bg: "var(--green-bg)", color: "var(--green-text)", bar: "var(--green)" },
+          ] as const).map(({ label, pct, count, bg, color, bar }) => (
+            <div key={label} style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--r)",
+              padding: "18px 22px",
+              boxShadow: "var(--sh)",
+              position: "relative" as const,
+              overflow: "hidden",
+            }}>
+              {/* barra de progresso no fundo */}
+              <div style={{
+                position: "absolute" as const, inset: 0, right: `${100 - pct}%`,
+                background: bg, opacity: 0.5,
+              }} />
+              <div style={{ position: "relative" as const }}>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--text-300)", marginBottom: 4 }}>
+                  {label}
+                </div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                  <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 34, fontWeight: 800, color, lineHeight: 1 }}>
+                    {pct}%
+                  </span>
+                  <span style={{ fontSize: 12, color: "var(--text-300)" }}>
+                    {count} líder{count !== 1 ? "es" : ""}
+                  </span>
+                </div>
+                {/* mini barra */}
+                <div style={{ marginTop: 10, height: 4, borderRadius: 2, background: "var(--border)" }}>
+                  <div style={{ height: "100%", borderRadius: 2, width: `${pct}%`, background: bar, transition: "width 0.3s ease" }} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* ── Lista de líderes ────────────────────────────────────────────────── */}
       {leaders.length === 0 ? (
