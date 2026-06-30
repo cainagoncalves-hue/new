@@ -357,14 +357,18 @@ export default async function HomePage({
   let fbQuery = supabase
     .from("elofy_feedbacks")
     .select("id_usuario_destinatario")
-    .gte("data_feedback", `${monthStr}-01`);
+    .gte("data_feedback", `${monthStr}-01`)
+    .order("id_usuario_destinatario", { ascending: true })
+    .limit(9999);
   if (acompanhadosUserIds) fbQuery = fbQuery.in("id_usuario_destinatario", acompanhadosUserIds);
 
   let ooQuery = supabase
     .from("elofy_one_one")
     .select("id_usuario_convidado")
     .gte("data", `${monthStr}-01`)
-    .eq("situacao", "Realizada");   // só 1:1s efetivamente realizadas (alinha com módulo feedback)
+    .eq("situacao", "Realizada")   // só 1:1s efetivamente realizadas (alinha com módulo feedback)
+    .order("id_usuario_convidado", { ascending: true })
+    .limit(9999);
   if (acompanhadosUserIds) ooQuery = ooQuery.in("id_usuario_convidado", acompanhadosUserIds);
 
   const [
@@ -445,7 +449,7 @@ export default async function HomePage({
   ] = await Promise.all([
     imgUsersQ,
     supabase.rpc("get_iso_scores", { p_mes: latestMes?.slice(0, 7) ?? null }),
-    supabase.from("manual_talentos_chave").select("nome_gestor, status"),
+    supabase.from("manual_talentos_chave").select("nome_gestor, status").limit(9999),
     manualQ,
   ]);
 
@@ -464,14 +468,18 @@ export default async function HomePage({
     .from("elofy_feedbacks")
     .select("id_usuario_destinatario")
     .gte("data_feedback", imgMesStart)
-    .lt("data_feedback", imgMesEndDate);
+    .lt("data_feedback", imgMesEndDate)
+    .order("id_usuario_destinatario", { ascending: true })
+    .limit(9999);
   if (allSubordinateIds.length > 0) imgFbQ = imgFbQ.in("id_usuario_destinatario", allSubordinateIds);
   let imgOoQ = supabase
     .from("elofy_one_one")
     .select("id_usuario_convidado")
     .gte("data", imgMesStart)
     .lt("data", imgMesEndDate)
-    .eq("situacao", "Realizada");
+    .eq("situacao", "Realizada")
+    .order("id_usuario_convidado", { ascending: true })
+    .limit(9999);
   if (allSubordinateIds.length > 0) imgOoQ = imgOoQ.in("id_usuario_convidado", allSubordinateIds);
 
   const [{ data: imgFbRows }, { data: imgOoRows }] = await Promise.all([

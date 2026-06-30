@@ -118,18 +118,13 @@ export default async function IMGPage({
   const subtreeLeaders = leader ? await getLeaderSubtree(supabase, leader) : null;
 
   // ── Meses disponíveis para o filtro de período ──────────────────────────────
-  const { data: mesRows } = await supabase
-    .from("manual_img_indicadores")
-    .select("mes_referencia")
-    .not("mes_referencia", "is", null)
-    .order("mes_referencia", { ascending: false })
-    .limit(1000);
+  // Inclui meses com indicadores manuais OU feedback/1:1 já registrados —
+  // não só os meses com upload manual fechado (ver migration 034).
+  const { data: mesRows } = await supabase.rpc("get_img_available_months");
 
   const mesSet = new Set<string>();
-  for (const row of mesRows ?? []) {
-    // mes_referencia é date → vem como "YYYY-MM-DD"; normaliza para "YYYY-MM"
-    const key = (row.mes_referencia as string)?.slice(0, 7);
-    if (key) mesSet.add(key);
+  for (const row of (mesRows as Array<{ mes_key: string }> ?? [])) {
+    if (row.mes_key) mesSet.add(row.mes_key);
   }
   const periods = [...mesSet]
     .sort((a, b) => b.localeCompare(a))
@@ -165,11 +160,15 @@ export default async function IMGPage({
   // mes_referencia é date → precisa do formato YYYY-MM-DD
   if (activeMes) manualQ = manualQ.eq("mes_referencia", `${activeMes}-01`);
 
+  // ORDER BY + limit explícito: evita que o PostgREST retorne subconjuntos
+  // não-determinísticos quando há mais de max_rows linhas na query sem ordenação.
   let fbQ = supabase
     .from("elofy_feedbacks")
     .select("id_usuario_destinatario")
     .gte("data_feedback", mesStart)
-    .lt("data_feedback", mesEnd);
+    .lt("data_feedback", mesEnd)
+    .order("id_usuario_destinatario", { ascending: true })
+    .limit(9999);
   if (allUserIds.length > 0) fbQ = fbQ.in("id_usuario_destinatario", allUserIds);
 
   let ooQ = supabase
@@ -177,7 +176,9 @@ export default async function IMGPage({
     .select("id_usuario_convidado")
     .gte("data", mesStart)
     .lt("data", mesEnd)
-    .eq("situacao", "Realizada");   // só 1:1s efetivamente realizadas (alinha com módulo feedback)
+    .eq("situacao", "Realizada")   // só 1:1s efetivamente realizadas (alinha com módulo feedback)
+    .order("id_usuario_convidado", { ascending: true })
+    .limit(9999);
   if (allUserIds.length > 0) ooQ = ooQ.in("id_usuario_convidado", allUserIds);
 
   const [
@@ -192,7 +193,7 @@ export default async function IMGPage({
     // Passa o mês de referência ao RPC para que LNPS, ISBE, Turnover e CID F
     // sejam calculados em relação ao período selecionado, não ao mais recente.
     supabase.rpc("get_iso_scores", { p_mes: activeMes || null }),
-    supabase.from("manual_talentos_chave").select("nome_gestor, status"),
+    supabase.from("manual_talentos_chave").select("nome_gestor, status").limit(9999),
     manualQ,
   ]);
 
