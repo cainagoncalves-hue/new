@@ -47,17 +47,6 @@ async function Topbar() {
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <span style={{
-          background: "var(--brand-pale)",
-          color: "var(--brand)",
-          fontSize: 12,
-          fontWeight: 600,
-          padding: "5px 14px",
-          borderRadius: 20,
-          border: "1px solid rgba(109,40,217,.15)",
-        }}>
-          1º Trimestre 2026
-        </span>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{
             width: 32,
