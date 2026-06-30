@@ -508,7 +508,7 @@ export default async function IMGPage({
           {([
             { label: "Básico",        pct: basicoPct,        count: basicoCount,        bg: "var(--red-bg)",    color: "var(--red-text)",    bar: "var(--red)"    },
             { label: "Intermediário", pct: intermediarioPct, count: intermediarioCount, bg: "var(--amber-bg)", color: "var(--amber-text)", bar: "var(--amber)" },
-            { label: "Excelência",    pct: excelenciaPct,    count: excelenciaCount,    bg: "var(--green-bg)", color: "var(--green-text)", bar: "var(--green)" },
+            { label: "Avançado",      pct: excelenciaPct,    count: excelenciaCount,    bg: "var(--green-bg)", color: "var(--green-text)", bar: "var(--green)" },
           ] as const).map(({ label, pct, count, bg, color, bar }) => (
             <div key={label} style={{
               background: "var(--surface)",
