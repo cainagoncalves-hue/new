@@ -237,16 +237,16 @@ export default async function IMGPage({
   type Report = { nome: string; elofy_id: string };
   const mgrMap: Record<string, { area: string; reports: Report[] }> = {};
   const [mesYear, mesMonth] = activeMes ? activeMes.split("-").map(Number) : [0, 0];
-  const mesEndDate = mesYear ? new Date(mesYear, mesMonth, 1) : null; // primeiro dia do mês seguinte
+  const mesStartDate = mesYear ? new Date(mesYear, mesMonth - 1, 1) : null; // primeiro dia do mês de referência
 
   for (const u of (users as Array<{ nome: string; nome_gestor: string; nome_time: string; elofy_id: string; data_admissao: string }> ?? [])) {
     const mgr = (u.nome_gestor ?? "").trim();
     if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
 
-    // Filtra quem entrou depois do mês de referência
-    if (mesEndDate && u.data_admissao) {
+    // Filtra quem entrou no mês de referência ou depois
+    if (mesStartDate && u.data_admissao) {
       const [d, m, y] = u.data_admissao.split("/").map(Number);
-      if (d && m && y && new Date(y, m - 1, d) >= mesEndDate) continue;
+      if (d && m && y && new Date(y, m - 1, d) >= mesStartDate) continue;
     }
 
     if (!mgrMap[mgr]) mgrMap[mgr] = { area: u.nome_time ?? "", reports: [] };
