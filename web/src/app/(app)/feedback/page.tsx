@@ -64,20 +64,11 @@ export default async function FeedbackPage({
   // Expande o filtro de líder para toda a hierarquia abaixo dele
   const subtreeLeaders = leader ? await getLeaderSubtree(supabase, leader) : null;
 
-  // Meses disponíveis derivados da mesma fonte do IMG (manual_img_indicadores)
-  // para garantir consistência entre os dois módulos
-  const { data: mesRows } = await supabase
-    .from("manual_img_indicadores")
-    .select("mes_referencia")
-    .not("mes_referencia", "is", null)
-    .order("mes_referencia", { ascending: false })
-    .limit(1000);
-
+  // Meses disponíveis: inclui qualquer mês com feedback, 1:1 ou indicador manual
+  const { data: mesRows } = await supabase.rpc("get_img_available_months");
   const monthKeySet = new Set<string>();
-  for (const row of mesRows ?? []) {
-    // mes_referencia é date → "YYYY-MM-DD"; normaliza para "YYYY-MM"
-    const key = (row.mes_referencia as string)?.slice(0, 7);
-    if (key) monthKeySet.add(key);
+  for (const row of (mesRows as Array<{ mes_key: string }> ?? [])) {
+    if (row.mes_key) monthKeySet.add(row.mes_key);
   }
   const periods = [...monthKeySet]
     .sort((a, b) => b.localeCompare(a))
@@ -90,7 +81,7 @@ export default async function FeedbackPage({
 
   // Get all active users with their manager (include elofy_id for reliable matching)
   let usersQ = excludeAdmins(
-    supabase.from("elofy_users").select("nome, elofy_id, nome_gestor, nome_time").eq("status", "Ativo"),
+    supabase.from("elofy_users").select("nome, elofy_id, nome_gestor, nome_time, data_admissao").eq("status", "Ativo"),
     "nome"
   );
   if (areaFilter) usersQ = usersQ.in("nome_time", areaFilter);
@@ -135,9 +126,18 @@ export default async function FeedbackPage({
     reports: Array<{ nome: string; elofy_id: string }>;
   }> = {};
 
+  const [mesYear, mesMonth] = activeMes ? activeMes.split("-").map(Number) : [0, 0];
+  const mesStartDate = mesYear ? new Date(mesYear, mesMonth - 1, 1) : null;
+
   for (const u of users ?? []) {
     const mgr = u.nome_gestor ?? "";
     if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
+
+    if (mesStartDate && u.data_admissao) {
+      const [d, m, y] = (u.data_admissao as string).split("/").map(Number);
+      if (d && m && y && new Date(y, m - 1, d) >= mesStartDate) continue;
+    }
+
     if (!leaderMap[mgr]) leaderMap[mgr] = { area: u.nome_time ?? "", reports: [] };
     leaderMap[mgr].reports.push({ nome: u.nome ?? "", elofy_id: u.elofy_id ?? "" });
   }
