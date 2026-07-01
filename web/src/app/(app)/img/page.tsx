@@ -266,8 +266,9 @@ export default async function IMGPage({
   const leaders: LeaderIMG[] = Object.entries(mgrMap)
   .filter(([name]) => {
     if (EXCLUDED_IMG_LEADERS.includes(name)) return false;
-    // Exclui líderes que entraram no mês de referência ou depois
+    // Exclui líderes sem data de admissão ou que entraram no mês de referência ou depois
     const adm = admissaoByName[name];
+    if (mesStartDate && !adm) return false;
     if (mesStartDate && adm) {
       const [d, m, y] = adm.split("/").map(Number);
       if (d && m && y && new Date(y, m - 1, d) >= mesStartDate) return false;
