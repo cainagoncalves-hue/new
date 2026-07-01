@@ -138,7 +138,7 @@ export default async function IMGPage({
   // ── Users no escopo ──────────────────────────────────────────────────────────
   let usersQ = excludeAdmins(
     supabase.from("elofy_users")
-      .select("nome, nome_gestor, nome_time, elofy_id")
+      .select("nome, nome_gestor, nome_time, elofy_id, data_admissao")
       .eq("status", "Ativo"),
     "nome"
   );
@@ -232,11 +232,23 @@ export default async function IMGPage({
   }
 
   // mgrMap: líder → { area, reports[] } — chave trimada
+  // Exclui colaboradores admitidos após o mês de referência para não inflar o denominador
+  // de acompanhamento com pessoas que ainda não faziam parte do time no período.
   type Report = { nome: string; elofy_id: string };
   const mgrMap: Record<string, { area: string; reports: Report[] }> = {};
-  for (const u of (users as Array<{ nome: string; nome_gestor: string; nome_time: string; elofy_id: string }> ?? [])) {
+  const [mesYear, mesMonth] = activeMes ? activeMes.split("-").map(Number) : [0, 0];
+  const mesEndDate = mesYear ? new Date(mesYear, mesMonth, 1) : null; // primeiro dia do mês seguinte
+
+  for (const u of (users as Array<{ nome: string; nome_gestor: string; nome_time: string; elofy_id: string; data_admissao: string }> ?? [])) {
     const mgr = (u.nome_gestor ?? "").trim();
     if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
+
+    // Filtra quem entrou depois do mês de referência
+    if (mesEndDate && u.data_admissao) {
+      const [d, m, y] = u.data_admissao.split("/").map(Number);
+      if (d && m && y && new Date(y, m - 1, d) >= mesEndDate) continue;
+    }
+
     if (!mgrMap[mgr]) mgrMap[mgr] = { area: u.nome_time ?? "", reports: [] };
     mgrMap[mgr].reports.push({ nome: u.nome ?? "", elofy_id: u.elofy_id ?? "" });
   }
