@@ -243,7 +243,11 @@ export default async function IMGPage({
 
   // ── Cálculo por líder (metodologia completa) ─────────────────────────────────
 
-  const leaders: LeaderIMG[] = Object.entries(mgrMap).map(([name, data]) => {
+  const EXCLUDED_IMG_LEADERS = ["Henrique Carmellino", "Gustavo Carmellino"];
+
+  const leaders: LeaderIMG[] = Object.entries(mgrMap)
+  .filter(([name]) => !EXCLUDED_IMG_LEADERS.includes(name))
+  .map(([name, data]) => {
     const reports = data.reports;
     const man = manualByLeader[name] ?? {};
 
