@@ -261,7 +261,7 @@ export default async function IMGPage({
 
   // ── Cálculo por líder (metodologia completa) ─────────────────────────────────
 
-  const EXCLUDED_IMG_LEADERS = ["Henrique Carmellino", "Gustavo Carmellino"];
+  const EXCLUDED_IMG_LEADERS = ["Henrique Carmellino", "Henrique Carmellino Filho", "Gustavo Carmellino"];
 
   const leaders: LeaderIMG[] = Object.entries(mgrMap)
   .filter(([name]) => {
