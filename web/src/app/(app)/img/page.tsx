@@ -239,11 +239,17 @@ export default async function IMGPage({
   const [mesYear, mesMonth] = activeMes ? activeMes.split("-").map(Number) : [0, 0];
   const mesStartDate = mesYear ? new Date(mesYear, mesMonth - 1, 1) : null; // primeiro dia do mês de referência
 
+  // Lookup nome → data_admissao para filtrar os próprios líderes
+  const admissaoByName: Record<string, string> = {};
+  for (const u of (users as Array<{ nome: string; data_admissao: string }> ?? [])) {
+    if (u.nome) admissaoByName[u.nome.trim()] = u.data_admissao ?? "";
+  }
+
   for (const u of (users as Array<{ nome: string; nome_gestor: string; nome_time: string; elofy_id: string; data_admissao: string }> ?? [])) {
     const mgr = (u.nome_gestor ?? "").trim();
     if (!mgr || mgr.toLowerCase().includes("elofy")) continue;
 
-    // Filtra quem entrou no mês de referência ou depois
+    // Filtra liderados que entraram no mês de referência ou depois
     if (mesStartDate && u.data_admissao) {
       const [d, m, y] = u.data_admissao.split("/").map(Number);
       if (d && m && y && new Date(y, m - 1, d) >= mesStartDate) continue;
@@ -258,7 +264,16 @@ export default async function IMGPage({
   const EXCLUDED_IMG_LEADERS = ["Henrique Carmellino", "Gustavo Carmellino"];
 
   const leaders: LeaderIMG[] = Object.entries(mgrMap)
-  .filter(([name]) => !EXCLUDED_IMG_LEADERS.includes(name))
+  .filter(([name]) => {
+    if (EXCLUDED_IMG_LEADERS.includes(name)) return false;
+    // Exclui líderes que entraram no mês de referência ou depois
+    const adm = admissaoByName[name];
+    if (mesStartDate && adm) {
+      const [d, m, y] = adm.split("/").map(Number);
+      if (d && m && y && new Date(y, m - 1, d) >= mesStartDate) return false;
+    }
+    return true;
+  })
   .map(([name, data]) => {
     const reports = data.reports;
     const man = manualByLeader[name] ?? {};
