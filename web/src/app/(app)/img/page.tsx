@@ -181,12 +181,21 @@ export default async function IMGPage({
     .limit(9999);
   if (allUserIds.length > 0) ooQ = ooQ.in("id_usuario_convidado", allUserIds);
 
+  // Data de admissão de TODOS os ativos, sem filtro de área/BP: o próprio líder
+  // pode ter nome_time fora do areaFilter (ex.: time de diretoria) mesmo liderando
+  // pessoas de times mapeados para o BP — não pode depender do array `users` filtrado.
+  const admissaoQ = excludeAdmins(
+    supabase.from("elofy_users").select("nome, data_admissao").eq("status", "Ativo"),
+    "nome"
+  );
+
   const [
     { data: fbRows },
     { data: ooRows },
     { data: isoRows },
     { data: talentos },
     { data: manualIndicadores },
+    { data: allAdmissoes },
   ] = await Promise.all([
     fbQ,
     ooQ,
@@ -195,6 +204,7 @@ export default async function IMGPage({
     supabase.rpc("get_iso_scores", { p_mes: activeMes || null }),
     supabase.from("manual_talentos_chave").select("nome_gestor, status").limit(9999),
     manualQ,
+    admissaoQ,
   ]);
 
   // ── Lookups auxiliares ───────────────────────────────────────────────────────
@@ -240,8 +250,9 @@ export default async function IMGPage({
   const mesStartDate = mesYear ? new Date(mesYear, mesMonth - 1, 1) : null; // primeiro dia do mês de referência
 
   // Lookup nome → data_admissao para filtrar os próprios líderes
+  // (usa allAdmissoes, sem filtro de área — ver comentário na query acima)
   const admissaoByName: Record<string, string> = {};
-  for (const u of (users as Array<{ nome: string; data_admissao: string }> ?? [])) {
+  for (const u of (allAdmissoes as Array<{ nome: string; data_admissao: string }> ?? [])) {
     if (u.nome) admissaoByName[u.nome.trim()] = u.data_admissao ?? "";
   }
 
