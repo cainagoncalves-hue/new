@@ -1,4 +1,4 @@
-import { checkTokenHealth } from "../_shared/elofy-client.ts";
+import { checkTokenHealth, getElofyToken } from "../_shared/elofy-client.ts";
 import { getSupabaseClient } from "../_shared/supabase-client.ts";
 import { notify } from "../_shared/notify.ts";
 
@@ -19,13 +19,14 @@ const ALL_FUNCTIONS = [
   "sync-avaliacoes",
 ];
 
-function fireFunction(name: string): void {
+function fireFunction(name: string, elofyToken: string): void {
   fetch(`${SUPABASE_URL}/functions/v1/${name}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${SERVICE_KEY}`,
       "Content-Type": "application/json",
     },
+    body: JSON.stringify({ elofyToken }),
   }).catch(() => {});
 }
 
@@ -57,10 +58,40 @@ Deno.serve(async () => {
     );
   }
 
+  // Faz um único login na Elofy e repassa o token às 9 funções — evita que
+  // cada uma logue concorrentemente e invalide a sessão das outras.
+  let elofyToken: string;
+  try {
+    elofyToken = await getElofyToken();
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+
+    await notify({
+      type: "token_expired",
+      message: "🔴 Login na Elofy falhou. Sync não iniciado.",
+      detail: message,
+      timestamp: startedAt,
+    });
+
+    await supabase.from("elofy_sync_logs").insert({
+      entity: "sync-all",
+      status: "error",
+      records_synced: 0,
+      error_message: message,
+      started_at: startedAt,
+      finished_at: new Date().toISOString(),
+    });
+
+    return new Response(
+      JSON.stringify({ ok: false, error: "login_failed", detail: message }),
+      { status: 502, headers: { "Content-Type": "application/json" } },
+    );
+  }
+
   // Dispara todas as funções em background (fire-and-forget).
   // Cada função loga seu próprio resultado em elofy_sync_logs.
   for (const fn of ALL_FUNCTIONS) {
-    fireFunction(fn);
+    fireFunction(fn, elofyToken);
   }
 
   await supabase.from("elofy_sync_logs").insert({

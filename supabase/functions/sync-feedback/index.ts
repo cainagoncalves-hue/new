@@ -1,4 +1,4 @@
-import { elofyGetAll } from "../_shared/elofy-client.ts";
+import { elofyGetAll, setElofyToken } from "../_shared/elofy-client.ts";
 import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-client.ts";
 import { dedup, parseDate } from "../_shared/utils.ts";
 
@@ -80,9 +80,12 @@ async function syncFeelings() {
   return rows.length;
 }
 
-Deno.serve(async () => {
+Deno.serve(async (req) => {
   const startedAt = new Date().toISOString();
   const results: Record<string, number> = {};
+
+  const { elofyToken } = await req.json().catch(() => ({}));
+  if (elofyToken) setElofyToken(elofyToken);
 
   try {
     results.feedbacks = await syncFeedbacks();

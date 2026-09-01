@@ -33,6 +33,12 @@ function checkTokenAging(token: string): void {
 
 let cachedToken: string | null = null;
 
+// Permite injetar um token já obtido (ex: sync-all faz um único login e
+// repassa às funções que dispara, evitando N logins concorrentes na Elofy).
+export function setElofyToken(token: string): void {
+  cachedToken = token;
+}
+
 export async function getElofyToken(): Promise<string> {
   if (cachedToken) return cachedToken;
 
