@@ -1,4 +1,4 @@
-import { elofyGetAll, setElofyToken } from "../_shared/elofy-client.ts";
+import { elofyGetAll } from "../_shared/elofy-client.ts";
 import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-client.ts";
 import { dedup } from "../_shared/utils.ts";
 
@@ -233,15 +233,12 @@ async function syncSurveyDetails(surveyIds: string[]) {
 Deno.serve(async (req) => {
   const startedAt = new Date().toISOString();
 
-  // Aceita { from_date: "YYYY-MM-DD", elofyToken } no body: from_date permite
-  // re-sync direcionado por período; elofyToken evita login próprio quando
-  // repassado pelo sync-all. Sem body (ex: chamada do cron), usa o padrão
-  // (últimos 30 surveys + login via email/senha).
+  // Aceita { from_date: "YYYY-MM-DD" } no body para re-sync direcionado por período.
+  // Sem body (ex: chamada do cron), usa o comportamento padrão (últimos 30 surveys).
   let fromDate: string | undefined;
   try {
     const body = await req.json();
     if (typeof body?.from_date === "string") fromDate = body.from_date;
-    if (typeof body?.elofyToken === "string") setElofyToken(body.elofyToken);
   } catch { /* body vazio ou não-JSON — ok */ }
 
   try {

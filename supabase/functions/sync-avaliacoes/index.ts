@@ -1,4 +1,4 @@
-import { elofyGetAll, setElofyToken } from "../_shared/elofy-client.ts";
+import { elofyGetAll } from "../_shared/elofy-client.ts";
 import { getSupabaseClient, logSync, upsertBatch } from "../_shared/supabase-client.ts";
 import { toNum } from "../_shared/utils.ts";
 
@@ -327,12 +327,9 @@ async function syncNinebox() {
   return rows.length;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(async () => {
   const startedAt = new Date().toISOString();
   const results: Record<string, unknown> = {};
-
-  const { elofyToken } = await req.json().catch(() => ({}));
-  if (elofyToken) setElofyToken(elofyToken);
 
   try {
     results.cycle_review_public = await syncCycleReviewPublic();
