@@ -1,4 +1,4 @@
-import { checkTokenHealth, getElofyToken } from "../_shared/elofy-client.ts";
+import { checkTokenHealth, elofyGet, getElofyToken } from "../_shared/elofy-client.ts";
 import { getSupabaseClient } from "../_shared/supabase-client.ts";
 import { notify } from "../_shared/notify.ts";
 
@@ -87,6 +87,14 @@ Deno.serve(async () => {
       { status: 502, headers: { "Content-Type": "application/json" } },
     );
   }
+
+  // A sessão recém-criada leva um instante para propagar no lado da Elofy —
+  // disparar as 9 chamadas em paralelo logo após o login derruba a maioria
+  // com 401. Um request de "aquecimento" + pequena espera evita isso.
+  try {
+    await elofyGet("/dataQuery/company");
+  } catch { /* se falhar aqui, as 9 funções abaixo vão falhar e logar por conta própria */ }
+  await new Promise((r) => setTimeout(r, 1500));
 
   // Dispara todas as funções em background (fire-and-forget).
   // Cada função loga seu próprio resultado em elofy_sync_logs.
