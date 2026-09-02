@@ -101,6 +101,7 @@ export default async function ISOPage({
     lnps_is_area_avg: boolean; lnps_area_label: string | null;
     isbe_raw: number | null; isbe_score: number | null; isbe_n: number;
     isbe_is_area_avg: boolean; isbe_area_label: string | null;
+    isbe_is_inherited: boolean; isbe_inherited_from: string | null;
     perguntas_isbe: ISOQuestion[] | null;
     lnps_date: string | null; isbe_mes: string | null;
   };
@@ -133,6 +134,8 @@ export default async function ISOPage({
     isbeQuestions: (row.perguntas_isbe as ISOQuestion[]) ?? [],
     isbeIsAreaAvg: row.isbe_is_area_avg ?? false,
     isbeAreaLabel: row.isbe_area_label ?? "",
+    isbeIsInherited: row.isbe_is_inherited ?? false,
+    isbeInheritedFrom: row.isbe_inherited_from ?? "",
   }));
 
   // Filtra por gestor (bp_gestor_map) em vez de por area (MIN do time),

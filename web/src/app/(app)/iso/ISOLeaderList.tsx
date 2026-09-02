@@ -32,6 +32,8 @@ export interface ISOLeaderData {
   isbeQuestions: ISOQuestion[];
   isbeIsAreaAvg: boolean;
   isbeAreaLabel: string;
+  isbeIsInherited: boolean;
+  isbeInheritedFrom: string;
 }
 
 function isoColor(v: number | null) {
@@ -131,6 +133,7 @@ export default function ISOLeaderList({ leaders }: Props) {
     getScore: (l: ISOLeaderData) => number | null;
     getDisplayValue?: (l: ISOLeaderData) => number | null;
     getAreaAvg?: (l: ISOLeaderData) => string | null;
+    getInheritedFrom?: (l: ISOLeaderData) => string | null;
     getDetail: (l: ISOLeaderData) => string;
   }[] = [
     {
@@ -172,6 +175,7 @@ export default function ISOLeaderList({ leaders }: Props) {
       getScore: (l) => l.isbeScore,
       getDisplayValue: (l) => l.isbeRaw !== null ? parseFloat(l.isbeRaw.toFixed(2)) : null,
       getAreaAvg: (l) => l.isbeIsAreaAvg ? l.isbeAreaLabel : null,
+      getInheritedFrom: (l) => l.isbeIsInherited ? l.isbeInheritedFrom : null,
       getDetail: (l) =>
         l.isbeRaw !== null
           ? `Contribuição ISO: ${Math.round(l.isbeScore ?? 0)}/100 · n=${l.isbeN}`
@@ -321,10 +325,11 @@ export default function ISOLeaderList({ leaders }: Props) {
                     gap: 12,
                     padding: 20,
                   }}>
-                    {ISO_CRITERIA.map(({ key, label, weight, meta, getScore, getDisplayValue, getAreaAvg, getDetail }) => {
+                    {ISO_CRITERIA.map(({ key, label, weight, meta, getScore, getDisplayValue, getAreaAvg, getInheritedFrom, getDetail }) => {
                       const score = getScore(l);
                       const displayVal = getDisplayValue ? getDisplayValue(l) : score;
                       const areaAvgLabel = getAreaAvg ? getAreaAvg(l) : null;
+                      const inheritedFrom = getInheritedFrom ? getInheritedFrom(l) : null;
                       const c = scoreColor(score);
                       return (
                         <div key={key} style={{ background: "var(--surface-2)", borderRadius: 10, padding: "14px 16px" }}>
@@ -351,7 +356,15 @@ export default function ISOLeaderList({ leaders }: Props) {
                               </span>
                             </div>
                           )}
-                          <div style={{ fontSize: 10, color: "var(--text-300)", marginTop: areaAvgLabel ? 4 : 8 }}>
+                          {inheritedFrom && (
+                            <div style={{ marginTop: 6, display: "inline-flex", alignItems: "center", gap: 4, background: "var(--blue-bg, #dbeafe)", borderRadius: 5, padding: "2px 7px" }}>
+                              <span style={{ fontSize: 8, color: "#1e40af" }}>🔗</span>
+                              <span style={{ fontSize: 9, fontWeight: 600, color: "#1e40af" }}>
+                                Herdado de {inheritedFrom}
+                              </span>
+                            </div>
+                          )}
+                          <div style={{ fontSize: 10, color: "var(--text-300)", marginTop: (areaAvgLabel || inheritedFrom) ? 4 : 8 }}>
                             {meta}
                           </div>
                           <div style={{ fontSize: 10, color: "var(--text-500)", marginTop: 2 }}>
@@ -379,6 +392,14 @@ export default function ISOLeaderList({ leaders }: Props) {
                           <span style={{ fontSize: 9 }}>📊</span>
                           <span style={{ fontSize: 10, fontWeight: 600, color: "#92400e" }}>
                             Média da área · {l.isbeAreaLabel}
+                          </span>
+                        </div>
+                      )}
+                      {l.isbeIsInherited && (
+                        <div style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "var(--blue-bg, #dbeafe)", borderRadius: 5, padding: "3px 9px" }}>
+                          <span style={{ fontSize: 9 }}>🔗</span>
+                          <span style={{ fontSize: 10, fontWeight: 600, color: "#1e40af" }}>
+                            Herdado do líder acima · {l.isbeInheritedFrom}
                           </span>
                         </div>
                       )}
