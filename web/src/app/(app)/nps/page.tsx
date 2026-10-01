@@ -282,6 +282,7 @@ export default async function NPSPage({
             .from("elofy_survey_standard")
             .select("nome_gestor, resposta, time")
             .eq("id_pesquisa", activePeriod.lnpsId)
+            .eq("tipo_pergunta", "NPS")
         )
       : Promise.resolve({ data: [] as { nome_gestor: string; resposta: string; time: string }[] }),
     activePeriod?.enpsId
@@ -290,6 +291,7 @@ export default async function NPSPage({
             .from("elofy_survey_standard")
             .select("nome_gestor, resposta, time")
             .eq("id_pesquisa", activePeriod.enpsId)
+            .eq("tipo_pergunta", "NPS")
         )
       : Promise.resolve({ data: [] as { nome_gestor: string; resposta: string; time: string }[] }),
   ]);

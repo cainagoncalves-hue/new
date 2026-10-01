@@ -379,12 +379,16 @@ export default async function HomePage({
   ] = await Promise.all([
     latestEnpsMeta?.id_pesquisa
       ? applySurveyScope(
-          supabase.from("elofy_survey_standard").select("resposta").eq("id_pesquisa", latestEnpsMeta.id_pesquisa)
+          supabase.from("elofy_survey_standard").select("resposta")
+            .eq("id_pesquisa", latestEnpsMeta.id_pesquisa)
+            .eq("tipo_pergunta", "NPS")
         )
       : Promise.resolve({ data: [] as { resposta: string }[] }),
     latestLnpsMeta?.id_pesquisa
       ? applySurveyScope(
-          supabase.from("elofy_survey_standard").select("resposta").eq("id_pesquisa", latestLnpsMeta.id_pesquisa)
+          supabase.from("elofy_survey_standard").select("resposta")
+            .eq("id_pesquisa", latestLnpsMeta.id_pesquisa)
+            .eq("tipo_pergunta", "NPS")
         )
       : Promise.resolve({ data: [] as { resposta: string }[] }),
     fbQuery,
